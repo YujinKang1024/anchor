@@ -1,3 +1,5 @@
+import Scene3D from './components/Scene3D/Scene3D';
+
 export default function App() {
-  return <div />;
+  return <Scene3D />;
 }
