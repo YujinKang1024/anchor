@@ -1,26 +1,14 @@
+import Scene3DUI from '../Scene3DUI/Scene3DUI';
 import { Container, StyledCanvas } from './Scene3D.styles';
-import BaseButton from '../BaseButton/BaseButton';
-import Title from '../Title/Title';
-import AnchorImage from '../AnchorImage/AnchorImage';
-import SoundToggleButton from '../SoundToggleButton/SoundToggleButton';
-import CustomScrollbar from '../CustomScrollbar/CustomScrollbar';
-import GradientButton from '../GradientButton/GradientButton';
 
 export default function Scene3D() {
   return (
     <Container>
-      <CustomScrollbar />
-      <GradientButton startColor="#fbc2eb" endColor="#a6c1ee">
-        P O R T F O L I O
-      </GradientButton>
-      <BaseButton bottom="28%">Weigh Anchor</BaseButton>
-      <BaseButton top="4%" right="4%">
-        About
-      </BaseButton>
-      <Title>ANCHOR</Title>
-      <AnchorImage />
-      <SoundToggleButton />
-      <StyledCanvas />
+      <Scene3DUI />
+      <StyledCanvas camera={{ position: [0, 0, 9], fov: 25 }}>
+        <directionalLight position={[5, 5, 5]} intensity={1} />
+        <ambientLight intensity={0.5} />
+      </StyledCanvas>
     </Container>
   );
 }

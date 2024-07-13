@@ -5,8 +5,8 @@ import {
   TextContainer,
   Text,
   HighlightText,
-  CloseButton,
 } from './AboutModal.styles';
+import CloseButton from '../../styled-components/CloseButton';
 
 export default function AboutModal() {
   return (
