@@ -3,9 +3,13 @@ import styled from 'styled-components';
 export const StyledButton = styled.button`
   position: absolute;
   padding: 10px 30px;
-  bottom: 30%;
+  top: ${({ top }) => top || 'auto'};
+  left: ${({ left }) => left || 'auto'};
+  bottom: ${({ bottom }) => bottom || 'auto'};
+  right: ${({ right }) => right || 'auto'};
   z-index: 2;
-  border: none;
+  border: 1px solid;
+  border-color: #569dff;
   border-radius: 8px;
   font-size: 1.5rem;
   background-color: #fff;
