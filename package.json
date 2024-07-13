@@ -12,13 +12,15 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@react-three/drei": "^9.108.3",
     "@react-three/fiber": "^8.16.8",
     "gsap": "^3.12.5",
     "jotai": "^2.9.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-intersection-observer": "^9.13.0",
-    "styled-components": "^6.1.11"
+    "styled-components": "^6.1.11",
+    "three": "^0.166.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.6",

@@ -16,6 +16,12 @@ module.exports = {
     'prettier/prettier': 'error',
     'react/prop-types': 'off',
     'react/jsx-no-target-blank': 'off',
+    'react/no-unknown-property': [
+      2,
+      {
+        ignore: ['mesh', 'planeGeometry', 'args', 'position', 'intensity'],
+      },
+    ],
     'react-refresh/only-export-components': [
       'warn',
       { allowConstantExport: true },
