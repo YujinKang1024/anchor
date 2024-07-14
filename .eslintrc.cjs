@@ -19,7 +19,14 @@ module.exports = {
     'react/no-unknown-property': [
       2,
       {
-        ignore: ['mesh', 'planeGeometry', 'args', 'position', 'intensity'],
+        ignore: [
+          'mesh',
+          'planeGeometry',
+          'args',
+          'position',
+          'intensity',
+          'rotation',
+        ],
       },
     ],
     'react-refresh/only-export-components': [
