@@ -82,6 +82,7 @@ export default function Scene3D() {
       <Scene3DUI
         isShowLandingUI={isShowLandingUI}
         setIsShowLandingUI={setIsShowLandingUI}
+        boatRef={boatRef}
       />
       <Canvas
         camera={{ position: [0, 0, 0], fov: 45, near: 0.1, far: 2000 }}
@@ -104,7 +105,7 @@ export default function Scene3D() {
           maxAzimuthAngle={Math.PI / 0}
           minAzimuthAngle={-Math.PI / 0}
           enablePan={true}
-          enableZoom={true}
+          enableZoom={false}
         />
         <Boat ref={boatRef} onLoaded={handleBoatLoaded} />
         <Lands />
