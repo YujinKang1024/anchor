@@ -26,6 +26,7 @@ module.exports = {
           'position',
           'intensity',
           'rotation',
+          'object',
         ],
       },
     ],
