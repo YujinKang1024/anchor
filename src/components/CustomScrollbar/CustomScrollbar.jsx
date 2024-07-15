@@ -13,19 +13,25 @@ export default function CustomScrollbar({ boatRef }) {
   const virtualScrollHeight = 8000;
 
   const handleScroll = useCallback(() => {
+    if (!scrollRef.current) return;
+
     const scrollTop = scrollRef.current.scrollTop;
     const clientHeight = scrollRef.current.clientHeight;
-    const newThumbPosition =
-      (scrollTop / (virtualScrollHeight - clientHeight)) * 100;
+    const scrollHeight = scrollRef.current.scrollHeight;
+
+    const newThumbPosition = Math.min(
+      (scrollTop / (scrollHeight - clientHeight)) * 100,
+      100,
+    );
     setThumbPosition(newThumbPosition);
 
     if (boatRef.current) {
       const boatMaxDistanceX = 1000;
       const boatMaxDistanceZ = 500;
       const boatPositionX =
-        (scrollTop / (virtualScrollHeight - clientHeight)) * boatMaxDistanceX;
+        (scrollTop / (scrollHeight - clientHeight)) * boatMaxDistanceX;
       const boatPositionZ =
-        (scrollTop / (virtualScrollHeight - clientHeight)) * boatMaxDistanceZ;
+        (scrollTop / (scrollHeight - clientHeight)) * boatMaxDistanceZ;
       boatRef.current.position.set(
         boatPositionX,
         boatRef.current.position.y,
