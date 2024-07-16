@@ -29,8 +29,8 @@ export default function CustomScrollbar({ boatRef, pathPoints }) {
     const clientHeight = scrollRef.current.clientHeight;
     const scrollHeight = scrollRef.current.scrollHeight;
 
-    const scrollRatio = scrollTop / (scrollHeight - clientHeight);
-    const newThumbPosition = Math.min(scrollRatio * 100, 100);
+    const scrollRatio = 1 - scrollTop / (scrollHeight - clientHeight);
+    const newThumbPosition = Math.min((1 - scrollRatio) * 100, 100);
 
     setThumbPosition(newThumbPosition);
 
