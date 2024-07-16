@@ -40,13 +40,13 @@ export const Scrollbar = styled.div.attrs(({ $scrollbarheight }) => ({
 
 export const Thumb = styled.div.attrs(({ $scrolltop }) => ({
   style: {
-    top: `${Math.min($scrolltop, 95)}%`,
+    top: `${Math.min($scrolltop, 97)}%`,
   },
 }))`
   position: absolute;
   left: 0;
   width: 100%;
-  height: 5%;
+  height: 3%;
   background: #88bfff;
   border-radius: 0.3rem;
   cursor: pointer;
