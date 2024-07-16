@@ -24,7 +24,7 @@ export default function Scene3DUI({ isShowLandingUI, setIsShowLandingUI, pathPoi
           </BaseButton>
         </>
       )}
-      <CustomScrollbar boatRef={boatRef} />
+      <CustomScrollbar boatRef={boatRef} pathPoints={pathPoints} />
       <BaseButton top="4%" right="4%">
         About
       </BaseButton>

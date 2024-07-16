@@ -9,6 +9,7 @@ import Scene3DUI from '../Scene3DUI/Scene3DUI';
 import Ocean from '../Ocean/Ocean';
 import Boat from '../Boat/Boat';
 import Lands from '../Lands/Lands';
+import Path from '../Path/Path';
 
 import FullScreenContainer from '../../styled-components/FullScreenContainer';
 
@@ -40,6 +41,7 @@ function CameraLogger({ cameraRef, controlsRef }) {
 export default function Scene3D() {
   const [isShowLandingUI, setIsShowLandingUI] = useState(false);
   const [isBoatLoaded, setIsBoatLoaded] = useState(false);
+  const [pathPoints, setPathPoints] = useState([]);
 
   const cameraRef = useRef();
   const boatRef = useRef();
@@ -79,6 +81,7 @@ export default function Scene3D() {
       <Scene3DUI
         isShowLandingUI={isShowLandingUI}
         setIsShowLandingUI={setIsShowLandingUI}
+        pathPoints={pathPoints}
         boatRef={boatRef}
       />
       <Canvas
@@ -106,6 +109,7 @@ export default function Scene3D() {
         <Boat ref={boatRef} onLoaded={handleBoatLoaded} />
         <Lands />
         <Ocean />
+        <Path setPathPoints={setPathPoints} />
         <CameraLogger cameraRef={cameraRef} controlsRef={controlsRef} />
       </Canvas>
     </FullScreenContainer>

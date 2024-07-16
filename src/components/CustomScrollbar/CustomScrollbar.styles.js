@@ -33,7 +33,7 @@ export const Scrollbar = styled.div`
 
 export const Thumb = styled.div`
   position: absolute;
-  top: ${({ top = 0 }) => `${Math.min(top, 90)}%`};
+  top: ${({ top = 0 }) => `${Math.min(top, 100)}%`};
   left: 0;
   width: 100%;
   height: 10%;
