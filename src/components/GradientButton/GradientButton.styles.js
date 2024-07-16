@@ -7,8 +7,7 @@ export const StyledButton = styled.button`
   color: #fff;
   background: linear-gradient(
     to right,
-    ${({ startColor, endColor }) =>
-      `${startColor} 0%, ${endColor} 51%, ${startColor} 100%`}
+    ${({ startColor, endColor }) => `${startColor} 0%, ${endColor} 51%, ${startColor} 100%`}
   );
   border: none;
   border-radius: 10px;

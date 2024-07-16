@@ -24,12 +24,7 @@ const Boat = forwardRef(({ onLoaded }, ref) => {
   }, [scene, onLoaded]);
 
   return (
-    <primitive
-      ref={ref}
-      object={scene}
-      position={[780, -500.5, 520]}
-      rotation={[0, 0.8, 0]}
-    />
+    <primitive ref={ref} object={scene} position={[780, -500.5, 520]} rotation={[0, 0.8, 0]} />
   );
 });
 

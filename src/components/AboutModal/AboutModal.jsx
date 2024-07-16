@@ -11,13 +11,7 @@ import CloseButton from '../../styled-components/CloseButton';
 export default function AboutModal() {
   return (
     <ModalOverlay>
-      <AnchorImage
-        top="78%"
-        width="11rem"
-        zIndex="6"
-        imageBlur="0"
-        applyColorEnhancement="true"
-      />
+      <AnchorImage top="78%" width="11rem" zIndex="6" imageBlur="0" applyColorEnhancement="true" />
       <ModalContent>
         <CloseButton />
         <TextContainer>

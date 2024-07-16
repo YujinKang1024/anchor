@@ -1,9 +1,6 @@
 import YoutubeFrame from '../YouTubeFrame/YouTubeFrame';
 import CloseButton from '../../styled-components/CloseButton';
-import {
-  ModalBackdrop,
-  StyledPerspectiveDModal,
-} from './PerspectiveModal.styles';
+import { ModalBackdrop, StyledPerspectiveDModal } from './PerspectiveModal.styles';
 
 export default function PerspectiveModal() {
   return (

@@ -13,13 +13,7 @@ export const ModalOverlay = styled.div`
 `;
 
 export const ModalContent = styled.div`
-  background: linear-gradient(
-    to bottom,
-    #fff 0%,
-    #f5f9ff 10%,
-    #bed9ff 40%,
-    #569dff 100%
-  );
+  background: linear-gradient(to bottom, #fff 0%, #f5f9ff 10%, #bed9ff 40%, #569dff 100%);
   width: 100%;
   height: 100%;
 `;

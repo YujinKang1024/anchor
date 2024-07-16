@@ -1,10 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import {
-  ScrollContainer,
-  Scrollbar,
-  Thumb,
-  VirtualContent,
-} from './CustomScrollbar.styles';
+import { ScrollContainer, Scrollbar, Thumb, VirtualContent } from './CustomScrollbar.styles';
 
 export default function CustomScrollbar({ boatRef }) {
   const [currentScrollRef, setCurrentScrollRef] = useState(null);
@@ -42,13 +37,11 @@ export default function CustomScrollbar({ boatRef }) {
       const boatMaxDistanceX = 100;
       const boatMaxDistanceZ = 50;
       const boatPositionX =
-        (scrollTop / (scrollHeight - clientHeight)) *
-        boatMaxDistanceX *
-        sensitivity;
+        (scrollTop / (scrollHeight - clientHeight)) * boatMaxDistanceX * sensitivity;
       const boatPositionZ =
-        (scrollTop / (scrollHeight - clientHeight)) *
-        boatMaxDistanceZ *
-        sensitivity;
+        (scrollTop / (scrollHeight - clientHeight)) * boatMaxDistanceZ * sensitivity;
+      console.log('boatPositionX:', boatPositionX);
+      console.log('boatPositionZ:', boatPositionZ);
       boatRef.current.position.set(
         initialBoatPositionRef.current.x + boatPositionX,
         initialBoatPositionRef.current.y,

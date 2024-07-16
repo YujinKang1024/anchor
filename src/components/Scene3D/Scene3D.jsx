@@ -20,10 +20,7 @@ function CameraLogger({ cameraRef, controlsRef }) {
   useFrame(() => {
     if (cameraRef.current && controlsRef.current) {
       const { position, rotation } = cameraRef.current;
-      if (
-        !prevPosition.current.equals(position) ||
-        !prevRotation.current.equals(rotation)
-      ) {
+      if (!prevPosition.current.equals(position) || !prevRotation.current.equals(rotation)) {
         console.log(
           `Camera Position: [${position.x.toFixed(2)}, ${position.y.toFixed(2)}, ${position.z.toFixed(2)}]`,
         );
@@ -91,8 +88,7 @@ export default function Scene3D() {
           display: 'block',
           width: '100%',
           height: '100%',
-          background:
-            'linear-gradient(to bottom, #fff 0%, #f5f9ff 10%, #bed9ff 30%, #569dff 100%)',
+          background: 'linear-gradient(to bottom, #fff 0%, #f5f9ff 10%, #bed9ff 30%, #569dff 100%)',
         }}
         onCreated={({ camera }) => (cameraRef.current = camera)}
       >
