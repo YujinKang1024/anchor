@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import * as THREE from 'three';
 
 import { ScrollContainer, Scrollbar, Thumb, VirtualContent } from './CustomScrollbar.styles';
+import animateBoatPosition from '../../utils/animateBoatPosition';
 
 export default function CustomScrollbar({ boatRef, pathPoints }) {
   const [currentScrollRef, setCurrentScrollRef] = useState(null);
@@ -52,12 +53,12 @@ export default function CustomScrollbar({ boatRef, pathPoints }) {
 
       const newCurrentPoint = pathPoints[0];
       const newNextPoint = pathPoints[pathPoints.length - 1];
-      const newBoatPosition = new THREE.Vector3().lerpVectors(newCurrentPoint, newNextPoint, 0.3);
+      const newBoatPosition = new THREE.Vector3().lerpVectors(newCurrentPoint, newNextPoint, 0.2);
 
-      scrollRef.current.scrollTop = 0;
-      boatRef.current.position.set(newBoatPosition.x, initialBoatPositionY, newBoatPosition.y);
-
-      setIsAtBottom(false);
+      animateBoatPosition(newBoatPosition, newNextPoint, boatRef, initialBoatPositionY, () => {
+        scrollRef.current.scrollTop = 0;
+        setIsAtBottom(false);
+      });
     }
 
     if (boatRef.current && !isAtBottom) {
