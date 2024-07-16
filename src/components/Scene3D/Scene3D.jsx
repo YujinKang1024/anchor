@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -12,6 +12,7 @@ import Lands from '../Lands/Lands';
 import Path from '../Path/Path';
 
 import FullScreenContainer from '../../styled-components/FullScreenContainer';
+import CameraController from '../CameraController/CameraController';
 
 // OrbitControls에 의한 카메라 포지션 console 출력
 function CameraLogger({ cameraRef, controlsRef }) {
@@ -46,31 +47,6 @@ export default function Scene3D() {
   const cameraRef = useRef();
   const boatRef = useRef();
   const controlsRef = useRef();
-
-  useEffect(() => {
-    if (cameraRef.current && boatRef.current && isBoatLoaded) {
-      const camera = cameraRef.current;
-      const boat = boatRef.current;
-
-      const boatPosition = new THREE.Vector3();
-      boat.getWorldPosition(boatPosition);
-
-      // 카메라 위치 설정
-      camera.position.set(866, -488, 500);
-      camera.rotation.set(-2.4, 1.3, 2.4);
-
-      camera.lookAt(boatPosition);
-
-      // OrbitControls의 target 설정
-      if (controlsRef.current) {
-        controlsRef.current.target.copy(boatPosition);
-        controlsRef.current.update();
-      }
-
-      console.log('Camera Position:', camera.position);
-      console.log('Boat Position:', boat.getWorldPosition(boatPosition));
-    }
-  }, [isBoatLoaded]);
 
   function handleBoatLoaded() {
     setIsBoatLoaded(true);
@@ -111,6 +87,9 @@ export default function Scene3D() {
         <Ocean />
         <Path setPathPoints={setPathPoints} />
         <CameraLogger cameraRef={cameraRef} controlsRef={controlsRef} />
+        {isBoatLoaded && (
+          <CameraController cameraRef={cameraRef} boatRef={boatRef} controlsRef={controlsRef} />
+        )}
       </Canvas>
     </FullScreenContainer>
   );
