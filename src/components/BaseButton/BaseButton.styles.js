@@ -3,10 +3,10 @@ import styled from 'styled-components';
 export const StyledButton = styled.button`
   position: absolute;
   padding: 10px 30px;
-  top: ${({ top }) => top || 'auto'};
-  left: ${({ left }) => left || 'auto'};
-  bottom: ${({ bottom }) => bottom || 'auto'};
-  right: ${({ right }) => right || 'auto'};
+  top: ${({ $top }) => $top || 'auto'};
+  left: ${({ $left }) => $left || 'auto'};
+  bottom: ${({ $bottom }) => $bottom || 'auto'};
+  right: ${({ $right }) => $right || 'auto'};
   z-index: 2;
   border: 1px solid;
   border-color: #569dff;

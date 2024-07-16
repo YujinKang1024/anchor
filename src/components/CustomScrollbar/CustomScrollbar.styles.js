@@ -16,15 +16,19 @@ export const ScrollContainer = styled.div`
   z-index: 10;
 `;
 
-export const VirtualContent = styled.div.attrs(({ height }) => ({
+export const VirtualContent = styled.div.attrs(({ $contentheight }) => ({
   style: {
-    height: height,
+    height: $contentheight,
   },
 }))`
   width: 100%;
 `;
 
-export const Scrollbar = styled.div`
+export const Scrollbar = styled.div.attrs(({ $scrollbarheight }) => ({
+  style: {
+    height: `${$scrollbarheight * 100}%`,
+  },
+}))`
   position: fixed;
   right: 0.5%;
   width: 0.4rem;
@@ -34,16 +38,16 @@ export const Scrollbar = styled.div`
   z-index: 11;
 `;
 
-export const Thumb = styled.div.attrs(({ top = 0 }) => ({
+export const Thumb = styled.div.attrs(({ $scrolltop }) => ({
   style: {
-    top: `${Math.min(top, 95)}%`,
+    top: `${Math.min($scrolltop, 95)}%`,
   },
 }))`
   position: absolute;
   left: 0;
   width: 100%;
   height: 5%;
-  background: rgba(0, 0, 0, 1);
+  background: #88bfff;
   border-radius: 0.3rem;
   cursor: pointer;
 `;
