@@ -8,19 +8,26 @@ export default function CustomScrollbar({ boatRef, pathPoints }) {
   const [thumbPosition, setThumbPosition] = useState(0);
 
   const scrollRef = useRef();
-  const initialBoatPositionRef = useRef({ x: 780, y: -500.5, z: 520 });
 
   const virtualScrollHeight = 50000;
+  const initialBoatPositionY = -500.5;
 
   useEffect(() => {
-    if (boatRef.current) {
-      initialBoatPositionRef.current = {
-        x: boatRef.current.position.x,
-        y: boatRef.current.position.y,
-        z: boatRef.current.position.z,
-      };
+    if (boatRef.current && pathPoints.length > 0) {
+      const initialPoint = pathPoints[0];
+      const initialNextPoint = pathPoints[pathPoints.length - 1];
+      const initialBoatPosition = new THREE.Vector3().lerpVectors(
+        initialPoint,
+        initialNextPoint,
+        0.98,
+      );
+      boatRef.current.position.set(
+        initialBoatPosition.x,
+        initialBoatPositionY,
+        initialBoatPosition.y,
+      );
     }
-  }, [boatRef]);
+  }, [boatRef, pathPoints, initialBoatPositionY]);
 
   const handleScroll = useCallback(() => {
     if (!scrollRef.current || pathPoints.length === 0) return;
@@ -28,7 +35,6 @@ export default function CustomScrollbar({ boatRef, pathPoints }) {
     const scrollTop = scrollRef.current.scrollTop;
     const clientHeight = scrollRef.current.clientHeight;
     const scrollHeight = scrollRef.current.scrollHeight;
-
     const scrollRatio = 1 - scrollTop / (scrollHeight - clientHeight);
     const newThumbPosition = Math.min((1 - scrollRatio) * 100, 100);
 
@@ -44,12 +50,11 @@ export default function CustomScrollbar({ boatRef, pathPoints }) {
 
       const currentPoint = pathPoints[pointIndex];
       const nextPoint = pathPoints[nextPointIndex];
-
       const newPosition = new THREE.Vector3().lerpVectors(currentPoint, nextPoint, lerpFactor);
 
-      boatRef.current.position.set(newPosition.x, -500.5, newPosition.y);
+      boatRef.current.position.set(newPosition.x, initialBoatPositionY, newPosition.y);
     }
-  }, [boatRef, pathPoints]);
+  }, [boatRef, pathPoints, initialBoatPositionY]);
 
   useEffect(() => {
     setCurrentScrollRef(scrollRef.current);
