@@ -7,9 +7,9 @@ import path from '../../assets/models/path.glb';
 export default function Path({ setPathPoints }) {
   const { scene } = useGLTF(path);
 
-  const line = scene.children.find((child) => child.isLine);
-
   useEffect(() => {
+    const line = scene.children.find((child) => child.isLine);
+
     if (line) {
       line.material = new THREE.LineBasicMaterial({ color: '#f00' });
 
@@ -17,16 +17,14 @@ export default function Path({ setPathPoints }) {
       const pathPoints = [];
 
       for (let i = 0; i < points.length; i += 3) {
-        for (let i = 0; i < points.length; i += 3) {
-          const x = points[i];
-          const y = points[i + 1];
-          const z = points[i + 2];
-          pathPoints.push(new THREE.Vector3(x, y, z));
-        }
+        const x = points[i];
+        const y = points[i + 1];
+        const z = points[i + 2];
+        pathPoints.push(new THREE.Vector3(x, y, z));
       }
       setPathPoints(pathPoints);
     }
-  }, [line, setPathPoints]);
+  }, [scene, setPathPoints]);
 
   return <primitive object={scene} position={[0, -400, 0]} />;
 }
