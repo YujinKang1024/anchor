@@ -72,6 +72,7 @@ export default function Scene3D() {
         }}
         onCreated={({ camera }) => (cameraRef.current = camera)}
       >
+        <OrbitControlArea />
         <directionalLight position={[5, 10, 5]} intensity={1.2} />
         <ambientLight intensity={1} />
         <OrbitControls
@@ -83,7 +84,6 @@ export default function Scene3D() {
           enablePan={true}
           enableZoom={false}
         />
-        <OrbitControlArea />
         <Boat ref={boatRef} onLoaded={handleBoatLoaded} />
         <Lands />
         <Ocean />

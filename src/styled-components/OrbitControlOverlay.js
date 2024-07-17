@@ -7,7 +7,7 @@ const OrbitControlOverlay = styled.div`
   width: 14vw;
   height: 19vh;
   pointer-events: auto;
-  background-color: rgba(1, 1, 1, 0.3);
+  background-color: rgba(1, 1, 1, 0.5);
   z-index: 20;
 `;
 
