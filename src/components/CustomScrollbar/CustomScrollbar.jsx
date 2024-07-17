@@ -2,7 +2,10 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import * as THREE from 'three';
 
 import { ScrollContainer, Scrollbar, Thumb, VirtualContent } from './CustomScrollbar.styles';
+
+import initializeBoatPosition from '../../utils/initializeBoatPosition';
 import animateBoatPosition from '../../utils/animateBoatPosition';
+import { BOAT_POSITION_Y, SCROLLBAR_HEIGHT_RATIO } from '../../constants/constants';
 
 export default function CustomScrollbar({ boatRef, pathPoints }) {
   const [currentScrollRef, setCurrentScrollRef] = useState(null);
@@ -16,21 +19,8 @@ export default function CustomScrollbar({ boatRef, pathPoints }) {
   const scrollbarHeightRatio = 0.97;
 
   useEffect(() => {
-    if (boatRef.current && pathPoints.length > 0) {
-      const initialPoint = pathPoints[0];
-      const initialNextPoint = pathPoints[pathPoints.length - 1];
-      const initialBoatPosition = new THREE.Vector3().lerpVectors(
-        initialPoint,
-        initialNextPoint,
-        0.88,
-      );
-      boatRef.current.position.set(
-        initialBoatPosition.x,
-        initialBoatPositionY,
-        initialBoatPosition.y,
-      );
-    }
-  }, [boatRef, pathPoints, initialBoatPositionY]);
+    initializeBoatPosition(boatRef, pathPoints, BOAT_POSITION_Y, 0.88);
+  }, [boatRef, pathPoints]);
 
   const handleScroll = useCallback(() => {
     if (!scrollRef.current || pathPoints.length === 0) return;
@@ -38,7 +28,7 @@ export default function CustomScrollbar({ boatRef, pathPoints }) {
     const scrollTop = scrollRef.current.scrollTop;
     const clientHeight = scrollRef.current.clientHeight;
     const scrollHeight = scrollRef.current.scrollHeight;
-    const scrollbarHeight = clientHeight * scrollbarHeightRatio;
+    const scrollbarHeight = clientHeight * SCROLLBAR_HEIGHT_RATIO;
 
     const scrollRatio = 1 - scrollTop / (scrollHeight - clientHeight);
     const newThumbPosition = Math.min((1 - scrollRatio) * 100, 100);
@@ -46,7 +36,7 @@ export default function CustomScrollbar({ boatRef, pathPoints }) {
     setThumbPosition(newThumbPosition);
 
     if (
-      scrollTop + clientHeight >= scrollHeight - scrollbarHeight * (1 - scrollbarHeightRatio) &&
+      scrollTop + clientHeight >= scrollHeight - scrollbarHeight * (1 - SCROLLBAR_HEIGHT_RATIO) &&
       !isAtBottom
     ) {
       setIsAtBottom(true);
@@ -55,8 +45,9 @@ export default function CustomScrollbar({ boatRef, pathPoints }) {
       const newNextPoint = pathPoints[pathPoints.length - 1];
       const newBoatPosition = new THREE.Vector3().lerpVectors(newCurrentPoint, newNextPoint, 0.2);
 
-      animateBoatPosition(newBoatPosition, newNextPoint, boatRef, initialBoatPositionY, () => {
+      animateBoatPosition(newBoatPosition, newNextPoint, boatRef, BOAT_POSITION_Y, () => {
         scrollRef.current.scrollTop = 0;
+        lastScrollTopRef.current = 0;
         setIsAtBottom(false);
       });
     }
@@ -73,9 +64,9 @@ export default function CustomScrollbar({ boatRef, pathPoints }) {
       const nextPoint = pathPoints[nextPointIndex];
       const newPosition = new THREE.Vector3().lerpVectors(currentPoint, nextPoint, lerpFactor);
 
-      boatRef.current.position.set(newPosition.x, initialBoatPositionY, newPosition.y);
+      boatRef.current.position.set(newPosition.x, BOAT_POSITION_Y, newPosition.y);
     }
-  }, [boatRef, pathPoints, initialBoatPositionY, isAtBottom]);
+  }, [boatRef, pathPoints, isAtBottom]);
 
   useEffect(() => {
     setCurrentScrollRef(scrollRef.current);
@@ -92,8 +83,8 @@ export default function CustomScrollbar({ boatRef, pathPoints }) {
 
   return (
     <ScrollContainer ref={scrollRef}>
-      <VirtualContent $contentheight={virtualScrollHeight} />
-      <Scrollbar $scrollbarheight={scrollbarHeightRatio}>
+      <VirtualContent />
+      <Scrollbar>
         <Thumb $scrolltop={thumbPosition} />
       </Scrollbar>
     </ScrollContainer>

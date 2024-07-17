@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { VIRTUAL_SCROLL_HEIGHT, SCROLLBAR_HEIGHT_RATIO } from '../../constants/constants';
 
 export const ScrollContainer = styled.div`
   position: absolute;
@@ -16,19 +17,13 @@ export const ScrollContainer = styled.div`
   z-index: 10;
 `;
 
-export const VirtualContent = styled.div.attrs(({ $contentheight }) => ({
-  style: {
-    height: $contentheight,
-  },
-}))`
+export const VirtualContent = styled.div`
+  height: ${VIRTUAL_SCROLL_HEIGHT}px;
   width: 100%;
 `;
 
-export const Scrollbar = styled.div.attrs(({ $scrollbarheight }) => ({
-  style: {
-    height: `${$scrollbarheight * 100}%`,
-  },
-}))`
+export const Scrollbar = styled.div`
+  height: ${SCROLLBAR_HEIGHT_RATIO * 100}%;
   position: fixed;
   right: 0.5%;
   width: 0.4rem;
