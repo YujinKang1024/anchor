@@ -10,9 +10,10 @@ import Ocean from '../Ocean/Ocean';
 import Boat from '../Boat/Boat';
 import Lands from '../Lands/Lands';
 import Path from '../Path/Path';
+import CameraController from '../CameraController/CameraController';
+import OrbitControlArea from '../OrbitControlArea/OrbitControlArea';
 
 import FullScreenContainer from '../../styled-components/FullScreenContainer';
-import CameraController from '../CameraController/CameraController';
 
 // OrbitControls에 의한 카메라 포지션 console 출력
 function CameraLogger({ cameraRef, controlsRef }) {
@@ -75,13 +76,14 @@ export default function Scene3D() {
         <ambientLight intensity={1} />
         <OrbitControls
           ref={controlsRef}
-          maxPolarAngle={Math.PI / 2}
+          maxPolarAngle={Math.PI}
           minPolarAngle={0}
-          maxAzimuthAngle={Math.PI / 0}
-          minAzimuthAngle={-Math.PI / 0}
+          maxAzimuthAngle={Math.PI}
+          minAzimuthAngle={-Math.PI}
           enablePan={true}
           enableZoom={false}
         />
+        <OrbitControlArea />
         <Boat ref={boatRef} onLoaded={handleBoatLoaded} />
         <Lands />
         <Ocean />
