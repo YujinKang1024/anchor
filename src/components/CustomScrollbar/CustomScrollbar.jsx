@@ -5,18 +5,16 @@ import { ScrollContainer, Scrollbar, Thumb, VirtualContent } from './CustomScrol
 
 import initializeBoatPosition from '../../utils/initializeBoatPosition';
 import animateBoatPosition from '../../utils/animateBoatPosition';
+import limitedScroll from '../../utils/limitedScroll';
+
 import { BOAT_POSITION_Y, SCROLLBAR_HEIGHT_RATIO } from '../../constants/constants';
 
 export default function CustomScrollbar({ boatRef, pathPoints }) {
-  const [currentScrollRef, setCurrentScrollRef] = useState(null);
   const [thumbPosition, setThumbPosition] = useState(0);
   const [isAtBottom, setIsAtBottom] = useState(false);
 
   const scrollRef = useRef();
-
-  const virtualScrollHeight = 30000;
-  const initialBoatPositionY = -500.5;
-  const scrollbarHeightRatio = 0.97;
+  const lastScrollTopRef = useRef(0);
 
   useEffect(() => {
     initializeBoatPosition(boatRef, pathPoints, BOAT_POSITION_Y, 0.88);
@@ -68,18 +66,21 @@ export default function CustomScrollbar({ boatRef, pathPoints }) {
     }
   }, [boatRef, pathPoints, isAtBottom]);
 
-  useEffect(() => {
-    setCurrentScrollRef(scrollRef.current);
+  const handleLimitedScroll = useCallback(() => {
+    limitedScroll(scrollRef, lastScrollTopRef, handleScroll);
+  }, [handleScroll]);
 
-    if (currentScrollRef) {
-      currentScrollRef.addEventListener('scroll', handleScroll);
+  useEffect(() => {
+    const scrollElement = scrollRef.current;
+    if (scrollElement) {
+      scrollElement.addEventListener('scroll', handleLimitedScroll);
     }
     return () => {
-      if (currentScrollRef) {
-        currentScrollRef.removeEventListener('scroll', handleScroll);
+      if (scrollElement) {
+        scrollElement.removeEventListener('scroll', handleLimitedScroll);
       }
     };
-  }, [currentScrollRef, handleScroll]);
+  }, [handleLimitedScroll]);
 
   return (
     <ScrollContainer ref={scrollRef}>
