@@ -15,7 +15,7 @@ export default function useScrollHandler(scrollRef, lastScrollTopRef, handleScro
     clearTimeout(window.scrollTimeout);
     window.scrollTimeout = setTimeout(() => {
       setIsScrolling(false);
-    }, 300);
+    }, 0);
   }, [handleScroll, scrollRef, lastScrollTopRef, setIsScrolling]);
 
   useEffect(() => {
