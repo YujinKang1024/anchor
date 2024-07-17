@@ -55,7 +55,7 @@ export default function CustomScrollbar({ boatRef, pathPoints }) {
       const scaledScrollRatio = scrollRatio * pathLength;
 
       const pointIndex = Math.floor(scaledScrollRatio);
-      const nextPointIndex = (pointIndex + 1) % pathPoints.length;
+      const nextPointIndex = Math.min(pointIndex + 1, pathPoints.length - 1);
       const lerpFactor = scaledScrollRatio % 1;
 
       const currentPoint = pathPoints[pointIndex];

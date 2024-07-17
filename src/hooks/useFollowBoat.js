@@ -15,9 +15,13 @@ export default function useFollowBoat(cameraRef, boatRef, controlsRef) {
         boatPosition.z + 110,
       );
 
-      cameraRef.current.position.lerp(targetCameraPosition, 0.1);
+      cameraRef.current.position.set(
+        targetCameraPosition.x,
+        targetCameraPosition.y,
+        targetCameraPosition.z,
+      );
 
-      controlsRef.current.target.lerp(boatPosition, 0.1);
+      controlsRef.current.target.set(boatPosition.x, boatPosition.y, boatPosition.z);
       controlsRef.current.update();
     }
   });
