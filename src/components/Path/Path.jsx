@@ -11,7 +11,11 @@ export default function Path({ setPathPoints }) {
     const line = scene.children.find((child) => child.isLine);
 
     if (line) {
-      line.material = new THREE.LineBasicMaterial({ color: '#f00' });
+      line.material = new THREE.LineBasicMaterial({ transparent: true, opacity: 0 });
+
+      line.castShadow = false;
+      line.receiveShadow = false;
+      line.renderOrder = 1;
 
       const points = line.geometry.attributes.position.array;
       const pathPoints = [];
