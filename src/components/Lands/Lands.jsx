@@ -16,5 +16,5 @@ export default function Lands() {
     }
   });
 
-  return <primitive object={scene} position={[0, -502, 0]} />;
+  return <primitive object={scene} position={[0, -502, 0]} castShadow />;
 }

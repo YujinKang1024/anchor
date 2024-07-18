@@ -1,10 +1,13 @@
 import { forwardRef, useEffect } from 'react';
 import * as THREE from 'three';
 import { useGLTF } from '@react-three/drei';
+import { useAtom } from 'jotai';
 
 import boat from '../../assets/models/boat.glb';
+import { isBoatLoadedAtom } from '../../utils/atoms';
 
-const Boat = forwardRef(({ onLoaded }, ref) => {
+const Boat = forwardRef((props, ref) => {
+  const [isBoatLoaded, setIsBoatLoaded] = useAtom(isBoatLoadedAtom);
   const { scene } = useGLTF(boat);
 
   scene.traverse((child) => {
@@ -18,12 +21,12 @@ const Boat = forwardRef(({ onLoaded }, ref) => {
   });
 
   useEffect(() => {
-    if (onLoaded) {
-      onLoaded();
+    if (!isBoatLoaded) {
+      setIsBoatLoaded(true);
     }
-  }, [scene, onLoaded]);
+  }, [isBoatLoaded, setIsBoatLoaded]);
 
-  return <primitive ref={ref} object={scene} />;
+  return <primitive ref={ref} object={scene} castShadow />;
 });
 
 Boat.displayName = 'Boat';
