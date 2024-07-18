@@ -9,7 +9,7 @@ export default function CameraController({ cameraRef, boatRef, rotationAngle }) 
   const [isScrolling] = useAtom(isScrollingAtom);
   const [isCameraPositionInitialized, setIsCameraPositionInitialized] = useState(false);
   const cameraDistance = 110;
-  const cameraHeight = -470;
+  const cameraHeight = -480;
   const cameraOffset = useRef(new THREE.Vector3(20, cameraHeight, 100));
 
   useEffect(() => {
