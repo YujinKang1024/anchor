@@ -32,11 +32,9 @@ const fragmentShader = `
   varying vec4 vReflectCoord;
 
   void main() {
-    vec2 uv = vUv;
-    uv += 0.05 * vec2(
-      sin(uv.x * 10.0 + time * 0.1),
-      cos(uv.y * 10.0 + time * 0.1)
-    );
+    vec4 reflectCoord = vReflectCoord;
+    reflectCoord.xy /= reflectCoord.w;
+    vec2 reflectUv = reflectCoord.xy * 0.5 + 0.5;
 
     vec3 viewDirection = normalize(cameraPosition - vWorldPosition);
     float fresnelFactor = dot(viewDirection, vNormal);
@@ -45,8 +43,8 @@ const fragmentShader = `
 
     vec2 reflectUV = vReflectCoord.xy / vReflectCoord.w;
     vec3 reflection = texture2D(reflectionMap, reflectUV).rgb;
-    vec3 waterColor = vec3(0.1, 0.2, 0.05);
 
+    vec3 waterColor = vec3(0.1, 0.2, 0.05);
     vec3 finalColor = mix(waterColor, reflection, fresnelFactor);
 
     float luminance = dot(finalColor, vec3(0.05, 0.2, 0.2));
@@ -74,7 +72,7 @@ export default function Ocean() {
 
   const reflectionRenderTarget = useMemo(
     () =>
-      new THREE.WebGLRenderTarget(size.width / 2, size.height / 2, {
+      new THREE.WebGLRenderTarget(size.width * 1.3, size.height * 1.3, {
         encoding: THREE.sRGBEncoding,
         minFilter: THREE.LinearFilter,
         magFilter: THREE.LinearFilter,
@@ -107,7 +105,7 @@ export default function Ocean() {
   useFrame((state) => {
     if (!meshRef.current || !reflectionCameraRef.current) return;
 
-    const waterPosition = new THREE.Vector3(meshRef.current.position);
+    const waterPosition = new THREE.Vector3();
     meshRef.current.getWorldPosition(waterPosition);
 
     reflectionCameraRef.current.position.set(
@@ -115,12 +113,14 @@ export default function Ocean() {
       -camera.position.y + 2 * waterPosition.y,
       camera.position.z,
     );
+
     reflectionCameraRef.current.rotation.set(
       -camera.rotation.x,
       camera.rotation.y,
       camera.rotation.z,
     );
 
+    reflectionCameraRef.current.fov = camera.fov * 1.8;
     reflectionCameraRef.current.updateProjectionMatrix();
 
     const currentBackground = scene.background;
@@ -146,35 +146,7 @@ export default function Ocean() {
     }
 
     const clipBias = 0.00001;
-    const reflectorPlane = new THREE.Plane();
-    reflectorPlane.setFromNormalAndCoplanarPoint(
-      new THREE.Vector3(0, 1, 0),
-      meshRef.current.position,
-    );
-    reflectorPlane.applyMatrix4(meshRef.current.matrixWorld);
-
-    const clipPlane = new THREE.Vector4();
-    clipPlane.set(
-      reflectorPlane.normal.x,
-      reflectorPlane.normal.y,
-      reflectorPlane.normal.z,
-      reflectorPlane.constant,
-    );
-    const projectionMatrix = new THREE.Matrix4();
-    projectionMatrix.multiplyMatrices(
-      reflectionCameraRef.current.projectionMatrix,
-      reflectionCameraRef.current.matrixWorldInverse,
-    );
-    clipPlane.applyMatrix4(projectionMatrix);
-    const clipBiasPlanar =
-      clipBias *
-      Math.sqrt(clipPlane.x * clipPlane.x + clipPlane.y * clipPlane.y + clipPlane.z * clipPlane.z);
-    clipPlane.multiplyScalar(clipBiasPlanar);
-
-    reflectionCameraRef.current.projectionMatrix.elements[2] = clipPlane.x;
-    reflectionCameraRef.current.projectionMatrix.elements[6] = clipPlane.y;
-    reflectionCameraRef.current.projectionMatrix.elements[10] = clipPlane.z + 1.0;
-    reflectionCameraRef.current.projectionMatrix.elements[14] = clipPlane.w;
+    reflectionCameraRef.current.projectionMatrix.elements[10] -= clipBias;
 
     textureMatrix.set(
       0.5,
@@ -208,22 +180,7 @@ export default function Ocean() {
 
   return (
     <group position={[0, -507, 0]}>
-      <primitive
-        ref={meshRef}
-        object={nodes.oceanPlane}
-        material={
-          new THREE.ShaderMaterial({
-            vertexShader,
-            fragmentShader,
-            uniforms: {
-              reflectionMap: { value: reflectionRenderTarget.texture },
-              time: { value: 0 },
-              textureMatrix: { value: textureMatrix },
-            },
-            transparent: true,
-          })
-        }
-      />
+      <primitive ref={meshRef} object={nodes.oceanPlane} />
     </group>
   );
 }
