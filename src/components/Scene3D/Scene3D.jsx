@@ -4,6 +4,7 @@ import { Canvas } from '@react-three/fiber';
 import Scene3DContents from '../Scene3DContents/Scene3DContents';
 import Scene3DUI from '../Scene3DUI/Scene3DUI';
 import CameraDragHandler from '../CameraDragHandler/CameraDragHandler';
+import BoatRotationController from '../BoatRotationController/BoatRotationController';
 import FullScreenContainer from '../../styled-components/FullScreenContainer';
 
 export default function Scene3D() {
@@ -50,6 +51,7 @@ export default function Scene3D() {
             rotationAngle={rotationAngle}
           />
         )}
+        <BoatRotationController boatRef={boatRef} />
       </Canvas>
       <CameraDragHandler onRotate={handleRotate} />
     </FullScreenContainer>
