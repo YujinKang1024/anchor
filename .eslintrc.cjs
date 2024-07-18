@@ -41,6 +41,8 @@ module.exports = {
           'shadow-camera-top',
           'shadow-camera-bottom',
           'transparent',
+          'geometry',
+          'material',
         ],
       },
     ],
