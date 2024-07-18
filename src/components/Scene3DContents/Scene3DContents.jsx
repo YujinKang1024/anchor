@@ -24,8 +24,9 @@ export default function Scene3DContents({ boatRef, cameraRef, setPathPoints, rot
   return (
     <>
       <directionalLight
-        position={[5, 10, 5]}
-        intensity={1.2}
+        color={new THREE.Color(0xffffff)}
+        position={[5, 18, 5]}
+        intensity={1.0}
         castShadow
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
@@ -35,7 +36,9 @@ export default function Scene3DContents({ boatRef, cameraRef, setPathPoints, rot
         shadow-camera-top={250}
         shadow-camera-bottom={-250}
       />
-      <ambientLight intensity={1} />
+      <ambientLight color={new THREE.Color(0x87ceeb)} intensity={0.3} />
+      <ambientLight color={new THREE.Color(0xfffacd)} intensity={0.5} />
+      <ambientLight color={new THREE.Color(0xffffff)} intensity={0.3} />
       <Boat ref={boatRef} />
       <Lands />
       <Ocean />

@@ -40,15 +40,28 @@ const fragmentShader = `
 
     vec3 viewDirection = normalize(cameraPosition - vWorldPosition);
     float fresnelFactor = dot(viewDirection, vNormal);
-    fresnelFactor = pow(1.0 - fresnelFactor, 3.0);
+    float fresnelStrength = 2.6;
+    fresnelFactor = pow(1.0 - fresnelFactor, fresnelStrength);
 
     vec2 reflectUV = vReflectCoord.xy / vReflectCoord.w;
     vec3 reflection = texture2D(reflectionMap, reflectUV).rgb;
-    vec3 waterColor = vec3(0.0, 0.3, 0.5);
+    vec3 waterColor = vec3(0.1, 0.2, 0.05);
 
     vec3 finalColor = mix(waterColor, reflection, fresnelFactor);
 
-    gl_FragColor = vec4(finalColor, 1.0);
+    float luminance = dot(finalColor, vec3(0.05, 0.2, 0.2));
+
+    float threshold = 0.08;
+    float boost = 2.8;
+
+    if (luminance < threshold) {
+        float factor = (threshold - luminance) / threshold;
+        finalColor += vec3(0.17, 0.31, 0.47) * boost * factor;
+    }
+
+    finalColor = clamp(finalColor, 0.0, 1.0);
+
+    gl_FragColor = vec4(finalColor, 0.9);
   }
 `;
 
