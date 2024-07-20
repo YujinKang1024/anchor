@@ -1,4 +1,5 @@
 import { useRef, useMemo, useEffect } from 'react';
+import { useAtom } from 'jotai';
 import { useGLTF } from '@react-three/drei';
 import { useThree, useFrame, useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
@@ -9,14 +10,13 @@ import normalTextureUrl from '../../assets/textures/water-normal.png';
 import heightTextureUrl from '../../assets/textures/water-height.png';
 import roughnessTextureUrl from '../../assets/textures/water-roughness.jpg';
 import aoTextureUrl from '../../assets/textures/water-ao.jpg';
-
 import { OCEAN_CONSTANTS } from '../../constants/constants';
-import { DIRECTIONAL_LIGHT_POSITION, DIRECTIONAL_LIGHT_COLOR } from '../../constants/constants';
+import { LIGHT_OFFSET, DIRECTIONAL_LIGHT_COLOR } from '../../constants/constants';
 
 const vertexShader = `
   uniform mat4 u_textureMatrix;
+  uniform mat4 u_shadowMatrix;
   uniform float u_time;
-
   uniform float u_waveHeight;
   uniform float u_waveSpeed;
 
@@ -25,6 +25,7 @@ const vertexShader = `
   varying vec3 vNormal;
   varying vec4 vReflectCoord;
   varying float vWaveHeight;
+  varying vec4 vShadowCoord;
 
   float waveNoise(vec2 p) {
     return fract(sin(dot(p.xy, vec2(12.9898, 78.233))) * 43758.5453);
@@ -54,6 +55,8 @@ const vertexShader = `
     vNormal = normalize(normalMatrix * normal);
     vReflectCoord = u_textureMatrix * vec4(position, 1.0);
     vWaveHeight = height;
+
+    vShadowCoord = u_shadowMatrix * modelMatrix * vec4(displacedPosition, 1.0);
 
     gl_Position = projectionMatrix * modelViewMatrix * vec4(displacedPosition, 1.0);
   }
@@ -87,12 +90,22 @@ const fragmentShader = `
 
   uniform vec3 u_lightPosition;
   uniform vec3 u_lightColor;
+  uniform sampler2D u_shadowMap;
 
   varying vec2 vUv;
   varying vec3 vWorldPosition;
   varying vec3 vNormal;
   varying vec4 vReflectCoord;
   varying float vWaveHeight;
+  varying vec4 vShadowCoord;
+
+  float getShadow(vec4 shadowCoord) {
+      vec3 shadowCoordProj = shadowCoord.xyz / shadowCoord.w;
+      shadowCoordProj = shadowCoordProj * 0.5 + 0.5;
+      float shadowSample = texture2D(u_shadowMap, shadowCoordProj.xy).r;
+      float bias = 0.005;
+      return (shadowCoordProj.z - bias > shadowSample) ? 0.5 : 1.0;
+  }
 
   vec3 adjustColor(vec3 color, float u_brightness, float u_contrast, float u_saturation) {
     color *= u_brightness;
@@ -106,8 +119,8 @@ const fragmentShader = `
 
   // 노이즈 함수
   vec2 hash(vec2 p) {
-      p = vec2(dot(p,vec2(127.1,311.7)), dot(p,vec2(269.5,183.3)));
-      return -1.0 + 2.0*fract(sin(p)*43758.5453123);
+    p = vec2(dot(p,vec2(127.1,311.7)), dot(p,vec2(269.5,183.3)));
+    return -1.0 + 2.0*fract(sin(p)*43758.5453123);
   }
 
   float noise( in vec2 p ) {
@@ -135,11 +148,18 @@ const fragmentShader = `
   }
 
   void main() {
+    //그림자 디버깅 시작
+    vec4 shadowCoord = vShadowCoord / vShadowCoord.w;
+    shadowCoord = shadowCoord * 0.5 + 0.5;
+    vec4 shadowMapValue = texture2D(u_shadowMap, shadowCoord.xy);
+    gl_FragColor = vec4(shadowMapValue.rgb, 1.0);
+    return;
+
     vec3 viewDirection = normalize(cameraPosition - vWorldPosition);
 
     vec2 distortedUV = vUv + vec2(
-        cascadedNoise(vUv, u_time * 0.7) * 0.2,
-        cascadedNoise(vUv + vec2(5.0), u_time* 0.7) * 0.2
+      cascadedNoise(vUv, u_time * 0.7) * 0.2,
+      cascadedNoise(vUv + vec2(5.0), u_time* 0.7) * 0.2
     );
 
     vec4 reflectCoord = vReflectCoord;
@@ -161,6 +181,7 @@ const fragmentShader = `
       sin(u_time * 0.1) * 0.01,
       cos(u_time * 0.15) * 0.01
     );
+
     vec3 normal = texture2D(u_normalTexture, normalUV).rgb * 2.0 - 1.0;
     normal = normalize(normal * vec3(1.2, 1.2, 2.0));
 
@@ -175,6 +196,9 @@ const fragmentShader = `
 
     vec3 finalColor = mix(u_waterColor * 1.4, reflection, fresnelFactor * 0.7);
     finalColor *= ao;
+
+    float shadow = getShadow(vShadowCoord);
+    finalColor *= shadow;
 
     // 물 깊이에 따른 색상 변화
     float sceneDepth = gl_FragCoord.z / gl_FragCoord.w;
@@ -219,8 +243,8 @@ const fragmentShader = `
     float threshold = 0.25;
     float boost = 3.0;
     if (luminance < threshold) {
-        float factor = (threshold - luminance) / threshold;
-        finalColor += vec3(0.3, 0.4, 0.6) * boost * factor;
+      float factor = (threshold - luminance) / threshold;
+      finalColor += vec3(0.3, 0.4, 0.6) * boost * factor;
     }
 
     // 먼 곳에 안개 효과 적용
@@ -230,7 +254,7 @@ const fragmentShader = `
     // 물의 깊이 별 투명도 적용
     float viewDepth = length(vWorldPosition - cameraPosition);
     float viewDepthFactor = smoothstep(u_minDepth, u_maxDepth, viewDepth);
-    float alpha = mix(0.5, 0.8, viewDepthFactor);
+    float alpha = mix(0.65, 0.85, viewDepthFactor);
 
     finalColor = adjustColor(finalColor, u_brightness, u_contrast, u_saturation);
 
@@ -238,11 +262,12 @@ const fragmentShader = `
   }
 `;
 
-export default function Ocean() {
+export default function Ocean({ directionalLightRef }) {
   const { nodes } = useGLTF(oceanPlaneUri);
+  const { gl, scene, camera, size } = useThree();
+
   const meshRef = useRef();
   const reflectionCameraRef = useRef();
-  const { gl, scene, camera, size } = useThree();
 
   const aoTexture = useLoader(THREE.TextureLoader, aoTextureUrl);
   const normalTexture = useLoader(THREE.TextureLoader, normalTextureUrl);
@@ -256,7 +281,7 @@ export default function Ocean() {
 
   const reflectionRenderTarget = useMemo(
     () =>
-      new THREE.WebGLRenderTarget(size.width * 1.3, size.height * 1.3, {
+      new THREE.WebGLRenderTarget(size.width, size.height, {
         encoding: THREE.sRGBEncoding,
         minFilter: THREE.LinearFilter,
         magFilter: THREE.LinearFilter,
@@ -273,11 +298,13 @@ export default function Ocean() {
 
   useEffect(() => {
     if (meshRef.current) {
+      meshRef.current.receiveShadow = true;
       meshRef.current.material = new THREE.ShaderMaterial({
         vertexShader,
         fragmentShader,
         uniforms: {
           u_reflectionMap: { value: reflectionRenderTarget.texture },
+          u_reflectionStrength: { value: OCEAN_CONSTANTS.REFLECTION_STRENGTH },
           u_time: { value: 0 },
           u_textureMatrix: { value: new THREE.Matrix4() },
           u_aoTexture: { value: aoTexture },
@@ -293,13 +320,14 @@ export default function Ocean() {
           u_waveHeight: { value: OCEAN_CONSTANTS.WAVE_HEIGHT },
           u_waveSpeed: { value: OCEAN_CONSTANTS.WAVE_SPEED },
           u_fresnelStrength: { value: OCEAN_CONSTANTS.FRESNEL_STRENGTH },
-          u_reflectionStrength: { value: OCEAN_CONSTANTS.REFLECTION_STRENGTH },
           u_waterColor: { value: OCEAN_CONSTANTS.WATER_COLOR },
           u_crestColor: { value: OCEAN_CONSTANTS.CREST_COLOR },
           u_maxDepth: { value: OCEAN_CONSTANTS.MAX_DEPTH },
           u_minDepth: { value: OCEAN_CONSTANTS.MIN_DEPTH },
-          u_lightPosition: { value: DIRECTIONAL_LIGHT_POSITION },
+          u_lightPosition: { value: LIGHT_OFFSET },
           u_lightColor: { value: DIRECTIONAL_LIGHT_COLOR },
+          u_shadowMap: { value: null },
+          u_shadowMatrix: { value: new THREE.Matrix4() },
         },
         transparent: true,
       });
@@ -378,18 +406,31 @@ export default function Ocean() {
     textureMatrix.multiply(reflectionCameraRef.current.matrixWorldInverse);
     textureMatrix.multiply(meshRef.current.matrixWorld);
 
-    if (meshRef.current.material) {
+    if (meshRef.current && meshRef.current.material) {
       const elapsedTime = state.clock.getElapsedTime();
 
       meshRef.current.material.uniforms.u_reflectionMap.value = reflectionRenderTarget.texture;
       meshRef.current.material.uniforms.u_textureMatrix.value = textureMatrix;
       meshRef.current.material.uniforms.u_time.value = elapsedTime;
+
+      if (directionalLightRef.current && directionalLightRef.current.shadow) {
+        const shadowMatrix = new THREE.Matrix4().multiplyMatrices(
+          directionalLightRef.current.shadow.camera.projectionMatrix,
+          directionalLightRef.current.shadow.camera.matrixWorldInverse,
+        );
+        meshRef.current.material.uniforms.u_shadowMatrix.value.multiplyMatrices(
+          shadowMatrix,
+          meshRef.current.matrixWorld,
+        );
+        meshRef.current.material.uniforms.u_shadowMap.value =
+          directionalLightRef.current.shadow.map.texture;
+      }
     }
   });
 
   return (
-    <group position={[0, -507, 0]}>
-      <primitive ref={meshRef} object={nodes.oceanPlane} />
+    <group position={[0, -10, 0]}>
+      <primitive ref={meshRef} object={nodes.oceanPlane} receiveShadow />
     </group>
   );
 }

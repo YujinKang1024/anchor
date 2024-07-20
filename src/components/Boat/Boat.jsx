@@ -12,6 +12,7 @@ const Boat = forwardRef((props, ref) => {
 
   scene.traverse((child) => {
     if (child.isMesh) {
+      child.castShadow = true;
       child.material = new THREE.MeshStandardMaterial({
         color: '#eee',
         metalness: 0.1,

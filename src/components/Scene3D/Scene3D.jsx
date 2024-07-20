@@ -47,6 +47,7 @@ export default function Scene3D() {
           <Scene3DContents
             boatRef={boatRef}
             cameraRef={cameraRef}
+            pathPoints={pathPoints}
             setPathPoints={setPathPoints}
             rotationAngle={rotationAngle}
           />

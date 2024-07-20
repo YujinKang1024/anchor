@@ -7,6 +7,7 @@ export default function Lands() {
   const { scene } = useGLTF(lands);
 
   scene.traverse((child) => {
+    child.castShadow = true;
     if (child.isMesh) {
       child.material = new THREE.MeshStandardMaterial({
         color: '#95d26d',
@@ -16,5 +17,5 @@ export default function Lands() {
     }
   });
 
-  return <primitive object={scene} position={[0, -502, 0]} castShadow />;
+  return <primitive object={scene} position={[0, 0, 0]} castShadow />;
 }
