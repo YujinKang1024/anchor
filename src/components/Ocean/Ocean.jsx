@@ -5,7 +5,6 @@ import * as THREE from 'three';
 
 import oceanPlaneUri from '../../assets/models/oceanPlane.glb';
 
-import baseColorTextureUrl from '../../assets/textures/water-color.jpg';
 import normalTextureUrl from '../../assets/textures/water-normal.png';
 import heightTextureUrl from '../../assets/textures/water-height.png';
 import roughnessTextureUrl from '../../assets/textures/water-roughness.jpg';
@@ -42,7 +41,7 @@ const vertexShader = `
   }
 
   void main() {
-    vUv = uv * 48.0;
+    vUv = uv * 65.0;
 
     float height = calculateWaveHeight(position.xz, u_time);
     vec3 displacedPosition = position + normal * height;
@@ -59,12 +58,8 @@ const vertexShader = `
 const fragmentShader = `
   uniform vec3 u_waterColor;
   uniform vec3 u_crestColor;
-  uniform float u_fresnelStrength;
-  uniform float u_reflectionStrength;
-  uniform float u_waveHeight;
 
   uniform sampler2D u_reflectionMap;
-  uniform sampler2D u_baseColorTexture;
   uniform sampler2D u_aoTexture;
   uniform sampler2D u_normalTexture;
   uniform sampler2D u_roughnessTexture;
@@ -72,6 +67,11 @@ const fragmentShader = `
   uniform mat4 u_textureMatrix;
 
   uniform float u_time;
+  uniform float u_maxDepth;
+  uniform float u_minDepth;
+  uniform float u_fresnelStrength;
+  uniform float u_reflectionStrength;
+  uniform float u_waveHeight;
 
   uniform vec3 u_fogColor;
   uniform float u_fogNear;
@@ -128,31 +128,31 @@ const fragmentShader = `
   }
 
   void main() {
+    vec3 viewDirection = normalize(cameraPosition - vWorldPosition);
+
+    vec2 distortedUV = vUv + vec2(
+        cascadedNoise(vUv, u_time) * 0.18,
+        cascadedNoise(vUv + vec2(5.0), u_time) * 0.18
+    );
+
     vec4 reflectCoord = vReflectCoord;
     reflectCoord.xy /= reflectCoord.w;
     vec2 reflectUv = reflectCoord.xy * 0.5 + 0.5;
 
-    vec3 viewDirection = normalize(cameraPosition - vWorldPosition);
+    vec2 reflectUV = vReflectCoord.xy / vReflectCoord.w;
+      reflectUV += vec2(
+      noise(reflectUV * 5.0 + u_time * 0.05) * 0.003,
+      noise(reflectUV * 5.0 + u_time * 0.05 + 5.0) * 0.003
+    );
+
+    vec3 reflection = texture2D(u_reflectionMap, reflectUV).rgb;
+    vec3 ao = texture2D(u_aoTexture, distortedUV).rgb;
 
     vec2 uvTimeShifted = vUv + vec2(u_time * 0.8, u_time * 0.8);
 
-    vec2 distortedUV = vUv + vec2(
-        cascadedNoise(vUv, u_time) * 0.02,
-        cascadedNoise(vUv + vec2(5.0), u_time) * 0.02
-    );
-
-    vec2 reflectUV = vReflectCoord.xy / vReflectCoord.w;
-      reflectUV += vec2(
-      noise(reflectUV * 5.0 + u_time * 0.05) * 0.008,
-      noise(reflectUV * 5.0 + u_time * 0.05 + 5.0) * 0.008
-    );
-    vec3 reflection = texture2D(u_reflectionMap, reflectUV).rgb;
-    vec3 baseColor = texture2D(u_baseColorTexture, distortedUV).rgb;
-    vec3 ao = texture2D(u_aoTexture, distortedUV).rgb;
-
     vec2 normalUV = distortedUV + vec2(u_time * 0.05, u_time * 0.03);
     vec3 normal = texture2D(u_normalTexture, normalUV).rgb * 2.0 - 1.0;
-    normal = normalize(normal * vec3(1.0, 1.0, 2.0));
+    normal = normalize(normal * vec3(1.2, 1.2, 2.0));
 
     float roughness = texture2D(u_roughnessTexture, distortedUV).r;
     float height = texture2D(u_heightTexture, distortedUV).r;
@@ -163,24 +163,22 @@ const fragmentShader = `
     float fresnelFactor = pow(1.0 - dot(viewDirection, waterNormal), u_fresnelStrength);
     fresnelFactor *= u_reflectionStrength;
 
-    vec3 finalColor = mix(u_waterColor, reflection, fresnelFactor);
-
-    finalColor = mix(finalColor, baseColor, 0.6);
+    vec3 finalColor = mix(u_waterColor * 1.4, reflection, fresnelFactor * 0.7);
     finalColor *= ao;
 
     // 깊이에 따른 색상 변화
-    float depth = gl_FragCoord.z / gl_FragCoord.w;
-    vec3 shallowColor = vec3(0.0, 0.5, 0.8);
-    vec3 deepColor = vec3(0.0, 0.2, 0.4);
-    float depthFactor = smoothstep(0.0, 20.0, depth);
-    vec3 depthColor = mix(shallowColor, deepColor, depthFactor);
+    float sceneDepth = gl_FragCoord.z / gl_FragCoord.w;
+    vec3 shallowColor = vec3(0.5, 0.9, 0.9);
+    vec3 deepColor = vec3(0.6, 0.25, 0.9);
+    float sceneDepthFactor = smoothstep(0.0, 10.0, sceneDepth);
+    vec3 depthColor = mix(shallowColor, deepColor, sceneDepthFactor);
 
-    float waterDepth = 1.0 - exp(-depth * 0.02);
-    finalColor = mix(depthColor, finalColor, waterDepth);
+    float sceneWaterDepth = 1.0 - exp(-sceneDepth * 0.055);
+    finalColor = mix(depthColor * 6.0, finalColor, sceneWaterDepth);
 
     // 파도 크레스트 효과
     float waveHeight = vWaveHeight;
-    float crestFactor = smoothstep(0.36 * u_waveHeight, u_waveHeight, abs(waveHeight));
+    float crestFactor = smoothstep(0.9 * u_waveHeight, u_waveHeight, abs(waveHeight));
     finalColor = mix(finalColor, u_crestColor, crestFactor);
 
     // 파도 높이에 따른 색상 변화
@@ -192,32 +190,38 @@ const fragmentShader = `
 
     // 하이라이트 추가
     vec3 sunDirection = normalize(vec3(0.5, 0.8, 0.3));
-    float sunReflection = pow(max(0.0, dot(reflect(-viewDirection, waterNormal), sunDirection)), 64.0);
-    float sunStrength = 0.2;
+    float sunReflection = pow(max(0.0, dot(reflect(-viewDirection, waterNormal), sunDirection)), 128.0);
+    float sunStrength = 0.3;
     vec3 sunColor = vec3(1.0, 0.9, 0.7);
     finalColor += sunColor * sunReflection * sunStrength;
 
     // 추가적인 스페큘러 하이라이트
     float specularStrength = 0.1;
     vec3 halfwayDir = normalize(sunDirection + viewDirection);
-    float spec = pow(max(dot(waterNormal, halfwayDir), 0.0), 32.0);
+    float spec = pow(max(dot(waterNormal, halfwayDir), 0.0), 64.0);
     finalColor += sunColor * spec * specularStrength;
 
     // 낮은 휘도 영역에 대한 색상 보정
     float luminance = dot(finalColor, vec3(0.299, 0.587, 0.114));
-    float threshold = 0.26;
+    float threshold = 0.27;
     float boost = 3.0;
     if (luminance < threshold) {
         float factor = (threshold - luminance) / threshold;
-        finalColor += vec3(0.4, 0.5, 0.6) * boost * factor;
+        finalColor += vec3(0.3, 0.4, 0.6) * boost * factor;
     }
 
+    // 먼 곳에 안개 효과 적용
     float fogFactor = smoothstep(u_fogNear, u_fogFar, length(cameraPosition - vWorldPosition));
     finalColor = mix(finalColor, u_fogColor, fogFactor);
 
+    // 물의 깊이 별 투명도 적용
+    float viewDepth = length(vWorldPosition - cameraPosition);
+    float viewDepthFactor = smoothstep(u_minDepth, u_maxDepth, viewDepth);
+    float alpha = mix(0.5, 0.8, viewDepthFactor);
+
     finalColor = adjustColor(finalColor, u_brightness, u_contrast, u_saturation);
 
-    gl_FragColor = vec4(finalColor, 0.9);
+    gl_FragColor = vec4(finalColor, alpha);
   }
 `;
 
@@ -227,13 +231,11 @@ export default function Ocean() {
   const reflectionCameraRef = useRef();
   const { gl, scene, camera, size } = useThree();
 
-  const baseColorTexture = useLoader(THREE.TextureLoader, baseColorTextureUrl);
   const aoTexture = useLoader(THREE.TextureLoader, aoTextureUrl);
   const normalTexture = useLoader(THREE.TextureLoader, normalTextureUrl);
   const roughnessTexture = useLoader(THREE.TextureLoader, roughnessTextureUrl);
   const heightTexture = useLoader(THREE.TextureLoader, heightTextureUrl);
 
-  baseColorTexture.wrapS = baseColorTexture.wrapT = THREE.RepeatWrapping;
   aoTexture.wrapS = aoTexture.wrapT = THREE.RepeatWrapping;
   normalTexture.wrapS = normalTexture.wrapT = THREE.RepeatWrapping;
   roughnessTexture.wrapS = roughnessTexture.wrapT = THREE.RepeatWrapping;
@@ -265,7 +267,6 @@ export default function Ocean() {
           u_reflectionMap: { value: reflectionRenderTarget.texture },
           u_time: { value: 0 },
           u_textureMatrix: { value: new THREE.Matrix4() },
-          u_baseColorTexture: { value: baseColorTexture },
           u_aoTexture: { value: aoTexture },
           u_normalTexture: { value: normalTexture },
           u_roughnessTexture: { value: roughnessTexture },
@@ -282,19 +283,13 @@ export default function Ocean() {
           u_reflectionStrength: { value: OCEAN_CONSTANTS.REFLECTION_STRENGTH },
           u_waterColor: { value: OCEAN_CONSTANTS.WATER_COLOR },
           u_crestColor: { value: OCEAN_CONSTANTS.CREST_COLOR },
+          u_maxDepth: { value: OCEAN_CONSTANTS.MAX_DEPTH },
+          u_minDepth: { value: OCEAN_CONSTANTS.MIN_DEPTH },
         },
         transparent: true,
       });
     }
-  }, [
-    reflectionRenderTarget,
-    size,
-    baseColorTexture,
-    aoTexture,
-    normalTexture,
-    roughnessTexture,
-    heightTexture,
-  ]);
+  }, [reflectionRenderTarget, size, aoTexture, normalTexture, roughnessTexture, heightTexture]);
 
   useFrame((state) => {
     if (!meshRef.current || !reflectionCameraRef.current) return;
