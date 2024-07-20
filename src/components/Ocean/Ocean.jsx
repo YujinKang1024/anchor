@@ -1,5 +1,4 @@
 import { useRef, useMemo, useEffect } from 'react';
-import { useAtom } from 'jotai';
 import { useGLTF } from '@react-three/drei';
 import { useThree, useFrame, useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
@@ -10,6 +9,7 @@ import normalTextureUrl from '../../assets/textures/water-normal.png';
 import heightTextureUrl from '../../assets/textures/water-height.png';
 import roughnessTextureUrl from '../../assets/textures/water-roughness.jpg';
 import aoTextureUrl from '../../assets/textures/water-ao.jpg';
+
 import { OCEAN_CONSTANTS } from '../../constants/constants';
 import { LIGHT_OFFSET, DIRECTIONAL_LIGHT_COLOR } from '../../constants/constants';
 
@@ -56,7 +56,7 @@ const vertexShader = `
     vReflectCoord = u_textureMatrix * vec4(position, 1.0);
     vWaveHeight = height;
 
-    vShadowCoord = u_shadowMatrix * modelMatrix * vec4(displacedPosition, 1.0);
+    vShadowCoord = u_shadowMatrix * vec4(position, 1.0);
 
     gl_Position = projectionMatrix * modelViewMatrix * vec4(displacedPosition, 1.0);
   }
@@ -102,9 +102,10 @@ const fragmentShader = `
   float getShadow(vec4 shadowCoord) {
       vec3 shadowCoordProj = shadowCoord.xyz / shadowCoord.w;
       shadowCoordProj = shadowCoordProj * 0.5 + 0.5;
-      float shadowSample = texture2D(u_shadowMap, shadowCoordProj.xy).r;
+      float closestDepth = texture2D(u_shadowMap, shadowCoordProj.xy).r;
+      float currentDepth = shadowCoordProj.z;
       float bias = 0.005;
-      return (shadowCoordProj.z - bias > shadowSample) ? 0.5 : 1.0;
+      return currentDepth - bias > closestDepth ? 0.5 : 1.0;
   }
 
   vec3 adjustColor(vec3 color, float u_brightness, float u_contrast, float u_saturation) {
@@ -406,25 +407,39 @@ export default function Ocean({ directionalLightRef }) {
     textureMatrix.multiply(reflectionCameraRef.current.matrixWorldInverse);
     textureMatrix.multiply(meshRef.current.matrixWorld);
 
-    if (meshRef.current && meshRef.current.material) {
+    if (
+      meshRef.current &&
+      meshRef.current.material &&
+      directionalLightRef.current &&
+      directionalLightRef.current.shadow
+    ) {
       const elapsedTime = state.clock.getElapsedTime();
 
       meshRef.current.material.uniforms.u_reflectionMap.value = reflectionRenderTarget.texture;
       meshRef.current.material.uniforms.u_textureMatrix.value = textureMatrix;
       meshRef.current.material.uniforms.u_time.value = elapsedTime;
 
-      if (directionalLightRef.current && directionalLightRef.current.shadow) {
-        const shadowMatrix = new THREE.Matrix4().multiplyMatrices(
+      // 그림자 매트릭스 계산
+      const lightMatrix = new THREE.Matrix4().makeRotationFromQuaternion(
+        directionalLightRef.current.quaternion,
+      );
+      lightMatrix.setPosition(directionalLightRef.current.position);
+
+      const shadowMatrix = new THREE.Matrix4()
+        .multiplyMatrices(
           directionalLightRef.current.shadow.camera.projectionMatrix,
           directionalLightRef.current.shadow.camera.matrixWorldInverse,
-        );
-        meshRef.current.material.uniforms.u_shadowMatrix.value.multiplyMatrices(
-          shadowMatrix,
-          meshRef.current.matrixWorld,
-        );
-        meshRef.current.material.uniforms.u_shadowMap.value =
-          directionalLightRef.current.shadow.map.texture;
-      }
+        )
+        .multiply(lightMatrix);
+
+      const finalShadowMatrix = new THREE.Matrix4().multiplyMatrices(
+        shadowMatrix,
+        meshRef.current.matrixWorld,
+      );
+
+      meshRef.current.material.uniforms.u_shadowMatrix.value.copy(finalShadowMatrix);
+      meshRef.current.material.uniforms.u_shadowMap.value =
+        directionalLightRef.current.shadow.map.texture;
     }
   });
 
