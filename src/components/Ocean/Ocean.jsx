@@ -11,6 +11,7 @@ import roughnessTextureUrl from '../../assets/textures/water-roughness.jpg';
 import aoTextureUrl from '../../assets/textures/water-ao.jpg';
 
 import { OCEAN_CONSTANTS } from '../../constants/constants';
+import { DIRECTIONAL_LIGHT_POSITION, DIRECTIONAL_LIGHT_COLOR } from '../../constants/constants';
 
 const vertexShader = `
   uniform mat4 u_textureMatrix;
@@ -25,19 +26,22 @@ const vertexShader = `
   varying vec4 vReflectCoord;
   varying float vWaveHeight;
 
+  float waveNoise(vec2 p) {
+    return fract(sin(dot(p.xy, vec2(12.9898, 78.233))) * 43758.5453);
+  }
+
   float calculateWaveHeight(vec2 position, float u_time) {
-    float frequency1 = 0.03;
-    float frequency2 = 0.1;
-    float frequency3 = 0.15;
-    float amplitude1 = 0.3 * u_waveHeight;
-    float amplitude2 = 0.2 * u_waveHeight;
-    float amplitude3 = 0.1 * u_waveHeight;
+    float height = 0.0;
+    vec2 pos = position * 0.1;
 
-    float wave1 = sin(position.x * frequency1 + u_time * u_waveSpeed) * amplitude1;
-    float wave2 = cos(position.y * frequency2 + u_time * u_waveSpeed * 0.8) * amplitude2;
-    float wave3 = sin((position.x + position.y) * frequency3 + u_time * u_waveSpeed * 1.2) * amplitude3;
+    height += sin(pos.x * 1.8 + u_time * 1.2) * 0.15;
+    height += sin(pos.y * 2.2 + u_time * 0.8) * 0.12;
+    height += sin(pos.x * 0.9 + pos.y * 1.3 + u_time * 1.5) * 0.1;
 
-    return wave1 + wave2 + wave3;
+    height += sin(pos.x * 5.0 + u_time * 2.0) * 0.05;
+    height += sin(pos.y * 4.5 + u_time * 2.2) * 0.04;
+
+    return height * u_waveHeight;
   }
 
   void main() {
@@ -80,6 +84,9 @@ const fragmentShader = `
   uniform float u_brightness;
   uniform float u_contrast;
   uniform float u_saturation;
+
+  uniform vec3 u_lightPosition;
+  uniform vec3 u_lightColor;
 
   varying vec2 vUv;
   varying vec3 vWorldPosition;
@@ -131,8 +138,8 @@ const fragmentShader = `
     vec3 viewDirection = normalize(cameraPosition - vWorldPosition);
 
     vec2 distortedUV = vUv + vec2(
-        cascadedNoise(vUv, u_time) * 0.18,
-        cascadedNoise(vUv + vec2(5.0), u_time) * 0.18
+        cascadedNoise(vUv, u_time * 0.7) * 0.2,
+        cascadedNoise(vUv + vec2(5.0), u_time* 0.7) * 0.2
     );
 
     vec4 reflectCoord = vReflectCoord;
@@ -150,7 +157,10 @@ const fragmentShader = `
 
     vec2 uvTimeShifted = vUv + vec2(u_time * 0.8, u_time * 0.8);
 
-    vec2 normalUV = distortedUV + vec2(u_time * 0.05, u_time * 0.03);
+    vec2 normalUV = distortedUV + vec2(
+      sin(u_time * 0.1) * 0.01,
+      cos(u_time * 0.15) * 0.01
+    );
     vec3 normal = texture2D(u_normalTexture, normalUV).rgb * 2.0 - 1.0;
     normal = normalize(normal * vec3(1.2, 1.2, 2.0));
 
@@ -166,7 +176,7 @@ const fragmentShader = `
     vec3 finalColor = mix(u_waterColor * 1.4, reflection, fresnelFactor * 0.7);
     finalColor *= ao;
 
-    // 깊이에 따른 색상 변화
+    // 물 깊이에 따른 색상 변화
     float sceneDepth = gl_FragCoord.z / gl_FragCoord.w;
     vec3 shallowColor = vec3(0.5, 0.9, 0.9);
     vec3 deepColor = vec3(0.6, 0.25, 0.9);
@@ -176,34 +186,37 @@ const fragmentShader = `
     float sceneWaterDepth = 1.0 - exp(-sceneDepth * 0.055);
     finalColor = mix(depthColor * 6.0, finalColor, sceneWaterDepth);
 
-    // 파도 크레스트 효과
-    float waveHeight = vWaveHeight;
-    float crestFactor = smoothstep(0.9 * u_waveHeight, u_waveHeight, abs(waveHeight));
-    finalColor = mix(finalColor, u_crestColor, crestFactor);
 
-    // 파도 높이에 따른 색상 변화
-    vec3 deepWaterColor = vec3(0.0, 0.1, 0.2);
-    vec3 shallowWaterColor = vec3(0.0, 0.5, 0.8);
-    float waterColorFactor = smoothstep(-15.0, 15.0, waveHeight);
+    // 파도에 따른 색상 변화
+    float waveHeight = vWaveHeight;
+    vec3 deepWaterColor = vec3(0.1, 0.3, 0.5);
+    vec3 shallowWaterColor = vec3(0.2, 0.5, 0.7);
+    float waterColorFactor = smoothstep(-10.0, 10.0, waveHeight);
     vec3 heightBasedColor = mix(deepWaterColor, shallowWaterColor, waterColorFactor);
-    finalColor = mix(finalColor, heightBasedColor, 0.3);
+    finalColor = mix(finalColor, heightBasedColor, 0.2);
 
     // 하이라이트 추가
     vec3 sunDirection = normalize(vec3(0.5, 0.8, 0.3));
-    float sunReflection = pow(max(0.0, dot(reflect(-viewDirection, waterNormal), sunDirection)), 128.0);
-    float sunStrength = 0.3;
+    float sunReflection = pow(max(0.0, dot(reflect(-viewDirection, waterNormal), sunDirection)), 64.0);
+    float sunStrength = 0.1;
     vec3 sunColor = vec3(1.0, 0.9, 0.7);
     finalColor += sunColor * sunReflection * sunStrength;
 
     // 추가적인 스페큘러 하이라이트
-    float specularStrength = 0.1;
+    float specularStrength = 0.06;
     vec3 halfwayDir = normalize(sunDirection + viewDirection);
-    float spec = pow(max(dot(waterNormal, halfwayDir), 0.0), 64.0);
+    float spec = pow(max(dot(waterNormal, halfwayDir), 0.0), 32.0);
     finalColor += sunColor * spec * specularStrength;
+
+    // 디퓨즈 조명 추가
+    vec3 lightDir = normalize(u_lightPosition);
+    float diff = max(dot(waterNormal, lightDir), 0.0);
+    vec3 diffuse = u_lightColor * diff;
+    finalColor += diffuse * 0.06;
 
     // 낮은 휘도 영역에 대한 색상 보정
     float luminance = dot(finalColor, vec3(0.299, 0.587, 0.114));
-    float threshold = 0.27;
+    float threshold = 0.25;
     float boost = 3.0;
     if (luminance < threshold) {
         float factor = (threshold - luminance) / threshold;
@@ -285,6 +298,8 @@ export default function Ocean() {
           u_crestColor: { value: OCEAN_CONSTANTS.CREST_COLOR },
           u_maxDepth: { value: OCEAN_CONSTANTS.MAX_DEPTH },
           u_minDepth: { value: OCEAN_CONSTANTS.MIN_DEPTH },
+          u_lightPosition: { value: DIRECTIONAL_LIGHT_POSITION },
+          u_lightColor: { value: DIRECTIONAL_LIGHT_COLOR },
         },
         transparent: true,
       });

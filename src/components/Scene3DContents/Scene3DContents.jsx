@@ -10,6 +10,7 @@ import Path from '../Path/Path';
 import CameraController from '../CameraController/CameraController';
 
 import { isBoatLoadedAtom } from '../../utils/atoms';
+import { DIRECTIONAL_LIGHT_POSITION, DIRECTIONAL_LIGHT_COLOR } from '../../constants/constants';
 import gradientBackground from '../../assets/textures/gradient-background.jpg';
 
 export default function Scene3DContents({ boatRef, cameraRef, setPathPoints, rotationAngle }) {
@@ -24,8 +25,8 @@ export default function Scene3DContents({ boatRef, cameraRef, setPathPoints, rot
   return (
     <>
       <directionalLight
-        color={new THREE.Color(0xffffff)}
-        position={[5, 18, 5]}
+        color={DIRECTIONAL_LIGHT_COLOR}
+        position={DIRECTIONAL_LIGHT_POSITION}
         intensity={1.0}
         castShadow
         shadow-mapSize-width={1024}
