@@ -1,5 +1,22 @@
+import * as THREE from 'three';
+
 export const BOAT_POSITION_Y = -500.5;
 
 export const VIRTUAL_SCROLL_HEIGHT = 30000;
 export const SCROLLBAR_HEIGHT_RATIO = 0.97;
 export const MAX_SCROLL_SPEED = 8;
+
+export const OCEAN_CONSTANTS = {
+  WAVE_HEIGHT: 1.25,
+  WAVE_SPEED: 0.75,
+  WATER_COLOR: new THREE.Color(0.7, 0.5, 0.7),
+  CREST_COLOR: new THREE.Color(0.7, 0.9, 0.95),
+  FRESNEL_STRENGTH: 1.8,
+  REFLECTION_STRENGTH: 0.5,
+  FOG_COLOR: new THREE.Color(0.6, 0.75, 0.9),
+  FOG_NEAR: 1,
+  FOG_FAR: 1900,
+  BRIGHTNESS: 1.15,
+  CONTRAST: 1.0,
+  SATURATION: 1.1,
+};

@@ -11,9 +11,14 @@ import heightTextureUrl from '../../assets/textures/water-height.png';
 import roughnessTextureUrl from '../../assets/textures/water-roughness.jpg';
 import aoTextureUrl from '../../assets/textures/water-ao.jpg';
 
+import { OCEAN_CONSTANTS } from '../../constants/constants';
+
 const vertexShader = `
-  uniform mat4 textureMatrix;
-  uniform float time;
+  uniform mat4 u_textureMatrix;
+  uniform float u_time;
+
+  uniform float u_waveHeight;
+  uniform float u_waveSpeed;
 
   varying vec2 vUv;
   varying vec3 vWorldPosition;
@@ -21,17 +26,17 @@ const vertexShader = `
   varying vec4 vReflectCoord;
   varying float vWaveHeight;
 
-  float waveHeight(vec2 position, float time) {
+  float calculateWaveHeight(vec2 position, float u_time) {
     float frequency1 = 0.03;
     float frequency2 = 0.1;
     float frequency3 = 0.15;
-    float amplitude1 = 0.3;
-    float amplitude2 = 0.22;
-    float amplitude3 = 0.1;
+    float amplitude1 = 0.3 * u_waveHeight;
+    float amplitude2 = 0.2 * u_waveHeight;
+    float amplitude3 = 0.1 * u_waveHeight;
 
-    float wave1 = sin(position.x * frequency1 + time) * amplitude1;
-    float wave2 = cos(position.y * frequency2 + time * 0.8) * amplitude2;
-    float wave3 = sin((position.x + position.y) * frequency3 + time * 1.2) * amplitude3;
+    float wave1 = sin(position.x * frequency1 + u_time * u_waveSpeed) * amplitude1;
+    float wave2 = cos(position.y * frequency2 + u_time * u_waveSpeed * 0.8) * amplitude2;
+    float wave3 = sin((position.x + position.y) * frequency3 + u_time * u_waveSpeed * 1.2) * amplitude3;
 
     return wave1 + wave2 + wave3;
   }
@@ -39,12 +44,12 @@ const vertexShader = `
   void main() {
     vUv = uv * 48.0;
 
-    float height = waveHeight(position.xz, time);
+    float height = calculateWaveHeight(position.xz, u_time);
     vec3 displacedPosition = position + normal * height;
 
     vWorldPosition = (modelMatrix * vec4(displacedPosition, 1.0)).xyz;
     vNormal = normalize(normalMatrix * normal);
-    vReflectCoord = textureMatrix * vec4(position, 1.0);
+    vReflectCoord = u_textureMatrix * vec4(position, 1.0);
     vWaveHeight = height;
 
     gl_Position = projectionMatrix * modelViewMatrix * vec4(displacedPosition, 1.0);
@@ -52,22 +57,29 @@ const vertexShader = `
 `;
 
 const fragmentShader = `
-  uniform sampler2D reflectionMap;
-  uniform float time;
-  uniform mat4 textureMatrix;
-  uniform sampler2D baseColorTexture;
-  uniform sampler2D aoTexture;
-  uniform sampler2D normalTexture;
-  uniform sampler2D roughnessTexture;
-  uniform sampler2D heightTexture;
+  uniform vec3 u_waterColor;
+  uniform vec3 u_crestColor;
+  uniform float u_fresnelStrength;
+  uniform float u_reflectionStrength;
+  uniform float u_waveHeight;
 
-  uniform vec3 fogColor;
-  uniform float fogNear;
-  uniform float fogFar;
+  uniform sampler2D u_reflectionMap;
+  uniform sampler2D u_baseColorTexture;
+  uniform sampler2D u_aoTexture;
+  uniform sampler2D u_normalTexture;
+  uniform sampler2D u_roughnessTexture;
+  uniform sampler2D u_heightTexture;
+  uniform mat4 u_textureMatrix;
 
-  uniform float brightness;
-  uniform float contrast;
-  uniform float saturation;
+  uniform float u_time;
+
+  uniform vec3 u_fogColor;
+  uniform float u_fogNear;
+  uniform float u_fogFar;
+
+  uniform float u_brightness;
+  uniform float u_contrast;
+  uniform float u_saturation;
 
   varying vec2 vUv;
   varying vec3 vWorldPosition;
@@ -75,12 +87,12 @@ const fragmentShader = `
   varying vec4 vReflectCoord;
   varying float vWaveHeight;
 
-  vec3 adjustColor(vec3 color, float brightness, float contrast, float saturation) {
-    color *= brightness; // 밝기
-    color = (color - 0.5) * contrast + 0.5; // 대비
-    float luminance = dot(color, vec3(0.299, 0.587, 0.114)); // 채도
+  vec3 adjustColor(vec3 color, float u_brightness, float u_contrast, float u_saturation) {
+    color *= u_brightness;
+    color = (color - 0.5) * u_contrast + 0.5;
+    float luminance = dot(color, vec3(0.299, 0.587, 0.114));
 
-    color = mix(vec3(luminance), color, saturation);
+    color = mix(vec3(luminance), color, u_saturation);
 
     return clamp(color, 0.0, 1.0);
   }
@@ -108,10 +120,10 @@ const fragmentShader = `
     return dot( n, vec3(70.0) );
   }
 
-  float cascadedNoise(vec2 uv, float time) {
-    float noise1 = noise(uv * 1.0 + time * 0.1) * 0.5;
-    float noise2 = noise(uv * 2.0 + time * 0.2) * 0.25;
-    float noise3 = noise(uv * 4.0 + time * 0.3) * 0.125;
+  float cascadedNoise(vec2 uv, float u_time) {
+    float noise1 = noise(uv * 1.0 + u_time * 0.1) * 0.5;
+    float noise2 = noise(uv * 2.0 + u_time * 0.2) * 0.25;
+    float noise3 = noise(uv * 4.0 + u_time * 0.3) * 0.125;
     return noise1 + noise2 + noise3;
   }
 
@@ -122,38 +134,36 @@ const fragmentShader = `
 
     vec3 viewDirection = normalize(cameraPosition - vWorldPosition);
 
-    vec2 uvTimeShifted = vUv + vec2(time * 0.8, time * 0.8);
+    vec2 uvTimeShifted = vUv + vec2(u_time * 0.8, u_time * 0.8);
 
     vec2 distortedUV = vUv + vec2(
-        cascadedNoise(vUv, time) * 0.02,
-        cascadedNoise(vUv + vec2(5.0), time) * 0.02
+        cascadedNoise(vUv, u_time) * 0.02,
+        cascadedNoise(vUv + vec2(5.0), u_time) * 0.02
     );
 
     vec2 reflectUV = vReflectCoord.xy / vReflectCoord.w;
       reflectUV += vec2(
-      noise(reflectUV * 5.0 + time * 0.05) * 0.0075,
-      noise(reflectUV * 5.0 + time * 0.05 + 5.0) * 0.0075
+      noise(reflectUV * 5.0 + u_time * 0.05) * 0.008,
+      noise(reflectUV * 5.0 + u_time * 0.05 + 5.0) * 0.008
     );
-    vec3 reflection = texture2D(reflectionMap, reflectUV).rgb;
-    vec3 baseColor = texture2D(baseColorTexture, distortedUV).rgb;
-    vec3 ao = texture2D(aoTexture, distortedUV).rgb;
+    vec3 reflection = texture2D(u_reflectionMap, reflectUV).rgb;
+    vec3 baseColor = texture2D(u_baseColorTexture, distortedUV).rgb;
+    vec3 ao = texture2D(u_aoTexture, distortedUV).rgb;
 
-    vec2 normalUV = distortedUV + vec2(time * 0.05, time * 0.03);
-    vec3 normal = texture2D(normalTexture, normalUV).rgb * 2.0 - 1.0;
+    vec2 normalUV = distortedUV + vec2(u_time * 0.05, u_time * 0.03);
+    vec3 normal = texture2D(u_normalTexture, normalUV).rgb * 2.0 - 1.0;
     normal = normalize(normal * vec3(1.0, 1.0, 2.0));
 
-    float roughness = texture2D(roughnessTexture, distortedUV).r;
-    float height = texture2D(heightTexture, distortedUV).r;
+    float roughness = texture2D(u_roughnessTexture, distortedUV).r;
+    float height = texture2D(u_heightTexture, distortedUV).r;
 
-    float heightSample = texture2D(heightTexture, distortedUV + vec2(time * 0.03, time * 0.02)).r;
+    float heightSample = texture2D(u_heightTexture, distortedUV + vec2(u_time * 0.03, u_time * 0.02)).r;
     vec3 waterNormal = normalize(vNormal + normal * 0.5 + vec3(0.0, 0.0, heightSample * 0.2));
 
-    float fresnelStrength = 1.8;
-    float fresnelFactor = pow(1.0 - dot(viewDirection, waterNormal), fresnelStrength);
-    fresnelFactor *= 0.5;
+    float fresnelFactor = pow(1.0 - dot(viewDirection, waterNormal), u_fresnelStrength);
+    fresnelFactor *= u_reflectionStrength;
 
-    vec3 waterColor = vec3(0.7, 0.5, 0.7);
-    vec3 finalColor = mix(waterColor, reflection, fresnelFactor);
+    vec3 finalColor = mix(u_waterColor, reflection, fresnelFactor);
 
     finalColor = mix(finalColor, baseColor, 0.6);
     finalColor *= ao;
@@ -170,9 +180,8 @@ const fragmentShader = `
 
     // 파도 크레스트 효과
     float waveHeight = vWaveHeight;
-    vec3 crestColor = vec3(1.0, 1.0, 1.0);
-    float crestFactor = smoothstep(10.0, 15.0, waveHeight);
-    finalColor = mix(finalColor, crestColor, crestFactor * 0.5);
+    float crestFactor = smoothstep(0.36 * u_waveHeight, u_waveHeight, abs(waveHeight));
+    finalColor = mix(finalColor, u_crestColor, crestFactor);
 
     // 파도 높이에 따른 색상 변화
     vec3 deepWaterColor = vec3(0.0, 0.1, 0.2);
@@ -203,10 +212,10 @@ const fragmentShader = `
         finalColor += vec3(0.4, 0.5, 0.6) * boost * factor;
     }
 
-    float fogFactor = smoothstep(fogNear, fogFar, length(cameraPosition - vWorldPosition));
-    finalColor = mix(finalColor, fogColor, fogFactor);
+    float fogFactor = smoothstep(u_fogNear, u_fogFar, length(cameraPosition - vWorldPosition));
+    finalColor = mix(finalColor, u_fogColor, fogFactor);
 
-    finalColor = adjustColor(finalColor, brightness, contrast, saturation);
+    finalColor = adjustColor(finalColor, u_brightness, u_contrast, u_saturation);
 
     gl_FragColor = vec4(finalColor, 0.9);
   }
@@ -253,20 +262,26 @@ export default function Ocean() {
         vertexShader,
         fragmentShader,
         uniforms: {
-          reflectionMap: { value: reflectionRenderTarget.texture },
-          time: { value: 0 },
-          textureMatrix: { value: new THREE.Matrix4() },
-          baseColorTexture: { value: baseColorTexture },
-          aoTexture: { value: aoTexture },
-          normalTexture: { value: normalTexture },
-          roughnessTexture: { value: roughnessTexture },
-          heightTexture: { value: heightTexture },
-          fogColor: { value: new THREE.Color(0.6, 0.75, 0.9) },
-          fogNear: { value: 1 },
-          fogFar: { value: 1900 },
-          brightness: { value: 1.1 },
-          contrast: { value: 1.0 },
-          saturation: { value: 1.1 },
+          u_reflectionMap: { value: reflectionRenderTarget.texture },
+          u_time: { value: 0 },
+          u_textureMatrix: { value: new THREE.Matrix4() },
+          u_baseColorTexture: { value: baseColorTexture },
+          u_aoTexture: { value: aoTexture },
+          u_normalTexture: { value: normalTexture },
+          u_roughnessTexture: { value: roughnessTexture },
+          u_heightTexture: { value: heightTexture },
+          u_fogColor: { value: OCEAN_CONSTANTS.FOG_COLOR },
+          u_fogNear: { value: OCEAN_CONSTANTS.FOG_NEAR },
+          u_fogFar: { value: OCEAN_CONSTANTS.FOG_FAR },
+          u_brightness: { value: OCEAN_CONSTANTS.BRIGHTNESS },
+          u_contrast: { value: OCEAN_CONSTANTS.CONTRAST },
+          u_saturation: { value: OCEAN_CONSTANTS.SATURATION },
+          u_waveHeight: { value: OCEAN_CONSTANTS.WAVE_HEIGHT },
+          u_waveSpeed: { value: OCEAN_CONSTANTS.WAVE_SPEED },
+          u_fresnelStrength: { value: OCEAN_CONSTANTS.FRESNEL_STRENGTH },
+          u_reflectionStrength: { value: OCEAN_CONSTANTS.REFLECTION_STRENGTH },
+          u_waterColor: { value: OCEAN_CONSTANTS.WATER_COLOR },
+          u_crestColor: { value: OCEAN_CONSTANTS.CREST_COLOR },
         },
         transparent: true,
       });
@@ -322,9 +337,9 @@ export default function Ocean() {
     if (meshRef.current.material) {
       const elapsedTime = state.clock.getElapsedTime();
 
-      meshRef.current.material.uniforms.reflectionMap.value = reflectionRenderTarget.texture;
-      meshRef.current.material.uniforms.textureMatrix.value = textureMatrix;
-      meshRef.current.material.uniforms.time.value = elapsedTime * 0.5;
+      meshRef.current.material.uniforms.u_reflectionMap.value = reflectionRenderTarget.texture;
+      meshRef.current.material.uniforms.u_textureMatrix.value = textureMatrix;
+      meshRef.current.material.uniforms.u_time.value = elapsedTime * 0.5;
     }
 
     const clipBias = 0.00001;
@@ -356,9 +371,9 @@ export default function Ocean() {
     if (meshRef.current.material) {
       const elapsedTime = state.clock.getElapsedTime();
 
-      meshRef.current.material.uniforms.reflectionMap.value = reflectionRenderTarget.texture;
-      meshRef.current.material.uniforms.textureMatrix.value = textureMatrix;
-      meshRef.current.material.uniforms.time.value = elapsedTime;
+      meshRef.current.material.uniforms.u_reflectionMap.value = reflectionRenderTarget.texture;
+      meshRef.current.material.uniforms.u_textureMatrix.value = textureMatrix;
+      meshRef.current.material.uniforms.u_time.value = elapsedTime;
     }
   });
 
