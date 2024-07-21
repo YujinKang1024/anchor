@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 export const INITIAL_BOAT_POSITION_Y = 0;
 
-export const LIGHT_OFFSET = new THREE.Vector3(600, 1000, 800).normalize();
+export const LIGHT_POSITION = new THREE.Vector3(300, 480, -150);
 
 export const DIRECTIONAL_LIGHT_COLOR = new THREE.Color(0xffffff);
 

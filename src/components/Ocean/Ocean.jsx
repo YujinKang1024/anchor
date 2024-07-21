@@ -10,9 +10,8 @@ import heightTextureUrl from '../../assets/textures/water-height.png';
 import roughnessTextureUrl from '../../assets/textures/water-roughness.jpg';
 import aoTextureUrl from '../../assets/textures/water-ao.jpg';
 
-import calculateShadowMatrix from '../../utils/calculateShadowMatrix';
 import { OCEAN_CONSTANTS } from '../../constants/constants';
-import { LIGHT_OFFSET, DIRECTIONAL_LIGHT_COLOR } from '../../constants/constants';
+import { LIGHT_POSITION, DIRECTIONAL_LIGHT_COLOR } from '../../constants/constants';
 
 const vertexShader = `
   uniform mat4 u_textureMatrix;
@@ -106,7 +105,7 @@ const fragmentShader = `
       float closestDepth = texture2D(u_shadowMap, shadowCoordProj.xy).r;
       float currentDepth = shadowCoordProj.z;
       float bias = 0.005;
-      return currentDepth - bias > closestDepth ? 0.5 : 1.0;
+      return step(currentDepth - bias, closestDepth);
   }
 
   vec3 adjustColor(vec3 color, float u_brightness, float u_contrast, float u_saturation) {
@@ -326,7 +325,7 @@ export default function Ocean({ directionalLightRef }) {
           u_crestColor: { value: OCEAN_CONSTANTS.CREST_COLOR },
           u_maxDepth: { value: OCEAN_CONSTANTS.MAX_DEPTH },
           u_minDepth: { value: OCEAN_CONSTANTS.MIN_DEPTH },
-          u_lightPosition: { value: LIGHT_OFFSET },
+          u_lightPosition: { value: LIGHT_POSITION },
           u_lightColor: { value: DIRECTIONAL_LIGHT_COLOR },
           u_shadowMap: { value: null },
           u_shadowMatrix: { value: new THREE.Matrix4() },
@@ -335,18 +334,6 @@ export default function Ocean({ directionalLightRef }) {
       });
     }
   }, [reflectionRenderTarget, size, aoTexture, normalTexture, roughnessTexture, heightTexture]);
-
-  useEffect(() => {
-    if (meshRef.current && directionalLightRef.current && directionalLightRef.current.shadow.map) {
-      const initialShadowMatrix = calculateShadowMatrix(
-        directionalLightRef.current,
-        meshRef.current,
-      );
-      meshRef.current.material.uniforms.u_shadowMatrix.value.copy(initialShadowMatrix);
-      meshRef.current.material.uniforms.u_shadowMap.value =
-        directionalLightRef.current.shadow.map.texture;
-    }
-  }, [directionalLightRef]);
 
   useFrame((state) => {
     if (!meshRef.current || !reflectionCameraRef.current) return;
@@ -433,17 +420,10 @@ export default function Ocean({ directionalLightRef }) {
       meshRef.current.material.uniforms.u_time.value = elapsedTime;
 
       // 그림자 매트릭스 계산
-      const lightMatrix = new THREE.Matrix4().makeRotationFromQuaternion(
-        directionalLightRef.current.quaternion,
+      const shadowMatrix = new THREE.Matrix4().multiplyMatrices(
+        directionalLightRef.current.shadow.camera.projectionMatrix,
+        directionalLightRef.current.shadow.camera.matrixWorldInverse,
       );
-      lightMatrix.setPosition(directionalLightRef.current.position);
-
-      const shadowMatrix = new THREE.Matrix4()
-        .multiplyMatrices(
-          directionalLightRef.current.shadow.camera.projectionMatrix,
-          directionalLightRef.current.shadow.camera.matrixWorldInverse,
-        )
-        .multiply(lightMatrix);
 
       const finalShadowMatrix = new THREE.Matrix4().multiplyMatrices(
         shadowMatrix,
