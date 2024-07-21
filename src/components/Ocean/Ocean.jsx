@@ -91,6 +91,7 @@ const fragmentShader = `
   uniform vec3 u_lightPosition;
   uniform vec3 u_lightColor;
   uniform sampler2D u_shadowMap;
+  uniform vec3 u_shadowColor;
 
   varying vec2 vUv;
   varying vec3 vWorldPosition;
@@ -99,13 +100,55 @@ const fragmentShader = `
   varying float vWaveHeight;
   varying vec4 vShadowCoord;
 
+  #define PI 3.14159265359
+
   float getShadow(vec4 shadowCoord) {
-      vec3 shadowCoordProj = shadowCoord.xyz / shadowCoord.w;
-      shadowCoordProj = shadowCoordProj * 0.5 + 0.5;
-      float closestDepth = texture2D(u_shadowMap, shadowCoordProj.xy).r;
-      float currentDepth = shadowCoordProj.z;
-      float bias = 0.005;
-      return step(currentDepth - bias, closestDepth);
+    vec3 shadowCoordProj = shadowCoord.xyz / shadowCoord.w;
+    shadowCoordProj = shadowCoordProj * 0.5 + 0.5;
+    float currentDepth = shadowCoordProj.z;
+
+    float shadow = 0.0;
+    float bias = 0.005;
+    float samples = 9.0;
+    float offset = 1.0 / 4096.0;
+    for(float y = -4.0; y <= 4.0; y += 1.0) {
+      for(float x = -4.0; x <= 4.0; x += 1.0) {
+        float pcfDepth = texture2D(u_shadowMap, shadowCoordProj.xy + vec2(x, y) * offset).r;
+        shadow += currentDepth - bias > pcfDepth ? 0.9 : 0.0;
+      }
+    }
+    shadow /= (samples * samples);
+
+    float depthFactor = smoothstep(u_minDepth, u_maxDepth, length(vWorldPosition - cameraPosition));
+    shadow = mix(shadow, 0.0, depthFactor * 0.5);
+
+    return 1.0 - shadow;
+  }
+
+  float gaussianWeight(float x, float sigma) {
+    return (1.0 / (sqrt(2.0 * PI) * sigma)) * exp(-((x * x) / (2.0 * (sigma * sigma))));
+  }
+
+  float blurShadow(vec4 shadowCoord) {
+    vec3 shadowCoordProj = shadowCoord.xyz / shadowCoord.w;
+    shadowCoordProj = shadowCoordProj * 0.5 + 0.5;
+    float currentDepth = shadowCoordProj.z;
+
+    float shadow = 0.0;
+    float bias = 0.01;
+    float blurRadius = 2.0;
+    float sigma = blurRadius / 2.0;
+    float weightSum = 0.0;
+
+    for(float y = -blurRadius; y <= blurRadius; y += 1.0) {
+      for(float x = -blurRadius; x <= blurRadius; x += 1.0) {
+        float weight = gaussianWeight(length(vec2(x, y)), sigma);
+        float pcfDepth = texture2D(u_shadowMap, shadowCoordProj.xy + vec2(x, y) / 2048.0).r;
+        shadow += weight * (currentDepth - bias > pcfDepth ? 0.0 : 1.0);
+        weightSum += weight;
+      }
+    }
+    return shadow / weightSum;
   }
 
   vec3 adjustColor(vec3 color, float u_brightness, float u_contrast, float u_saturation) {
@@ -149,13 +192,6 @@ const fragmentShader = `
   }
 
   void main() {
-    //그림자 디버깅 시작
-    vec4 shadowCoord = vShadowCoord / vShadowCoord.w;
-    shadowCoord = shadowCoord * 0.5 + 0.5;
-    vec4 shadowMapValue = texture2D(u_shadowMap, shadowCoord.xy);
-    gl_FragColor = vec4(shadowMapValue.rgb, 1.0);
-    return;
-
     vec3 viewDirection = normalize(cameraPosition - vWorldPosition);
 
     vec2 distortedUV = vUv + vec2(
@@ -184,7 +220,7 @@ const fragmentShader = `
     );
 
     vec3 normal = texture2D(u_normalTexture, normalUV).rgb * 2.0 - 1.0;
-    normal = normalize(normal * vec3(1.2, 1.2, 2.0));
+    normal = normalize(normal * vec3(1.5, 1.5, 2.0));
 
     float roughness = texture2D(u_roughnessTexture, distortedUV).r;
     float height = texture2D(u_heightTexture, distortedUV).r;
@@ -199,7 +235,11 @@ const fragmentShader = `
     finalColor *= ao;
 
     float shadow = getShadow(vShadowCoord);
-    finalColor *= shadow;
+    float blurred = blurShadow(vShadowCoord);
+    float finalShadow = mix(shadow, blurred, 0.009);
+
+    vec3 shadowColor = mix(u_shadowColor, vec3(1.0), finalShadow);
+    finalColor = mix(finalColor, finalColor * shadowColor, 1.0);
 
     // 물 깊이에 따른 색상 변화
     float sceneDepth = gl_FragCoord.z / gl_FragCoord.w;
@@ -210,7 +250,6 @@ const fragmentShader = `
 
     float sceneWaterDepth = 1.0 - exp(-sceneDepth * 0.055);
     finalColor = mix(depthColor * 6.0, finalColor, sceneWaterDepth);
-
 
     // 파도에 따른 색상 변화
     float waveHeight = vWaveHeight;
@@ -328,6 +367,7 @@ export default function Ocean({ directionalLightRef }) {
           u_lightPosition: { value: LIGHT_POSITION },
           u_lightColor: { value: DIRECTIONAL_LIGHT_COLOR },
           u_shadowMap: { value: null },
+          u_shadowColor: { value: OCEAN_CONSTANTS.SHADOW_COLOR },
           u_shadowMatrix: { value: new THREE.Matrix4() },
         },
         transparent: true,
@@ -437,7 +477,7 @@ export default function Ocean({ directionalLightRef }) {
   });
 
   return (
-    <group position={[0, -10, 0]}>
+    <group position={[0, -7.2, 0]}>
       <primitive ref={meshRef} object={nodes.oceanPlane} receiveShadow />
     </group>
   );

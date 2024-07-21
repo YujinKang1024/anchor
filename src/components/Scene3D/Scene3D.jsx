@@ -1,5 +1,6 @@
 import { useRef, useState, useCallback } from 'react';
 import { Canvas } from '@react-three/fiber';
+import * as THREE from 'three';
 
 import Scene3DContents from '../Scene3DContents/Scene3DContents';
 import Scene3DUI from '../Scene3DUI/Scene3DUI';
@@ -42,6 +43,12 @@ export default function Scene3D() {
           setIsCameraReady(true);
         }}
         shadows
+        gl={{
+          shadowMap: {
+            enabled: true,
+            type: THREE.PCFSoftShadowMap,
+          },
+        }}
       >
         {isCameraReady && (
           <Scene3DContents
