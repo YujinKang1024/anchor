@@ -114,7 +114,7 @@ const fragmentShader = `
     for(float y = -4.0; y <= 4.0; y += 1.0) {
       for(float x = -4.0; x <= 4.0; x += 1.0) {
         float pcfDepth = texture2D(u_shadowMap, shadowCoordProj.xy + vec2(x, y) * offset).r;
-        shadow += currentDepth - bias > pcfDepth ? 0.9 : 0.0;
+        shadow += currentDepth - bias > pcfDepth ? 0.8 : 0.0;
       }
     }
     shadow /= (samples * samples);

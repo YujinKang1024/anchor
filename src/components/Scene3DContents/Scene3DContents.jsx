@@ -1,7 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useThree, useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
-import { useAtom } from 'jotai';
 
 import Boat from '../Boat/Boat';
 import Lands from '../Lands/Lands';
@@ -10,11 +9,11 @@ import Path from '../Path/Path';
 import CameraController from '../CameraController/CameraController';
 
 import initializeBoatPosition from '../../utils/initializeBoatPosition';
-import { isBoatLoadedAtom } from '../../utils/atoms';
 import {
   DIRECTIONAL_LIGHT_COLOR,
   INITIAL_BOAT_POSITION_Y,
   LIGHT_POSITION,
+  CAMERA_CONSTANTS,
 } from '../../constants/constants';
 import gradientBackground from '../../assets/textures/gradient-background.jpg';
 
@@ -25,7 +24,7 @@ export default function Scene3DContents({
   setPathPoints,
   rotationAngle,
 }) {
-  const [isBoatLoaded] = useAtom(isBoatLoadedAtom);
+  const [isInitialCameraSetup, setisInitialCameraSetup] = useState(false);
   const { scene } = useThree();
   const directionalLightRef = useRef();
   const gradientTexture = useLoader(THREE.TextureLoader, gradientBackground);
@@ -35,10 +34,27 @@ export default function Scene3DContents({
   }, [scene, gradientTexture]);
 
   useEffect(() => {
-    if (boatRef.current && directionalLightRef.current) {
+    if (boatRef.current && directionalLightRef.current && pathPoints.length > 0) {
       initializeBoatPosition(boatRef, pathPoints, INITIAL_BOAT_POSITION_Y, 1);
+
+      if (cameraRef.current && !isInitialCameraSetup) {
+        const boatPosition = new THREE.Vector3();
+        boatRef.current.getWorldPosition(boatPosition);
+
+        const cameraOffset = new THREE.Vector3(
+          CAMERA_CONSTANTS.LATERAL_DISTANCE,
+          CAMERA_CONSTANTS.HEIGHT,
+          -CAMERA_CONSTANTS.DISTANCE,
+        );
+
+        const initialCameraPosition = boatPosition.clone().add(cameraOffset);
+        cameraRef.current.position.copy(initialCameraPosition);
+        cameraRef.current.lookAt(boatPosition);
+
+        setisInitialCameraSetup(true);
+      }
     }
-  }, [boatRef, pathPoints]);
+  }, [boatRef, cameraRef, pathPoints, directionalLightRef, isInitialCameraSetup]);
 
   return (
     <>
@@ -63,7 +79,7 @@ export default function Scene3DContents({
       <Ocean directionalLightRef={directionalLightRef} boatRef={boatRef} />
       <Lands />
       <Path setPathPoints={setPathPoints} />
-      {isBoatLoaded && cameraRef.current && (
+      {isInitialCameraSetup && (
         <CameraController
           cameraRef={cameraRef}
           boatRef={boatRef}

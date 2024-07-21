@@ -11,8 +11,9 @@ export const SCROLLBAR_HEIGHT_RATIO = 0.97;
 export const MAX_SCROLL_SPEED = 3;
 
 export const CAMERA_CONSTANTS = {
-  HEIGHT: 10,
-  DISTANCE: 110,
+  LATERAL_DISTANCE: 60,
+  HEIGHT: 16,
+  DISTANCE: 120,
 };
 
 export const OCEAN_CONSTANTS = {
@@ -20,7 +21,7 @@ export const OCEAN_CONSTANTS = {
   WAVE_SPEED: 0.8,
   WATER_COLOR: new THREE.Color(0.35, 0.55, 0.85),
   CREST_COLOR: new THREE.Color(0.9, 0.8, 0.9),
-  SHADOW_COLOR: new THREE.Color(0.2, 0.4, 0.4),
+  SHADOW_COLOR: new THREE.Color(0.2, 0.5, 0.4),
   FRESNEL_STRENGTH: 3.0,
   REFLECTION_STRENGTH: 0.28,
   FOG_COLOR: new THREE.Color(0.3, 0.5, 0.75),

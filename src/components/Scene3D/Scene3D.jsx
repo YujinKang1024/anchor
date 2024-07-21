@@ -6,6 +6,7 @@ import Scene3DContents from '../Scene3DContents/Scene3DContents';
 import Scene3DUI from '../Scene3DUI/Scene3DUI';
 import CameraDragHandler from '../CameraDragHandler/CameraDragHandler';
 import BoatRotationController from '../BoatRotationController/BoatRotationController';
+import BoatWaveController from '../BoatWaveController/BoatWaveController';
 import FullScreenContainer from '../../styled-components/FullScreenContainer';
 
 export default function Scene3D() {
@@ -30,7 +31,7 @@ export default function Scene3D() {
         boatRef={boatRef}
       />
       <Canvas
-        camera={{ position: [0, 0, 0], fov: 40, near: 0.1, far: 2000 }}
+        camera={{ fov: 40, near: 0.1, far: 2000 }}
         style={{
           position: 'absolute',
           display: 'block',
@@ -60,6 +61,7 @@ export default function Scene3D() {
           />
         )}
         <BoatRotationController boatRef={boatRef} />
+        <BoatWaveController boatRef={boatRef} />
       </Canvas>
       <CameraDragHandler onRotate={handleRotate} />
     </FullScreenContainer>

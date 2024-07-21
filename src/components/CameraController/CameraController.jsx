@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useAtom } from 'jotai';
 import * as THREE from 'three';
@@ -8,43 +8,30 @@ import { CAMERA_CONSTANTS } from '../../constants/constants';
 
 export default function CameraController({ cameraRef, boatRef, rotationAngle }) {
   const [isScrolling] = useAtom(isScrollingAtom);
-  const [isCameraPositionInitialized, setIsCameraPositionInitialized] = useState(false);
 
-  const cameraOffset = useRef(new THREE.Vector3(20, CAMERA_CONSTANTS.HEIGHT, 100));
-
-  useEffect(() => {
-    if (!isCameraPositionInitialized && cameraRef.current && boatRef.current) {
-      const boatPosition = new THREE.Vector3();
-      boatRef.current.getWorldPosition(boatPosition);
-
-      const targetCameraPosition = boatPosition.clone().add(cameraOffset.current);
-
-      cameraRef.current.position.copy(targetCameraPosition);
-      cameraRef.current.lookAt(boatPosition);
-
-      setIsCameraPositionInitialized(true);
-    }
-  }, [cameraRef, boatRef, isCameraPositionInitialized, setIsCameraPositionInitialized]);
+  const cameraOffset = useRef(
+    new THREE.Vector3(
+      CAMERA_CONSTANTS.LATERAL_DISTANCE,
+      CAMERA_CONSTANTS.HEIGHT,
+      -CAMERA_CONSTANTS.DISTANCE,
+    ),
+  );
+  const targetCameraPosition = useRef(new THREE.Vector3());
 
   useFrame(() => {
     if (cameraRef.current && boatRef.current) {
       const newBoatPosition = new THREE.Vector3();
       boatRef.current.getWorldPosition(newBoatPosition);
 
-      let targetCameraPosition;
-      if (isScrolling) {
-        targetCameraPosition = newBoatPosition.clone().add(cameraOffset.current);
-      } else {
-        const x = newBoatPosition.x + CAMERA_CONSTANTS.DISTANCE * Math.sin(rotationAngle);
-        const z = newBoatPosition.z + CAMERA_CONSTANTS.DISTANCE * Math.cos(rotationAngle);
-        targetCameraPosition = new THREE.Vector3(x, CAMERA_CONSTANTS.HEIGHT, z);
-      }
+      const rotatedOffset = cameraOffset.current
+        .clone()
+        .applyAxisAngle(new THREE.Vector3(0, 1, 0), rotationAngle);
 
-      cameraRef.current.position.set(
-        targetCameraPosition.x,
-        CAMERA_CONSTANTS.HEIGHT,
-        targetCameraPosition.z,
-      );
+      targetCameraPosition.current.copy(newBoatPosition).add(rotatedOffset);
+
+      const lerpFactor = isScrolling ? 0.1 : 0.05;
+
+      cameraRef.current.position.lerp(targetCameraPosition.current, lerpFactor);
       cameraRef.current.lookAt(newBoatPosition);
     }
   });
