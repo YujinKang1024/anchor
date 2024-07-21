@@ -14,7 +14,7 @@ export default function BoatWaveController({ boatRef }) {
   useFrame((state, delta) => {
     if (boatRef.current) {
       const currentPosition = boatRef.current.position;
-      timeRef.current += delta * (isScrolling ? 0.5 : 1);
+      timeRef.current += delta * (isScrolling ? 0.4 : 1);
 
       const waveHeight = calculateSimplifiedWaveHeight(
         currentPosition.x,
