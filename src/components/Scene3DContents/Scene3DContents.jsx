@@ -35,33 +35,43 @@ export default function Scene3DContents({
   }, [scene, gradientTexture]);
 
   useEffect(() => {
-    if (boatRef.current) {
+    if (boatRef.current && directionalLightRef.current && directionalLightRef.current.shadow.map) {
       initializeBoatPosition(boatRef, pathPoints, INITIAL_BOAT_POSITION_Y, 1);
+
+      const boatPosition = new THREE.Vector3();
+      boatRef.current.getWorldPosition(boatPosition);
+
+      directionalLightRef.current.position.copy(boatPosition).add(LIGHT_OFFSET);
+      directionalLightRef.current.target.updateMatrixWorld();
+
+      directionalLightRef.current.shadow.camera.updateProjectionMatrix();
+      directionalLightRef.current.shadow.camera.updateMatrixWorld();
+
+      directionalLightRef.current.shadow.map.needsUpdate = true;
     }
-  }, [boatRef, pathPoints]);
+  }, [boatRef, pathPoints, directionalLightRef]);
 
   return (
     <>
       <directionalLight
         ref={directionalLightRef}
-        position={LIGHT_OFFSET}
         intensity={1.0}
         color={DIRECTIONAL_LIGHT_COLOR}
         castShadow
-        shadow-mapSize-width={4096}
-        shadow-mapSize-height={4096}
+        shadow-mapSize-width={8192}
+        shadow-mapSize-height={8192}
         shadow-camera-far={3000}
-        shadow-camera-left={-1300}
-        shadow-camera-right={1300}
-        shadow-camera-top={1300}
-        shadow-camera-bottom={-1300}
+        shadow-camera-left={-1500}
+        shadow-camera-right={1500}
+        shadow-camera-top={1500}
+        shadow-camera-bottom={-1500}
       />
       <ambientLight color={new THREE.Color(0x87ceeb)} intensity={0.3} />
       <ambientLight color={new THREE.Color(0xfffacd)} intensity={0.5} />
       <ambientLight color={new THREE.Color(0xffffff)} intensity={0.3} />
       <Boat ref={boatRef} />
-      <Lands />
       <Ocean directionalLightRef={directionalLightRef} />
+      <Lands />
       <Path setPathPoints={setPathPoints} />
       {isBoatLoaded && cameraRef.current && (
         <CameraController

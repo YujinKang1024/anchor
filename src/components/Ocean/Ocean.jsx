@@ -10,6 +10,7 @@ import heightTextureUrl from '../../assets/textures/water-height.png';
 import roughnessTextureUrl from '../../assets/textures/water-roughness.jpg';
 import aoTextureUrl from '../../assets/textures/water-ao.jpg';
 
+import calculateShadowMatrix from '../../utils/calculateShadowMatrix';
 import { OCEAN_CONSTANTS } from '../../constants/constants';
 import { LIGHT_OFFSET, DIRECTIONAL_LIGHT_COLOR } from '../../constants/constants';
 
@@ -334,6 +335,18 @@ export default function Ocean({ directionalLightRef }) {
       });
     }
   }, [reflectionRenderTarget, size, aoTexture, normalTexture, roughnessTexture, heightTexture]);
+
+  useEffect(() => {
+    if (meshRef.current && directionalLightRef.current && directionalLightRef.current.shadow.map) {
+      const initialShadowMatrix = calculateShadowMatrix(
+        directionalLightRef.current,
+        meshRef.current,
+      );
+      meshRef.current.material.uniforms.u_shadowMatrix.value.copy(initialShadowMatrix);
+      meshRef.current.material.uniforms.u_shadowMap.value =
+        directionalLightRef.current.shadow.map.texture;
+    }
+  }, [directionalLightRef]);
 
   useFrame((state) => {
     if (!meshRef.current || !reflectionCameraRef.current) return;
