@@ -3,11 +3,12 @@ import { useFrame } from '@react-three/fiber';
 import { useAtom } from 'jotai';
 import * as THREE from 'three';
 
-import { isScrollingAtom } from '../../utils/atoms';
+import { isScrollingAtom, isReturningAtom } from '../../utils/atoms';
 import { CAMERA_CONSTANTS } from '../../constants/constants';
 
 export default function CameraController({ cameraRef, boatRef, rotationAngle }) {
   const [isScrolling] = useAtom(isScrollingAtom);
+  const [isReturning] = useAtom(isReturningAtom);
 
   const cameraOffset = useRef(
     new THREE.Vector3(
@@ -29,7 +30,7 @@ export default function CameraController({ cameraRef, boatRef, rotationAngle }) 
 
       targetCameraPosition.current.copy(newBoatPosition).add(rotatedOffset);
 
-      const lerpFactor = isScrolling ? 0.1 : 0.05;
+      const lerpFactor = isScrolling || isReturning ? 0.1 : 0.05;
 
       cameraRef.current.position.lerp(targetCameraPosition.current, lerpFactor);
       cameraRef.current.lookAt(newBoatPosition);

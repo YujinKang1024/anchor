@@ -7,24 +7,33 @@ import { ScrollContainer, Scrollbar, Thumb, VirtualContent } from './CustomScrol
 import animateBoatPosition from '../../utils/animateBoatPosition';
 import useScrollHandler from '../../hooks/useScrollHandler';
 
-import { targetRotationAtom } from '../../utils/atoms';
+import { targetRotationAtom, isReturningAtom } from '../../utils/atoms';
 import { INITIAL_BOAT_POSITION_Y, SCROLLBAR_HEIGHT_RATIO } from '../../constants/constants';
 
 const rotationAngles = {
   58: 1.3,
   56: 1,
-  46: 0.45,
-  44: 0.1,
-  42: -0.5,
-  39: -0.9,
+  53: 0.7,
+  51: 0.5,
+  47: 0.2,
+  44: -0.1,
+  42: -0.3,
+  40: -0.5,
+  38: -0.9,
   34: -1,
   32: -1.4,
-  29: -1.8,
-  24: -2,
-  22: -2.5,
-  20: -3.4,
+  30: -1.6,
+  28: -1.8,
+  27: -2,
+  25: -2.2,
+  24: -2.5,
+  22: -2.9,
+  20: -3.2,
+  18: -3.5,
+  12: -3.8,
   9: -4,
   7: -4.5,
+  5: -4.8,
 };
 
 export default function CustomScrollbar({ boatRef, pathPoints }) {
@@ -33,6 +42,7 @@ export default function CustomScrollbar({ boatRef, pathPoints }) {
   const [initialRotationSet, setInitialRotationSet] = useState(false);
 
   const [, setTargetRotation] = useAtom(targetRotationAtom);
+  const [, setIsReturning] = useAtom(isReturningAtom);
 
   const scrollRef = useRef();
   const lastScrollTopRef = useRef(0);
@@ -75,15 +85,17 @@ export default function CustomScrollbar({ boatRef, pathPoints }) {
       !isAtBottom
     ) {
       setIsAtBottom(true);
+      setIsReturning(true);
 
       const newCurrentPoint = pathPoints[0];
       const newNextPoint = pathPoints[pathPoints.length - 1];
-      const newBoatPosition = new THREE.Vector3().lerpVectors(newCurrentPoint, newNextPoint, 0.2);
+      const newBoatPosition = new THREE.Vector3().lerpVectors(newCurrentPoint, newNextPoint, 0.01);
 
       animateBoatPosition(newBoatPosition, newNextPoint, boatRef, INITIAL_BOAT_POSITION_Y, () => {
         scrollRef.current.scrollTop = 0;
         lastScrollTopRef.current = 0;
         setIsAtBottom(false);
+        setIsReturning(false);
       });
     }
 
@@ -109,7 +121,7 @@ export default function CustomScrollbar({ boatRef, pathPoints }) {
         }
       }
     }
-  }, [boatRef, pathPoints, isAtBottom, setTargetRotation, initialRotationSet]);
+  }, [boatRef, pathPoints, isAtBottom, setTargetRotation, initialRotationSet, setIsReturning]);
 
   const handleLimitedScroll = useScrollHandler(scrollRef, lastScrollTopRef, handleScroll);
 

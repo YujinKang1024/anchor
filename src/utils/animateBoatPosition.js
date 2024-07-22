@@ -9,7 +9,7 @@ export default function animateBoatPosition(
 ) {
   const startPosition = new THREE.Vector3(startPoint.x, initialBoatPositionY, startPoint.y);
   const endPosition = new THREE.Vector3(endPoint.x, initialBoatPositionY, endPoint.y);
-  const duration = 300;
+  const duration = 1000;
 
   let start = null;
 
