@@ -61,7 +61,7 @@ export default function Scene3DContents({
       <directionalLight
         ref={directionalLightRef}
         position={LIGHT_POSITION}
-        intensity={1.0}
+        intensity={1.5}
         color={DIRECTIONAL_LIGHT_COLOR}
         castShadow
         shadow-mapSize-width={4096}
@@ -72,9 +72,10 @@ export default function Scene3DContents({
         shadow-camera-top={1500}
         shadow-camera-bottom={-1500}
       />
-      <ambientLight color={new THREE.Color(0x87ceeb)} intensity={0.3} />
+      <directionalLight position={[-50, 80, 150]} intensity={0.4} />
+      <ambientLight color={new THREE.Color(0xffffff)} intensity={0.5} />
+      <ambientLight color={new THREE.Color(0x87ceeb)} intensity={0.4} />
       <ambientLight color={new THREE.Color(0xfffacd)} intensity={0.5} />
-      <ambientLight color={new THREE.Color(0xffffff)} intensity={0.3} />
       <Boat ref={boatRef} />
       <Ocean directionalLightRef={directionalLightRef} boatRef={boatRef} />
       <Lands />
