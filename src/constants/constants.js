@@ -8,16 +8,16 @@ export const DIRECTIONAL_LIGHT_COLOR = new THREE.Color(0xffffff);
 
 export const VIRTUAL_SCROLL_HEIGHT = 30000;
 export const SCROLLBAR_HEIGHT_RATIO = 0.97;
-export const MAX_SCROLL_SPEED = 3;
+export const MAX_SCROLL_SPEED = 5;
 
 export const CAMERA_CONSTANTS = {
   LATERAL_DISTANCE: 60,
   HEIGHT: 16,
-  DISTANCE: 120,
+  DISTANCE: 90,
 };
 
 export const OCEAN_CONSTANTS = {
-  WAVE_HEIGHT: 1.8,
+  WAVE_HEIGHT: 2.0,
   WAVE_SPEED: 0.8,
   WATER_COLOR: new THREE.Color(0.35, 0.55, 0.85),
   CREST_COLOR: new THREE.Color(0.9, 0.8, 0.9),
