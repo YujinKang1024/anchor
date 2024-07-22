@@ -1,5 +1,4 @@
 import { forwardRef } from 'react';
-import * as THREE from 'three';
 import { useGLTF } from '@react-three/drei';
 
 import boat from '../../assets/models/boat.glb';
@@ -10,11 +9,6 @@ const Boat = forwardRef((props, ref) => {
   scene.traverse((child) => {
     if (child.isMesh) {
       child.castShadow = true;
-      child.material = new THREE.MeshStandardMaterial({
-        color: '#eee',
-        metalness: 0.1,
-        roughness: 0.3,
-      });
     }
   });
 

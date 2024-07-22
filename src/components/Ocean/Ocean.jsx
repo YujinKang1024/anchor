@@ -3,7 +3,7 @@ import { useGLTF } from '@react-three/drei';
 import { useThree, useFrame, useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
 
-import oceanPlaneUri from '../../assets/models/oceanPlane.glb';
+import oceanPlaneUrl from '../../assets/models/oceanPlane.glb';
 
 import normalTextureUrl from '../../assets/textures/water-normal.png';
 import heightTextureUrl from '../../assets/textures/water-height.png';
@@ -261,8 +261,8 @@ const fragmentShader = `
 
     // 하이라이트 추가
     vec3 sunDirection = normalize(vec3(0.5, 0.8, 0.3));
-    float sunReflection = pow(max(0.0, dot(reflect(-viewDirection, waterNormal), sunDirection)), 64.0);
-    float sunStrength = 0.1;
+    float sunReflection = pow(max(0.0, dot(reflect(-viewDirection, waterNormal), sunDirection)), 32.0);
+    float sunStrength = 0.05;
     vec3 sunColor = vec3(1.0, 0.9, 0.7);
     finalColor += sunColor * sunReflection * sunStrength;
 
@@ -303,7 +303,7 @@ const fragmentShader = `
 `;
 
 export default function Ocean({ directionalLightRef }) {
-  const { nodes } = useGLTF(oceanPlaneUri);
+  const { nodes } = useGLTF(oceanPlaneUrl);
   const { gl, scene, camera, size } = useThree();
 
   const meshRef = useRef();
