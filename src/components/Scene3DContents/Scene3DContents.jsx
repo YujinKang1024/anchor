@@ -7,6 +7,7 @@ import Lands from '../Lands/Lands';
 import Ocean from '../Ocean/Ocean';
 import Path from '../Path/Path';
 import CameraController from '../CameraController/CameraController';
+import GameLand from '../GameLand/GameLand';
 
 import initializeBoatPosition from '../../utils/initializeBoatPosition';
 import {
@@ -79,6 +80,7 @@ export default function Scene3DContents({
       <Boat ref={boatRef} />
       <Ocean directionalLightRef={directionalLightRef} boatRef={boatRef} />
       <Lands />
+      <GameLand />
       <Path setPathPoints={setPathPoints} />
       {isInitialCameraSetup && (
         <CameraController
