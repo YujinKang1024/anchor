@@ -1,6 +1,7 @@
 import { useRef, useState, useCallback } from 'react';
 import { Canvas } from '@react-three/fiber';
 import * as THREE from 'three';
+import { EffectComposer, Bloom, DepthOfField } from '@react-three/postprocessing';
 
 import Scene3DContents from '../Scene3DContents/Scene3DContents';
 import Scene3DUI from '../Scene3DUI/Scene3DUI';
@@ -31,7 +32,7 @@ export default function Scene3D() {
         boatRef={boatRef}
       />
       <Canvas
-        camera={{ fov: 40, near: 0.1, far: 2000 }}
+        camera={{ fov: 40, near: 0.6, far: 2000 }}
         style={{
           position: 'absolute',
           display: 'block',
@@ -62,6 +63,10 @@ export default function Scene3D() {
         )}
         <BoatRotationController boatRef={boatRef} />
         <BoatWaveController boatRef={boatRef} />
+        <EffectComposer>
+          <DepthOfField focusDistance={0} focalLength={1.4} bokehScale={4} height={800} />
+          <Bloom intensity={0.3} luminanceThreshold={0.9} luminanceSmoothing={0.2} />
+        </EffectComposer>
       </Canvas>
       <CameraDragHandler onRotate={handleRotate} />
     </FullScreenContainer>
