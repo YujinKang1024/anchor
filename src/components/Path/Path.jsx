@@ -30,5 +30,5 @@ export default function Path({ setPathPoints }) {
     }
   }, [scene, setPathPoints]);
 
-  return <primitive object={scene} position={[0, -400, 0]} />;
+  return <primitive object={scene} position={[0, -500, 0]} />;
 }

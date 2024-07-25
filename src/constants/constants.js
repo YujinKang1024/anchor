@@ -8,12 +8,12 @@ export const DIRECTIONAL_LIGHT_COLOR = new THREE.Color(0xffffff);
 
 export const VIRTUAL_SCROLL_HEIGHT = 30000;
 export const SCROLLBAR_HEIGHT_RATIO = 0.97;
-export const MAX_SCROLL_SPEED = 8;
+export const MAX_SCROLL_SPEED = 10;
 
 export const CAMERA_CONSTANTS = {
-  LATERAL_DISTANCE: 60,
+  LATERAL_DISTANCE: 65,
   HEIGHT: 16,
-  DISTANCE: 90,
+  DISTANCE: -70,
 };
 
 export const OCEAN_CONSTANTS = {

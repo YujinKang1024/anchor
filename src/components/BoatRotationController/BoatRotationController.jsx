@@ -17,7 +17,7 @@ export default function BoatRotationController({ boatRef }) {
       boatRef.current.rotation.y = THREE.MathUtils.lerp(
         currentRotation,
         currentRotation + deltaRotation,
-        0.01,
+        0.012,
       );
     }
   });

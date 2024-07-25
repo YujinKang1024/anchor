@@ -41,7 +41,7 @@ export const Thumb = styled.div.attrs(({ $scrolltop }) => ({
   position: absolute;
   left: 0;
   width: 100%;
-  height: 3%;
+  height: 12%;
   background: #88bfff;
   border-radius: 0.3rem;
   cursor: pointer;

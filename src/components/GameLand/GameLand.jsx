@@ -20,7 +20,7 @@ const emissionColorMap = {
   },
   game_vending_machine_emission: {
     color: new THREE.Color(0x424242),
-    intensity: 0.5,
+    intensity: 1.0,
   },
 };
 

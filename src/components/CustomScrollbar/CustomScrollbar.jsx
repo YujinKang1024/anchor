@@ -11,29 +11,32 @@ import { targetRotationAtom, isReturningAtom } from '../../utils/atoms';
 import { INITIAL_BOAT_POSITION_Y, SCROLLBAR_HEIGHT_RATIO } from '../../constants/constants';
 
 const rotationAngles = {
-  58: 1.3,
-  56: 1,
-  53: 0.7,
-  51: 0.5,
-  47: 0.2,
-  44: -0.1,
-  42: -0.3,
-  40: -0.5,
-  38: -0.9,
-  34: -1,
-  32: -1.4,
-  30: -1.6,
-  28: -1.8,
-  27: -2,
-  25: -2.2,
-  24: -2.5,
-  22: -2.9,
-  20: -3.2,
-  18: -3.5,
-  12: -3.8,
-  9: -4,
-  7: -4.5,
-  5: -4.8,
+  0: 6.9,
+  42: 6.75,
+  40: 6.5,
+  39: 6.3,
+  37: 6.1,
+  35: 5.9,
+  33: 5.75,
+  27: 5.2,
+  25: 4.8,
+  24: 4.7,
+  23: 4.6,
+  22: 4.2,
+  21: 3.7,
+  20: 3.4,
+  19: 3.1,
+  18: 3.0,
+  14: 3.2,
+  13: 3.4,
+  11: 2.8,
+  10: 2.7,
+  9: 2.5,
+  8: 2.2,
+  7: 1.8,
+  6: 1.5,
+  4: 1.2,
+  3: 1.0,
 };
 
 export default function CustomScrollbar({ boatRef, pathPoints }) {
@@ -89,7 +92,7 @@ export default function CustomScrollbar({ boatRef, pathPoints }) {
 
       const newCurrentPoint = pathPoints[0];
       const newNextPoint = pathPoints[pathPoints.length - 1];
-      const newBoatPosition = new THREE.Vector3().lerpVectors(newCurrentPoint, newNextPoint, 0.01);
+      const newBoatPosition = new THREE.Vector3().lerpVectors(newCurrentPoint, newNextPoint, 0.001);
 
       animateBoatPosition(newBoatPosition, newNextPoint, boatRef, INITIAL_BOAT_POSITION_Y, () => {
         scrollRef.current.scrollTop = 0;
@@ -118,6 +121,7 @@ export default function CustomScrollbar({ boatRef, pathPoints }) {
       } else {
         if (rotationAngles[pointIndex] !== undefined) {
           setTargetRotation(rotationAngles[pointIndex]);
+          console.log(pointIndex);
         }
       }
     }
