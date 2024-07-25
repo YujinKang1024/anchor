@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useThree, useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -7,7 +7,9 @@ import Lands from '../Lands/Lands';
 import Ocean from '../Ocean/Ocean';
 import Path from '../Path/Path';
 import CameraController from '../CameraController/CameraController';
+
 import GameLand from '../GameLand/GameLand';
+import GameLandBattleMachine from '../GameLandBattleMachine/GameLandBattleMachine';
 
 import initializeBoatPosition from '../../utils/initializeBoatPosition';
 import {
@@ -26,8 +28,9 @@ export default function Scene3DContents({
   rotationAngle,
 }) {
   const [isInitialCameraSetup, setisInitialCameraSetup] = useState(false);
-  const { scene } = useThree();
   const directionalLightRef = useRef();
+
+  const { scene } = useThree();
   const gradientTexture = useLoader(THREE.TextureLoader, gradientBackground);
 
   useEffect(() => {
@@ -57,6 +60,10 @@ export default function Scene3DContents({
     }
   }, [boatRef, cameraRef, pathPoints, directionalLightRef, isInitialCameraSetup]);
 
+  const handleBattleMachineClick = useCallback(() => {
+    console.log('배틀머신 클릭');
+  }, []);
+
   return (
     <>
       <directionalLight
@@ -81,6 +88,7 @@ export default function Scene3DContents({
       <Ocean directionalLightRef={directionalLightRef} boatRef={boatRef} />
       <Lands />
       <GameLand />
+      <GameLandBattleMachine onClick={handleBattleMachineClick} />
       <Path setPathPoints={setPathPoints} />
       {isInitialCameraSetup && (
         <CameraController
