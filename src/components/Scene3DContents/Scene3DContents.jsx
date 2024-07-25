@@ -74,11 +74,12 @@ export default function Scene3DContents({
         castShadow
         shadow-mapSize-width={4096}
         shadow-mapSize-height={4096}
-        shadow-camera-far={3000}
-        shadow-camera-left={-1500}
-        shadow-camera-right={1500}
-        shadow-camera-top={1500}
-        shadow-camera-bottom={-1500}
+        shadow-camera-far={1200}
+        shadow-camera-left={-900}
+        shadow-camera-right={900}
+        shadow-camera-top={900}
+        shadow-camera-bottom={-900}
+        shadow-bias={-0.01}
       />
       <directionalLight position={[-50, 80, 150]} intensity={0.4} />
       <ambientLight color={new THREE.Color(0xffffff)} intensity={0.5} />

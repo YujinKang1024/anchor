@@ -40,6 +40,7 @@ module.exports = {
           'shadow-camera-right',
           'shadow-camera-top',
           'shadow-camera-bottom',
+          'shadow-bias',
           'transparent',
           'geometry',
           'material',

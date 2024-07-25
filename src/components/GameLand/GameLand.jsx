@@ -34,6 +34,7 @@ export default function GameLand() {
       sceneRef.current.traverse((child) => {
         if (child.isMesh) {
           child.castShadow = true;
+          child.receiveShadow = true;
 
           if (child.name in emissionColorMap) {
             const { color, intensity } = emissionColorMap[child.name];

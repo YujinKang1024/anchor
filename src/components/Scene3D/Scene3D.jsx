@@ -32,7 +32,7 @@ export default function Scene3D() {
         boatRef={boatRef}
       />
       <Canvas
-        camera={{ fov: 40, near: 0.6, far: 2000 }}
+        camera={{ fov: 40, near: 0.6, far: 1300 }}
         style={{
           position: 'absolute',
           display: 'block',

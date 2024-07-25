@@ -22,7 +22,7 @@ export const OCEAN_CONSTANTS = {
   WAVE_SPEED: 0.8,
   WATER_COLOR: new THREE.Color(0.35, 0.55, 0.85),
   CREST_COLOR: new THREE.Color(0.9, 0.8, 0.9),
-  SHADOW_COLOR: new THREE.Color(0.2, 0.5, 0.4),
+  SHADOW_COLOR: new THREE.Color(0.7, 0.7, 0.8),
   FRESNEL_STRENGTH: 3.0,
   REFLECTION_STRENGTH: 0.28,
   FOG_COLOR: new THREE.Color(0.3, 0.5, 0.75),

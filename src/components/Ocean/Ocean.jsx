@@ -236,10 +236,10 @@ const fragmentShader = `
 
     float shadow = getShadow(vShadowCoord);
     float blurred = blurShadow(vShadowCoord);
-    float finalShadow = mix(shadow, blurred, 0.009);
+    float finalShadow = mix(shadow, blurred, 0.0001);
 
     vec3 shadowColor = mix(u_shadowColor, vec3(1.0), finalShadow);
-    finalColor = mix(finalColor, finalColor * shadowColor, 1.0);
+    finalColor = mix(finalColor, finalColor * shadowColor, 1.3);
 
     // 물 깊이에 따른 색상 변화
     float sceneDepth = gl_FragCoord.z / gl_FragCoord.w;

@@ -9,10 +9,11 @@ const Boat = forwardRef((props, ref) => {
   scene.traverse((child) => {
     if (child.isMesh) {
       child.castShadow = true;
+      child.receiveShadow = true;
     }
   });
 
-  return <primitive ref={ref} object={scene} castShadow />;
+  return <primitive ref={ref} object={scene} />;
 });
 
 Boat.displayName = 'Boat';

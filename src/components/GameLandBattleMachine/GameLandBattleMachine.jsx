@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import { useGLTF } from '@react-three/drei';
 
 import gameBattleMachine from '../../assets/models/gameLand-battleMachine.glb';
@@ -6,6 +6,17 @@ import gameBattleMachine from '../../assets/models/gameLand-battleMachine.glb';
 export default function GameLandBattleMachine({ onClick }) {
   const { scene: battleMachineScene } = useGLTF(gameBattleMachine);
   const sceneRef = useRef();
+
+  useEffect(() => {
+    if (sceneRef.current) {
+      sceneRef.current.traverse((child) => {
+        if (child.isMesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
+    }
+  }, []);
 
   const handleClick = useCallback(
     (event) => {
