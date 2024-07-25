@@ -244,7 +244,7 @@ const fragmentShader = `
     // 물 깊이에 따른 색상 변화
     float sceneDepth = gl_FragCoord.z / gl_FragCoord.w;
     vec3 shallowColor = vec3(0.5, 0.9, 0.9);
-    vec3 deepColor = vec3(0.6, 0.25, 0.9);
+    vec3 deepColor = vec3(0.6, 0.2, 0.9);
     float sceneDepthFactor = smoothstep(0.0, 10.0, sceneDepth);
     vec3 depthColor = mix(shallowColor, deepColor, sceneDepthFactor);
 
@@ -261,15 +261,15 @@ const fragmentShader = `
 
     // 하이라이트 추가
     vec3 sunDirection = normalize(vec3(0.5, 0.8, 0.3));
-    float sunReflection = pow(max(0.0, dot(reflect(-viewDirection, waterNormal), sunDirection)), 32.0);
-    float sunStrength = 0.05;
-    vec3 sunColor = vec3(1.0, 0.9, 0.7);
+    float sunReflection = pow(max(0.0, dot(reflect(-viewDirection, waterNormal), sunDirection)), 16.0);
+    float sunStrength = 0.009;
+    vec3 sunColor = vec3(0.5, 0.5, 0.8);
     finalColor += sunColor * sunReflection * sunStrength;
 
     // 추가적인 스페큘러 하이라이트
     float specularStrength = 0.06;
     vec3 halfwayDir = normalize(sunDirection + viewDirection);
-    float spec = pow(max(dot(waterNormal, halfwayDir), 0.0), 32.0);
+    float spec = pow(max(dot(waterNormal, halfwayDir), 0.0), 16.0);
     finalColor += sunColor * spec * specularStrength;
 
     // 디퓨즈 조명 추가

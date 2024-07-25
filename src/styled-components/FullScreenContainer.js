@@ -7,6 +7,8 @@ const FullScreenContainer = styled.div`
   height: 100vh;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+  pointer-events: none;
 `;
 
 export default FullScreenContainer;

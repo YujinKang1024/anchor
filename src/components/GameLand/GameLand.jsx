@@ -8,15 +8,15 @@ import gameLand from '../../assets/models/gameLand.glb';
 const emissionColorMap = {
   game_sign_emission: {
     color: new THREE.Color(0x8000ff),
-    intensity: 3.0,
+    intensity: 2.0,
   },
   game_battle_machine_sign02: {
     color: new THREE.Color(0xf73a54),
-    intensity: 1.0,
+    intensity: 1.5,
   },
   game_monitor_emission: {
-    color: new THREE.Color(0xccddff),
-    intensity: 2.0,
+    color: new THREE.Color(0xbbd2ff),
+    intensity: 20.0,
   },
   game_vending_machine_emission: {
     color: new THREE.Color(0x424242),
@@ -56,7 +56,7 @@ export default function GameLand() {
                   vec3 vNormel = normalize(normalMatrix * viewVector);
                   intensity = pow(0.9 - dot(vNormal, vNormel), 3.0);
 
-                  vec3 expandedPosition = position + normal * 0.2;
+                  vec3 expandedPosition = position + normal * 0.25;
                   gl_Position = projectionMatrix * modelViewMatrix * vec4(expandedPosition, 1.0);
                 }
              `,

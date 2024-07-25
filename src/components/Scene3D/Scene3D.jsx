@@ -64,8 +64,8 @@ export default function Scene3D() {
         <BoatRotationController boatRef={boatRef} />
         <BoatWaveController boatRef={boatRef} />
         <EffectComposer>
-          <DepthOfField focusDistance={0} focalLength={1.4} bokehScale={4} height={800} />
-          <Bloom intensity={0.3} luminanceThreshold={0.9} luminanceSmoothing={0.2} />
+          <DepthOfField focusDistance={0} focalLength={1.2} bokehScale={6} height={800} />
+          <Bloom intensity={0.4} luminanceThreshold={0.85} luminanceSmoothing={0.3} />
         </EffectComposer>
       </Canvas>
       <CameraDragHandler onRotate={handleRotate} />

@@ -27,8 +27,8 @@ export default function BoatWaveController({ boatRef }) {
         boatRef.current.position.y = THREE.MathUtils.lerp(boatRef.current.position.y, targetY, 0.1);
       }
 
-      const targetRotationX = Math.sin(timeRef.current * 1.5) * 0.01;
-      const targetRotationZ = Math.sin(timeRef.current * 1.2) * 0.01;
+      const targetRotationX = Math.sin(timeRef.current * 1.5) * 0.02;
+      const targetRotationZ = Math.sin(timeRef.current * 1.2) * 0.02;
 
       boatRef.current.rotation.x = THREE.MathUtils.lerp(
         boatRef.current.rotation.x,
