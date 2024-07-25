@@ -9,6 +9,7 @@ export const DIRECTIONAL_LIGHT_COLOR = new THREE.Color(0xffffff);
 export const VIRTUAL_SCROLL_HEIGHT = 30000;
 export const SCROLLBAR_HEIGHT_RATIO = 0.97;
 export const MAX_SCROLL_SPEED = 10;
+export const DRAG_THRESHOLD = 10;
 
 export const CAMERA_CONSTANTS = {
   LATERAL_DISTANCE: 65,
