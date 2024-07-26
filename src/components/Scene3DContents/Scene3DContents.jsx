@@ -6,6 +6,8 @@ import Boat from '../Boat/Boat';
 import Lands from '../Lands/Lands';
 import Ocean from '../Ocean/Ocean';
 import Path from '../Path/Path';
+import BoatController from '../BoatController/BoatController';
+import BoatWaveController from '../BoatWaveController/BoatWaveController';
 import CameraController from '../CameraController/CameraController';
 
 import GameLand from '../GameLand/GameLand';
@@ -92,12 +94,16 @@ export default function Scene3DContents({
       <GameLandBattleMachine onClick={handleBattleMachineClick} />
       <Path setPathPoints={setPathPoints} />
       {isInitialCameraSetup && (
-        <CameraController
-          cameraRef={cameraRef}
-          boatRef={boatRef}
-          directionalLightRef={directionalLightRef}
-          rotationAngle={rotationAngle}
-        />
+        <>
+          <CameraController
+            cameraRef={cameraRef}
+            boatRef={boatRef}
+            directionalLightRef={directionalLightRef}
+            rotationAngle={rotationAngle}
+          />
+          <BoatController boatRef={boatRef} pathPoints={pathPoints} />
+          <BoatWaveController boatRef={boatRef} />
+        </>
       )}
     </>
   );

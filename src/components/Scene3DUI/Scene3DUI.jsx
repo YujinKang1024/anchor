@@ -1,11 +1,10 @@
-import CustomScrollbar from '../CustomScrollbar/CustomScrollbar';
 import GradientButton from '../GradientButton/GradientButton';
 import BaseButton from '../BaseButton/BaseButton';
 import Title from '../Title/Title';
 import AnchorImage from '../AnchorImage/AnchorImage';
 import SoundToggleButton from '../SoundToggleButton/SoundToggleButton';
 
-export default function Scene3DUI({ isShowLandingUI, setIsShowLandingUI, pathPoints, boatRef }) {
+export default function Scene3DUI({ isShowLandingUI, setIsShowLandingUI }) {
   function toggleLandingUI() {
     setIsShowLandingUI(!isShowLandingUI);
   }
@@ -24,7 +23,6 @@ export default function Scene3DUI({ isShowLandingUI, setIsShowLandingUI, pathPoi
           </BaseButton>
         </>
       )}
-      <CustomScrollbar boatRef={boatRef} pathPoints={pathPoints} />
       <BaseButton top="4%" right="4%">
         About
       </BaseButton>

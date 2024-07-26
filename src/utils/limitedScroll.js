@@ -1,16 +1,10 @@
-import { MAX_SCROLL_SPEED } from '../constants/constants';
+export default function limitedScroll(delta, currentPosition, setPosition) {
+  const MAX_SCROLL_SPEED = 0.03;
+  const newPosition = currentPosition + delta;
 
-export default function limitedScroll(scrollRef, lastScrollTopRef, handleScroll) {
-  if (!scrollRef.current) return;
-
-  const currentScrollTop = scrollRef.current.scrollTop;
-  if (Math.abs(currentScrollTop - lastScrollTopRef.current) > MAX_SCROLL_SPEED) {
-    scrollRef.current.scrollTop =
-      lastScrollTopRef.current +
-      Math.sign(currentScrollTop - lastScrollTopRef.current) * MAX_SCROLL_SPEED;
-  } else {
-    lastScrollTopRef.current = currentScrollTop;
+  if (Math.abs(delta) > MAX_SCROLL_SPEED) {
+    delta = Math.sign(delta) * MAX_SCROLL_SPEED;
   }
 
-  handleScroll();
+  setPosition(Math.max(0, Math.min(newPosition, 1)));
 }

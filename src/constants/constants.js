@@ -6,9 +6,8 @@ export const LIGHT_POSITION = new THREE.Vector3(300, 480, -150);
 
 export const DIRECTIONAL_LIGHT_COLOR = new THREE.Color(0xffffff);
 
-export const VIRTUAL_SCROLL_HEIGHT = 30000;
-export const SCROLLBAR_HEIGHT_RATIO = 0.97;
-export const MAX_SCROLL_SPEED = 10;
+export const MAX_SCROLL_SPEED = 0.000000001;
+export const SCROLL_BOTTOM_THRESHOLD = 0.999;
 export const DRAG_THRESHOLD = 10;
 
 export const CAMERA_CONSTANTS = {

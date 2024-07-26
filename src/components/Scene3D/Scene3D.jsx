@@ -6,8 +6,7 @@ import { EffectComposer, Bloom, DepthOfField } from '@react-three/postprocessing
 import Scene3DContents from '../Scene3DContents/Scene3DContents';
 import Scene3DUI from '../Scene3DUI/Scene3DUI';
 import CameraDragHandler from '../CameraDragHandler/CameraDragHandler';
-import BoatRotationController from '../BoatRotationController/BoatRotationController';
-import BoatWaveController from '../BoatWaveController/BoatWaveController';
+import CustomScrollbar from '../CustomScrollbar/CustomScrollbar';
 import FullScreenContainer from '../../styled-components/FullScreenContainer';
 
 export default function Scene3D() {
@@ -16,6 +15,7 @@ export default function Scene3D() {
   const [rotationAngle, setRotationAngle] = useState(0);
   const [isCameraReady, setIsCameraReady] = useState(false);
 
+  const canvasRef = useRef(null);
   const boatRef = useRef();
   const cameraRef = useRef();
 
@@ -31,7 +31,9 @@ export default function Scene3D() {
         pathPoints={pathPoints}
         boatRef={boatRef}
       />
+      <CustomScrollbar canvasRef={canvasRef} boatRef={boatRef} pathPoints={pathPoints} />
       <Canvas
+        ref={canvasRef}
         camera={{ fov: 40, near: 0.6, far: 1300 }}
         style={{
           position: 'absolute',
@@ -61,8 +63,6 @@ export default function Scene3D() {
             rotationAngle={rotationAngle}
           />
         )}
-        <BoatRotationController boatRef={boatRef} />
-        <BoatWaveController boatRef={boatRef} />
         <EffectComposer>
           <DepthOfField focusDistance={0} focalLength={1.2} bokehScale={6} height={800} />
           <Bloom intensity={0.4} luminanceThreshold={0.85} luminanceSmoothing={0.3} />
