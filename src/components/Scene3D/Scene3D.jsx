@@ -11,14 +11,18 @@ import FullScreenContainer from '../../styled-components/FullScreenContainer';
 export default function Scene3D() {
   const [isShowLandingUI, setIsShowLandingUI] = useState(false);
   const [rotationAngle, setRotationAngle] = useState(0);
+  const [verticalRotationAngle, setVerticalRotationAngle] = useState(0);
   const [isCameraReady, setIsCameraReady] = useState(false);
 
   const canvasRef = useRef(null);
   const boatRef = useRef();
   const cameraRef = useRef();
 
-  const handleRotate = useCallback((deltaAngle) => {
-    setRotationAngle((prevAngle) => prevAngle + deltaAngle);
+  const handleRotate = useCallback((deltaHorizontalAngle, deltaVerticalAngle) => {
+    setRotationAngle((prevAngle) => prevAngle + deltaHorizontalAngle);
+    setVerticalRotationAngle((prevAngle) => {
+      return Math.max(-Math.PI / 4, Math.min(Math.PI / 4, prevAngle + deltaVerticalAngle));
+    });
   }, []);
 
   return (
@@ -51,7 +55,12 @@ export default function Scene3D() {
         }}
       >
         {isCameraReady && (
-          <Scene3DContents boatRef={boatRef} cameraRef={cameraRef} rotationAngle={rotationAngle} />
+          <Scene3DContents
+            boatRef={boatRef}
+            cameraRef={cameraRef}
+            rotationAngle={rotationAngle}
+            verticalRotationAngle={verticalRotationAngle}
+          />
         )}
         <EffectComposer>
           <DepthOfField focusDistance={0} focalLength={1.4} bokehScale={6} height={800} />

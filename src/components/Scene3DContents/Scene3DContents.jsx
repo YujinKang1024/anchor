@@ -20,7 +20,13 @@ import {
 } from '../../constants/constants';
 import gradientBackground from '../../assets/textures/gradient-background.jpg';
 
-export default function Scene3DContents({ boatRef, cameraRef, pathPoints, rotationAngle }) {
+export default function Scene3DContents({
+  boatRef,
+  cameraRef,
+  pathPoints,
+  rotationAngle,
+  verticalRotationAngle,
+}) {
   const [isInitialCameraSetup, setisInitialCameraSetup] = useState(false);
   const directionalLightRef = useRef();
 
@@ -91,6 +97,7 @@ export default function Scene3DContents({ boatRef, cameraRef, pathPoints, rotati
             boatRef={boatRef}
             directionalLightRef={directionalLightRef}
             rotationAngle={rotationAngle}
+            verticalRotationAngle={verticalRotationAngle}
           />
           <BoatController boatRef={boatRef} />
           <BoatWaveController boatRef={boatRef} />

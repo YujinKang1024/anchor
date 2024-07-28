@@ -3,6 +3,7 @@ import * as THREE from 'three';
 export const LIGHT_POSITION = new THREE.Vector3(300, 480, -150);
 export const DIRECTIONAL_LIGHT_COLOR = new THREE.Color(0xffffff);
 
+export const VERTICAL_DRAG_LIMIT = 5;
 export const DRAG_THRESHOLD = 10;
 
 export const INTERACTION_ZONE = {
