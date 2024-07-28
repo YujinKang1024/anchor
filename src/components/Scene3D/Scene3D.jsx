@@ -6,12 +6,10 @@ import { EffectComposer, Bloom, DepthOfField } from '@react-three/postprocessing
 import Scene3DContents from '../Scene3DContents/Scene3DContents';
 import Scene3DUI from '../Scene3DUI/Scene3DUI';
 import CameraDragHandler from '../CameraDragHandler/CameraDragHandler';
-import CustomScrollbar from '../CustomScrollbar/CustomScrollbar';
 import FullScreenContainer from '../../styled-components/FullScreenContainer';
 
 export default function Scene3D() {
   const [isShowLandingUI, setIsShowLandingUI] = useState(false);
-  const [pathPoints, setPathPoints] = useState([]);
   const [rotationAngle, setRotationAngle] = useState(0);
   const [isCameraReady, setIsCameraReady] = useState(false);
 
@@ -28,10 +26,8 @@ export default function Scene3D() {
       <Scene3DUI
         isShowLandingUI={isShowLandingUI}
         setIsShowLandingUI={setIsShowLandingUI}
-        pathPoints={pathPoints}
         boatRef={boatRef}
       />
-      <CustomScrollbar canvasRef={canvasRef} pathPoints={pathPoints} />
       <Canvas
         ref={canvasRef}
         camera={{ fov: 40, near: 0.6, far: 1300 }}
@@ -55,16 +51,10 @@ export default function Scene3D() {
         }}
       >
         {isCameraReady && (
-          <Scene3DContents
-            boatRef={boatRef}
-            cameraRef={cameraRef}
-            pathPoints={pathPoints}
-            setPathPoints={setPathPoints}
-            rotationAngle={rotationAngle}
-          />
+          <Scene3DContents boatRef={boatRef} cameraRef={cameraRef} rotationAngle={rotationAngle} />
         )}
         <EffectComposer>
-          <DepthOfField focusDistance={0} focalLength={1.2} bokehScale={6} height={800} />
+          <DepthOfField focusDistance={0} focalLength={1.4} bokehScale={6} height={800} />
           <Bloom intensity={0.4} luminanceThreshold={0.85} luminanceSmoothing={0.3} />
         </EffectComposer>
       </Canvas>

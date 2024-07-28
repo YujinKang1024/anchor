@@ -3,18 +3,18 @@ import { useFrame } from '@react-three/fiber';
 import { useAtom } from 'jotai';
 import * as THREE from 'three';
 
-import { isScrollingAtom } from '../../utils/atoms';
+import { isMovingAtom } from '../../utils/atoms';
 import calculateSimplifiedWaveHeight from '../../utils/calculateSimplifiedWaveHeight';
-import { INITIAL_BOAT_POSITION_Y } from '../../constants/constants';
+import { BOAT_CONSTANTS } from '../../constants/constants';
 
 export default function BoatWaveController({ boatRef }) {
-  const [isScrolling] = useAtom(isScrollingAtom);
+  const [isMoving] = useAtom(isMovingAtom);
   const timeRef = useRef(0);
 
   useFrame((state, delta) => {
     if (boatRef.current) {
       const currentPosition = boatRef.current.position;
-      timeRef.current += delta * (isScrolling ? 0.4 : 1);
+      timeRef.current += delta * (isMoving ? 0.4 : 1);
 
       const waveHeight = calculateSimplifiedWaveHeight(
         currentPosition.x,
@@ -22,8 +22,8 @@ export default function BoatWaveController({ boatRef }) {
         timeRef.current,
       );
 
-      if (!isScrolling) {
-        const targetY = INITIAL_BOAT_POSITION_Y + waveHeight;
+      if (!isMoving) {
+        const targetY = BOAT_CONSTANTS.INITIAL_BOAT_POSITION.y + waveHeight;
         boatRef.current.position.y = THREE.MathUtils.lerp(boatRef.current.position.y, targetY, 0.1);
       }
 

@@ -5,7 +5,6 @@ import * as THREE from 'three';
 import Boat from '../Boat/Boat';
 import Lands from '../Lands/Lands';
 import Ocean from '../Ocean/Ocean';
-import Path from '../Path/Path';
 import BoatController from '../BoatController/BoatController';
 import BoatWaveController from '../BoatWaveController/BoatWaveController';
 import CameraController from '../CameraController/CameraController';
@@ -15,19 +14,13 @@ import GameLandBattleMachine from '../GameLandBattleMachine/GameLandBattleMachin
 
 import {
   DIRECTIONAL_LIGHT_COLOR,
-  INITIAL_BOAT_POSITION_Y,
   LIGHT_POSITION,
+  BOAT_CONSTANTS,
   CAMERA_CONSTANTS,
 } from '../../constants/constants';
 import gradientBackground from '../../assets/textures/gradient-background.jpg';
 
-export default function Scene3DContents({
-  boatRef,
-  cameraRef,
-  pathPoints,
-  setPathPoints,
-  rotationAngle,
-}) {
+export default function Scene3DContents({ boatRef, cameraRef, pathPoints, rotationAngle }) {
   const [isInitialCameraSetup, setisInitialCameraSetup] = useState(false);
   const directionalLightRef = useRef();
 
@@ -39,14 +32,9 @@ export default function Scene3DContents({
   }, [scene, gradientTexture]);
 
   useEffect(() => {
-    if (boatRef.current && directionalLightRef.current && pathPoints.length > 0) {
-      const initialBoatPosition = new THREE.Vector3(
-        pathPoints[0].x,
-        INITIAL_BOAT_POSITION_Y,
-        pathPoints[0].y,
-      );
-
-      boatRef.current.position.copy(initialBoatPosition);
+    if (boatRef.current && directionalLightRef.current) {
+      boatRef.current.position.copy(BOAT_CONSTANTS.INITIAL_BOAT_POSITION);
+      // boatRef.current.rotation.set(0, BOAT_CONSTANTS.INITIAL_ROTATION_OFFSET, 0);
 
       if (cameraRef.current && !isInitialCameraSetup) {
         const boatPosition = new THREE.Vector3();
@@ -97,7 +85,6 @@ export default function Scene3DContents({
       <Lands />
       <GameLand />
       <GameLandBattleMachine onClick={handleBattleMachineClick} />
-      <Path setPathPoints={setPathPoints} />
       {isInitialCameraSetup && (
         <>
           <CameraController
@@ -106,7 +93,7 @@ export default function Scene3DContents({
             directionalLightRef={directionalLightRef}
             rotationAngle={rotationAngle}
           />
-          <BoatController boatRef={boatRef} pathPoints={pathPoints} />
+          <BoatController boatRef={boatRef} />
           <BoatWaveController boatRef={boatRef} />
         </>
       )}

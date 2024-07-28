@@ -1,14 +1,18 @@
 import * as THREE from 'three';
 
-export const INITIAL_BOAT_POSITION_Y = 0;
-
 export const LIGHT_POSITION = new THREE.Vector3(300, 480, -150);
-
 export const DIRECTIONAL_LIGHT_COLOR = new THREE.Color(0xffffff);
 
-export const MAX_SCROLL_SPEED = 0.000001;
-export const SCROLL_BOTTOM_THRESHOLD = 0.99;
 export const DRAG_THRESHOLD = 10;
+
+export const BOAT_CONSTANTS = {
+  INITIAL_BOAT_ROTATION: Math.PI / -12,
+  INITIAL_BOAT_POSITION: new THREE.Vector3(155, 0, 394),
+  MOVE_SPEED: 0.1,
+  MOVE_DISTANCE: 1.8,
+  ROTATION_SPEED: 0.08,
+  ROTATION_ANGLE: Math.PI / 64,
+};
 
 export const CAMERA_CONSTANTS = {
   LATERAL_DISTANCE: 65,
