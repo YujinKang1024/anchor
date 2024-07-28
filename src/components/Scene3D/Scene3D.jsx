@@ -63,7 +63,7 @@ export default function Scene3D() {
           />
         )}
         <EffectComposer>
-          <DepthOfField focusDistance={0} focalLength={1.4} bokehScale={6} height={800} />
+          <DepthOfField focusDistance={0} focalLength={1.5} bokehScale={6} height={800} />
           <Bloom intensity={0.4} luminanceThreshold={0.85} luminanceSmoothing={0.3} />
         </EffectComposer>
       </Canvas>

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const ButtonContainer = styled.button`
   width: 13%;
   position: absolute;
-  bottom: 5%;
+  bottom: 10%;
   left: 50%;
   transform: translateX(-50%);
   background: none;
@@ -18,7 +18,7 @@ export const ButtonContainer = styled.button`
 `;
 
 export const ButtonImage = styled.img`
-  width: 100px;
+  width: 90px;
   height: auto;
   transition: transform 0.3s ease;
 
@@ -48,7 +48,7 @@ export const ButtonText = styled.span`
   font-weight: 700;
   font-style: normal;
   font-family: 'Alegreya Sans', sans-serif;
-  color: #5d9bee;
+  color: #6199e5;
   text-shadow:
     -2px 0 #fff,
     0 2px #fff,
