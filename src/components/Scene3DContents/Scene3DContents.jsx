@@ -13,7 +13,6 @@ import CameraController from '../CameraController/CameraController';
 import GameLand from '../GameLand/GameLand';
 import GameLandBattleMachine from '../GameLandBattleMachine/GameLandBattleMachine';
 
-import initializeBoatPosition from '../../utils/initializeBoatPosition';
 import {
   DIRECTIONAL_LIGHT_COLOR,
   INITIAL_BOAT_POSITION_Y,
@@ -41,7 +40,13 @@ export default function Scene3DContents({
 
   useEffect(() => {
     if (boatRef.current && directionalLightRef.current && pathPoints.length > 0) {
-      initializeBoatPosition(boatRef, pathPoints, INITIAL_BOAT_POSITION_Y, 1);
+      const initialBoatPosition = new THREE.Vector3(
+        pathPoints[0].x,
+        INITIAL_BOAT_POSITION_Y,
+        pathPoints[0].y,
+      );
+
+      boatRef.current.position.copy(initialBoatPosition);
 
       if (cameraRef.current && !isInitialCameraSetup) {
         const boatPosition = new THREE.Vector3();

@@ -1,66 +1,77 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { useAtom } from 'jotai';
-import * as THREE from 'three';
-
-import { Scrollbar, Thumb } from './CustomScrollbar.styles';
-import animateBoatPosition from '../../utils/animateBoatPosition';
+import { isScrollingAtom, scrollPositionAtom, isReturningAtom } from '../../utils/atoms';
 import eventBus from '../../utils/eventBus';
-import useCanvasScrollHandler from '../../hooks/useCanvasScrollHandler';
+import { Scrollbar, Thumb } from './CustomScrollbar.styles';
+import { MAX_SCROLL_SPEED, SCROLL_BOTTOM_THRESHOLD } from '../../constants/constants';
 
-import { isReturningAtom, isScrollingAtom } from '../../utils/atoms';
-import { INITIAL_BOAT_POSITION_Y, SCROLL_BOTTOM_THRESHOLD } from '../../constants/constants';
+export default function CustomScrollbar({ canvasRef }) {
+  const [, setIsScrolling] = useAtom(isScrollingAtom);
+  const [scrollPosition, setScrollPosition] = useAtom(scrollPositionAtom);
+  const [isReturning, setIsReturning] = useAtom(isReturningAtom);
+  const lastScrollPositionRef = useRef(0);
 
-export default function CustomScrollbar({ canvasRef, boatRef, pathPoints }) {
-  const [isAtBottom, setIsAtBottom] = useState(false);
-  const [, setIsReturning] = useAtom(isReturningAtom);
-  const [isScrolling] = useAtom(isScrollingAtom);
+  const handleWheel = useCallback(
+    (event) => {
+      event.preventDefault();
+      setIsScrolling(true);
 
-  const [scrollPosition, setScrollPosition] = useCanvasScrollHandler(canvasRef);
+      const delta = event.deltaY * 0.0000012;
+      const currentScrollPosition = scrollPosition;
+      let newScrollPosition;
 
-  const handleScroll = useCallback(() => {
-    if (!pathPoints || pathPoints.length === 0 || !isScrolling) return;
+      if (Math.abs(currentScrollPosition - lastScrollPositionRef.current) > MAX_SCROLL_SPEED) {
+        newScrollPosition =
+          lastScrollPositionRef.current +
+          Math.sign(currentScrollPosition - lastScrollPositionRef.current) * MAX_SCROLL_SPEED;
+      } else {
+        newScrollPosition = currentScrollPosition + delta;
+      }
 
-    if (scrollPosition >= SCROLL_BOTTOM_THRESHOLD && !isAtBottom) {
-      setIsAtBottom(true);
-      setIsReturning(true);
+      newScrollPosition = Math.max(0, Math.min(newScrollPosition, 1));
 
-      const newNextPoint = pathPoints[pathPoints.length - 1];
-      const newCurrentPoint = pathPoints[0];
-      const newBoatPosition = new THREE.Vector3().lerpVectors(newCurrentPoint, newNextPoint, 0.001);
-
-      animateBoatPosition(newBoatPosition, newNextPoint, boatRef, INITIAL_BOAT_POSITION_Y, () => {
-        setScrollPosition(0);
-        setIsAtBottom(false);
+      if (newScrollPosition >= SCROLL_BOTTOM_THRESHOLD && !isReturning) {
+        setIsReturning(true);
+        newScrollPosition = 0;
+      } else if (isReturning && newScrollPosition < 1) {
         setIsReturning(false);
-      });
-    } else if (scrollPosition < SCROLL_BOTTOM_THRESHOLD && isAtBottom) {
-      setIsAtBottom(false);
+      }
+
+      setScrollPosition(newScrollPosition);
+      lastScrollPositionRef.current = newScrollPosition;
+
+      clearTimeout(window.scrollTimeout);
+      window.scrollTimeout = setTimeout(() => {
+        setIsScrolling(false);
+      }, 100);
+    },
+    [setIsScrolling, scrollPosition, setScrollPosition, isReturning, setIsReturning],
+  );
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      canvas.addEventListener('wheel', handleWheel, { passive: false });
+      return () => {
+        canvas.removeEventListener('wheel', handleWheel);
+      };
     }
-  }, [
-    scrollPosition,
-    isAtBottom,
-    pathPoints,
-    boatRef,
-    setIsReturning,
-    setScrollPosition,
-    isScrolling,
-  ]);
+  }, [canvasRef, handleWheel]);
 
   useEffect(() => {
-    handleScroll();
-  }, [handleScroll, scrollPosition]);
-
-  useEffect(() => {
-    const updateScrollbar = ({ scrollPosition }) => {
-      setScrollPosition(scrollPosition);
+    const updateScrollbar = ({ scrollPosition: newScrollPosition }) => {
+      if (!isReturning) {
+        setScrollPosition(newScrollPosition);
+      } else {
+        setScrollPosition((prevPosition) => Math.max(0, prevPosition - 0.01));
+      }
     };
 
     eventBus.on('updateScrollbar', updateScrollbar);
-
     return () => {
       eventBus.remove('updateScrollbar', updateScrollbar);
     };
-  }, [setScrollPosition]);
+  }, [setScrollPosition, isReturning]);
 
   return (
     <Scrollbar>

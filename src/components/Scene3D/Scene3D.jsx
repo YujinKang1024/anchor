@@ -31,7 +31,7 @@ export default function Scene3D() {
         pathPoints={pathPoints}
         boatRef={boatRef}
       />
-      <CustomScrollbar canvasRef={canvasRef} boatRef={boatRef} pathPoints={pathPoints} />
+      <CustomScrollbar canvasRef={canvasRef} pathPoints={pathPoints} />
       <Canvas
         ref={canvasRef}
         camera={{ fov: 40, near: 0.6, far: 1300 }}
