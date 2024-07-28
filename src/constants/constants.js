@@ -5,6 +5,12 @@ export const DIRECTIONAL_LIGHT_COLOR = new THREE.Color(0xffffff);
 
 export const DRAG_THRESHOLD = 10;
 
+export const INTERACTION_ZONE = {
+  x: -749,
+  z: -246,
+  radius: 150,
+};
+
 export const BOAT_CONSTANTS = {
   INITIAL_BOAT_ROTATION: Math.PI / -12,
   INITIAL_BOAT_POSITION: new THREE.Vector3(155, 0, 394),

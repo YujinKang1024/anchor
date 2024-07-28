@@ -3,6 +3,7 @@ import BaseButton from '../BaseButton/BaseButton';
 import Title from '../Title/Title';
 import AnchorImage from '../AnchorImage/AnchorImage';
 import SoundToggleButton from '../SoundToggleButton/SoundToggleButton';
+import EnterIslandButton from '../EnterIslandButton/EnterIslandButton';
 
 export default function Scene3DUI({ isShowLandingUI, setIsShowLandingUI }) {
   function toggleLandingUI() {
@@ -26,6 +27,7 @@ export default function Scene3DUI({ isShowLandingUI, setIsShowLandingUI }) {
       <BaseButton top="4%" right="4%">
         About
       </BaseButton>
+      <EnterIslandButton />
       <SoundToggleButton />
     </>
   );

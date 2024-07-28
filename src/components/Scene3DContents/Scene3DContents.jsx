@@ -34,7 +34,6 @@ export default function Scene3DContents({ boatRef, cameraRef, pathPoints, rotati
   useEffect(() => {
     if (boatRef.current && directionalLightRef.current) {
       boatRef.current.position.copy(BOAT_CONSTANTS.INITIAL_BOAT_POSITION);
-      // boatRef.current.rotation.set(0, BOAT_CONSTANTS.INITIAL_ROTATION_OFFSET, 0);
 
       if (cameraRef.current && !isInitialCameraSetup) {
         const boatPosition = new THREE.Vector3();
