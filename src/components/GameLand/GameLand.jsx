@@ -36,9 +36,9 @@ export default function GameLand() {
   const [isOnBattle, setIsOnBattle] = useAtom(isOnBattleAtom);
   const { scene } = useGLTF(gameLand);
   const glowMeshesRef = useRef([]);
-  const mouseFollowerRef = useRef();
-  const battleMachineRef = useRef();
-  const sceneRef = useRef();
+  const mouseFollowerRef = useRef(null);
+  const battleMachineRef = useRef(null);
+  const sceneRef = useRef(null);
 
   useEffect(() => {
     if (sceneRef.current) {

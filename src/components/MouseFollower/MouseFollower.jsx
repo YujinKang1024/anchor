@@ -5,8 +5,8 @@ import * as THREE from 'three';
 
 const MouseFollower = forwardRef(({ mousePosition, gameLandRef, battleMachineRef }, ref) => {
   const { camera, raycaster } = useThree();
-  const HOVER_HEIGHT = 2;
-  const BATTLE_MACHINE_HOVER_HEIGHT = 5;
+  const HOVER_HEIGHT = 4;
+  const BATTLE_MACHINE_HOVER_HEIGHT = 6;
 
   const intersectObjects = useMemo(() => {
     const objects = [];
@@ -27,7 +27,6 @@ const MouseFollower = forwardRef(({ mousePosition, gameLandRef, battleMachineRef
 
       raycaster.set(camera.position, vector.sub(camera.position).normalize());
 
-      // 모든 교차 가능한 객체에 대해 레이캐스트 수행
       const intersects = raycaster.intersectObjects(intersectObjects, true);
 
       if (intersects.length > 0) {
@@ -41,18 +40,19 @@ const MouseFollower = forwardRef(({ mousePosition, gameLandRef, battleMachineRef
         }
 
         ref.current.position.copy(position);
+        console.log('MouseFollower 위치', position);
       } else {
-        // 교차점이 없을 경우 카메라로부터 일정 거리에 위치시킵니다.
-        const dir = vector.sub(camera.position).normalize();
+        const dir = vector.normalize();
         const pos = camera.position.clone().add(dir.multiplyScalar(100));
         pos.y += HOVER_HEIGHT;
         ref.current.position.copy(pos);
+        console.log('MouseFollower 기본 위치', pos);
       }
     }
   });
 
   return (
-    <Sphere ref={ref} args={[2, 16, 16]}>
+    <Sphere ref={ref} args={[3, 16, 16]}>
       <meshBasicMaterial color="orange" transparent opacity={0.7} />
     </Sphere>
   );

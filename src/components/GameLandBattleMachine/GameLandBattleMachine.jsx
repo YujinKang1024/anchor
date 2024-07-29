@@ -19,7 +19,7 @@ const GameLandBattleMachine = forwardRef(({ onClick }, ref) => {
         }
       });
     }
-  }, []);
+  }, [ref]);
 
   const handleClick = useCallback(
     (event) => {

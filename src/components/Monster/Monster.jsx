@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, useMemo } from 'react';
 import { useAtom } from 'jotai';
 import { useFrame } from '@react-three/fiber';
-import { Box } from '@react-three/drei';
+import { Box, Cylinder } from '@react-three/drei';
 import * as THREE from 'three';
 
 import { LaserShaderMaterial } from '../../materials/LaserShaderMaterial';
@@ -16,6 +16,7 @@ export default function Monster({ position, mouseFollowerRef }) {
   const intervalRef = useRef(null);
 
   const laserMaterial = useMemo(() => LaserShaderMaterial.clone(), []);
+  const raycaster = useMemo(() => new THREE.Raycaster(), []);
 
   useEffect(() => {
     if (isOnBattle) {
@@ -39,55 +40,64 @@ export default function Monster({ position, mouseFollowerRef }) {
     }
     if (isFiring && laserRef.current && isOnBattle && mouseFollowerRef.current) {
       const monsterPosition = new THREE.Vector3(...position);
-      // monsterPosition.y += 9; // 몬스터의 중앙점으로 조정
+      const targetPosition = mouseFollowerRef.current.position.clone();
 
-      // 레이저 시작점을 몬스터의 앞쪽 면으로 조정
-      const laserStartPoint = monsterPosition.clone();
-      // laserStartPoint.x += 9; // 몬스터의 x축 크기의 절반만큼 앞으로 이동
+      const direction = targetPosition.clone().sub(monsterPosition).normalize();
+      const laserStartPoint = monsterPosition.clone().add(direction.clone().multiplyScalar(9));
 
-      const end = mouseFollowerRef.current.position.clone();
+      // 레이캐스터 설정
+      raycaster.params.Points.threshold = 0.1;
+      raycaster.set(laserStartPoint, direction);
+      const maxDistance = 200;
 
-      const direction = end.clone().sub(laserStartPoint);
-      const laserLength = direction.length();
-      direction.normalize();
+      const intersectObjects = [mouseFollowerRef.current, monsterRef.current];
+      const intersects = raycaster.intersectObjects(intersectObjects, true);
 
-      // 레이저 길이 조절 (예: 최대 길이를 100으로 제한)
-      const maxLength = 150;
-      const scaledLength = Math.min(laserLength, maxLength);
+      let laserEndPoint;
+      if (intersects.length > 0 && intersects[0].distance < maxDistance) {
+        laserEndPoint = intersects[0].point.clone();
+        console.log('Collision detected:', intersects[0].object.name || 'Unknown object');
+        console.log('Collision distance:', intersects[0].distance);
+        console.log('Collision point:', laserEndPoint);
+      } else {
+        laserEndPoint = laserStartPoint.clone().add(direction.clone().multiplyScalar(maxDistance));
+        console.log('No collision, using max length');
+      }
 
-      laserMaterial.uniforms.laserLength.value = scaledLength / 100; // 셰이더에서 사용할 정규화된 길이
+      const laserLength = laserStartPoint.distanceTo(laserEndPoint);
+      laserMaterial.uniforms.laserLength.value = laserLength / 100;
       laserMaterial.uniforms.time.value = state.clock.elapsedTime;
 
-      laserRef.current.position.copy(laserStartPoint);
-      laserRef.current.lookAt(end);
+      const laserMidPoint = laserStartPoint
+        .clone()
+        .add(direction.clone().multiplyScalar(laserLength * 0.5));
+      laserRef.current.position.copy(laserMidPoint);
+      laserRef.current.scale.set(0.1, laserLength, 0.1);
 
       laserRef.current.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction);
 
-      laserRef.current.scale.set(1, scaledLength, 1); // x와 z 스케일을 작게 설정하여 레이저를 얇게 만듦
-
-      console.log('시작점', laserStartPoint);
-      console.log('끝점', end);
-      console.log('레이저 길이', scaledLength);
+      console.log('몬스터 위치:', monsterPosition);
+      console.log('마우스 팔로워 위치:', targetPosition);
+      console.log('레이저 시작점:', laserStartPoint);
+      console.log('레이저 끝점:', laserEndPoint);
+      console.log('레이저 길이:', laserLength);
+      console.log('레이저 방향:', direction);
     }
   });
-
-  // ...
 
   return (
     <>
       <Box
         ref={monsterRef}
         args={[18, 18, 18]}
-        position={new THREE.Vector3(position[0], position[1], position[2])}
+        position={new THREE.Vector3(...position)}
         castShadow
         receiveShadow
       >
         <meshStandardMaterial color="red" />
       </Box>
       {isFiring && isOnBattle && (
-        <mesh ref={laserRef} material={laserMaterial}>
-          <planeGeometry args={[1, 1, 1, 10]} />
-        </mesh>
+        <Cylinder ref={laserRef} args={[3.0, 3.0, 1, 8, 1, true]} material={laserMaterial} />
       )}
     </>
   );
