@@ -1,11 +1,11 @@
-import { useCallback, useEffect, forwardRef } from 'react';
+import { useEffect, forwardRef } from 'react';
 import { useAtom } from 'jotai';
 import { useGLTF } from '@react-three/drei';
 
 import { isEnterIslandAtom, isOnBattleAtom } from '../../utils/atoms';
 import gameBattleMachine from '../../assets/models/gameLand-battleMachine.glb';
 
-const GameLandBattleMachine = forwardRef(({ onClick, handlePointerOut }, ref) => {
+const GameLandBattleMachine = forwardRef(({ onClick, onPointerOut, onPointerOver }, ref) => {
   const [isEnterIsland] = useAtom(isEnterIslandAtom);
   const [isOnBattle] = useAtom(isOnBattleAtom);
   const { scene: battleMachineScene } = useGLTF(gameBattleMachine);
@@ -21,31 +21,15 @@ const GameLandBattleMachine = forwardRef(({ onClick, handlePointerOut }, ref) =>
     }
   }, [ref]);
 
-  const handleClick = useCallback(
-    (event) => {
-      if (!isEnterIsland && isOnBattle) return;
-
-      event.stopPropagation();
-      if (onClick) {
-        onClick(event);
-      }
-    },
-    [onClick, isEnterIsland, isOnBattle],
-  );
-
-  const handlePointerOver = useCallback(() => {
-    if (isEnterIsland && !isOnBattle) {
-      document.body.style.cursor = 'pointer';
-    }
-  }, [isEnterIsland, isOnBattle]);
+  const handleClick = (event) => {
+    if (!isEnterIsland || isOnBattle) return;
+    event.stopPropagation();
+    if (onClick) onClick(event);
+  };
 
   return (
     <group ref={ref} scale={[1, 1, 1]} position={[0, 0, 0]}>
-      <mesh
-        onPointerDown={handleClick}
-        onPointerOver={handlePointerOver}
-        onPointerOut={handlePointerOut}
-      >
+      <mesh onPointerDown={handleClick} onPointerOver={onPointerOver} onPointerOut={onPointerOut}>
         <primitive object={battleMachineScene} />
       </mesh>
     </group>

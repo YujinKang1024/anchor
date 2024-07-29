@@ -19,6 +19,7 @@ import { EMISSION_COLOR_MAP } from '../../constants/colorMapConstants';
 
 export default function GameLand() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isBattleMachineHovered, setIsBattleMachineHovered] = useState(false);
   const [isEnterIsland, setIsEnterIsland] = useAtom(isEnterIslandAtom);
   const [isOnBattle, setIsOnBattle] = useAtom(isOnBattleAtom);
   const [playerHP, setPlayerHP] = useAtom(playerHPAtom);
@@ -75,6 +76,18 @@ export default function GameLand() {
     }
   }, [isOnBattle, setIsOnBattle, isEnterIsland]);
 
+  const handleBattleMachinePointerOver = useCallback(() => {
+    if (isEnterIsland && !isOnBattle) {
+      document.body.style.cursor = 'pointer';
+      setIsBattleMachineHovered(true);
+    }
+  }, [isEnterIsland, isOnBattle]);
+
+  const handleBattleMachinePointerOut = useCallback(() => {
+    document.body.style.cursor = 'default';
+    setIsBattleMachineHovered(false);
+  }, []);
+
   const handleVendingMachineClick = useCallback(() => {
     console.log('자판기 클릭!');
   }, []);
@@ -115,23 +128,17 @@ export default function GameLand() {
     }
   }, [playerHP, setPlayerHP]);
 
-  const handlePointerOut = useCallback(() => {
-    document.body.style.cursor = 'default';
-  }, []);
-
   return (
     <>
       <primitive object={scene} ref={sceneRef} />
       <GameLandBattleMachine
         ref={battleMachineRef}
         onClick={handleBattleMachineClick}
-        handlePointerOut={handlePointerOut}
+        onPointerOver={handleBattleMachinePointerOver}
+        onPointerOut={handleBattleMachinePointerOut}
       />
-      <GameLandVendingMachine
-        onClick={handleVendingMachineClick}
-        handlePointerOut={handlePointerOut}
-      />
-      <GameLandBattleSign />
+      <GameLandVendingMachine onClick={handleVendingMachineClick} />
+      <GameLandBattleSign isGlowing={isBattleMachineHovered} />
       <Monster position={[-400, 40, -370]} onAttack={() => handlePlayerDamage(10)} />
       {isOnBattle && mousePosition && (
         <MouseFollower
