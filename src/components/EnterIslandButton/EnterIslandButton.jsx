@@ -77,6 +77,7 @@ export default function EnterIslandButton() {
 
   function handleClickEnterButton() {
     setIsEnterIsland(true);
+    setIsVisible(false);
     console.log(isEnterIsland);
   }
 

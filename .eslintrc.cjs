@@ -44,6 +44,7 @@ module.exports = {
           'transparent',
           'geometry',
           'material',
+          'linewidth',
         ],
       },
     ],

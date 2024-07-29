@@ -1,18 +1,18 @@
-import { useRef, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, forwardRef } from 'react';
 import { useAtom } from 'jotai';
 import { useGLTF } from '@react-three/drei';
 
-import { isEnterIslandAtom } from '../../utils/atoms';
+import { isEnterIslandAtom, isOnBattleAtom } from '../../utils/atoms';
 import gameBattleMachine from '../../assets/models/gameLand-battleMachine.glb';
 
-export default function GameLandBattleMachine({ onClick }) {
+const GameLandBattleMachine = forwardRef(({ onClick }, ref) => {
   const [isEnterIsland] = useAtom(isEnterIslandAtom);
+  const [isOnBattle] = useAtom(isOnBattleAtom);
   const { scene: battleMachineScene } = useGLTF(gameBattleMachine);
-  const sceneRef = useRef();
 
   useEffect(() => {
-    if (sceneRef.current) {
-      sceneRef.current.traverse((child) => {
+    if (ref.current) {
+      ref.current.traverse((child) => {
         if (child.isMesh) {
           child.castShadow = true;
           child.receiveShadow = true;
@@ -23,28 +23,28 @@ export default function GameLandBattleMachine({ onClick }) {
 
   const handleClick = useCallback(
     (event) => {
-      if (!isEnterIsland) return;
+      if (!isEnterIsland && isOnBattle) return;
+
       event.stopPropagation();
       if (onClick) {
         onClick(event);
       }
-      console.log('배틀 머신 클릭');
     },
-    [onClick, isEnterIsland],
+    [onClick, isEnterIsland, isOnBattle],
   );
 
   const handlePointerOver = useCallback(() => {
-    if (isEnterIsland) {
+    if (isEnterIsland && !isOnBattle) {
       document.body.style.cursor = 'pointer';
     }
-  }, [isEnterIsland]);
+  }, [isEnterIsland, isOnBattle]);
 
   const handlePointerOut = useCallback(() => {
     document.body.style.cursor = 'default';
   }, []);
 
   return (
-    <group ref={sceneRef} scale={[1, 1, 1]} position={[0, 0, 0]}>
+    <group ref={ref} scale={[1, 1, 1]} position={[0, 0, 0]}>
       <mesh
         onPointerDown={handleClick}
         onPointerOver={handlePointerOver}
@@ -54,4 +54,8 @@ export default function GameLandBattleMachine({ onClick }) {
       </mesh>
     </group>
   );
-}
+});
+
+GameLandBattleMachine.displayName = 'GameLandBattleMachine';
+
+export default GameLandBattleMachine;

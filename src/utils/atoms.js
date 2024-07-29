@@ -9,3 +9,4 @@ export const boatPositionAtom = atom({
 export const boatRotationAtom = atom(0);
 export const isMovingAtom = atom(false);
 export const isEnterIslandAtom = atom(false);
+export const isOnBattleAtom = atom(false);

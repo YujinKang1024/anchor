@@ -4,12 +4,13 @@ import { useAtom } from 'jotai';
 import * as THREE from 'three';
 
 import { BOAT_CONSTANTS } from '../../constants/constants';
-import { boatPositionAtom, boatRotationAtom } from '../../utils/atoms';
+import { boatPositionAtom, boatRotationAtom, isEnterIslandAtom } from '../../utils/atoms';
 import { useBoatControl } from '../../hooks/useBoatControl';
 
 export default function BoatController({ boatRef }) {
   const [boatPosition] = useAtom(boatPositionAtom);
   const [boatRotation] = useAtom(boatRotationAtom);
+  const [isEnterIsland] = useAtom(isEnterIslandAtom);
 
   const targetPosition = useRef(new THREE.Vector3());
   const targetRotation = useRef(new THREE.Euler());
@@ -17,7 +18,7 @@ export default function BoatController({ boatRef }) {
   useBoatControl();
 
   useFrame(() => {
-    if (boatRef.current) {
+    if (boatRef.current && !isEnterIsland) {
       targetPosition.current.set(boatPosition.x, boatPosition.y, boatPosition.z);
       boatRef.current.position.lerp(targetPosition.current, BOAT_CONSTANTS.MOVE_SPEED);
 

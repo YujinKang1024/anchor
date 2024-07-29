@@ -1,9 +1,15 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
+import { useAtom } from 'jotai';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
+import { isEnterIslandAtom, isOnBattleAtom } from '../../utils/atoms';
 import gameLand from '../../assets/models/gameLand.glb';
+
+import Monster from '../Monster/Monster';
+import GameLandBattleMachine from '../GameLandBattleMachine/GameLandBattleMachine';
+import MouseFollower from '../MouseFollower/MouseFollower';
 
 const emissionColorMap = {
   game_sign_emission: {
@@ -16,17 +22,22 @@ const emissionColorMap = {
   },
   game_monitor_emission: {
     color: new THREE.Color(0xbbd2ff),
-    intensity: 20.0,
+    intensity: 1.5,
   },
   game_vending_machine_emission: {
     color: new THREE.Color(0x424242),
-    intensity: 1.0,
+    intensity: 30.0,
   },
 };
 
 export default function GameLand() {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isEnterIsland] = useAtom(isEnterIslandAtom);
+  const [isOnBattle, setIsOnBattle] = useAtom(isOnBattleAtom);
   const { scene } = useGLTF(gameLand);
   const glowMeshesRef = useRef([]);
+  const mouseFollowerRef = useRef();
+  const battleMachineRef = useRef();
   const sceneRef = useRef();
 
   useEffect(() => {
@@ -110,5 +121,37 @@ export default function GameLand() {
     });
   });
 
-  return <primitive object={scene} ref={sceneRef} />;
+  const handleBattleMachineClick = useCallback(() => {
+    if (!isOnBattle && isEnterIsland) {
+      setIsOnBattle(true);
+      console.log('배틀 시작!');
+    }
+  }, [isOnBattle, setIsOnBattle, isEnterIsland]);
+
+  const handleMouseMove = useCallback((event) => {
+    const x = (event.clientX / window.innerWidth) * 2 - 1;
+    const y = -(event.clientY / window.innerHeight) * 2 + 1;
+    setMousePosition({ x, y });
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [handleMouseMove]);
+
+  return (
+    <>
+      <primitive object={scene} ref={sceneRef} />
+      <GameLandBattleMachine ref={battleMachineRef} onClick={handleBattleMachineClick} />
+      <Monster position={[-400, 40, -370]} mouseFollowerRef={mouseFollowerRef} />
+      {isOnBattle && mousePosition && (
+        <MouseFollower
+          ref={mouseFollowerRef}
+          mousePosition={mousePosition}
+          gameLandRef={sceneRef}
+          battleMachineRef={battleMachineRef}
+        />
+      )}
+    </>
+  );
 }

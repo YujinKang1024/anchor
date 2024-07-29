@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useThree, useLoader } from '@react-three/fiber';
+import { useAtom } from 'jotai';
 import * as THREE from 'three';
 
 import Boat from '../Boat/Boat';
@@ -8,9 +9,8 @@ import Ocean from '../Ocean/Ocean';
 import BoatController from '../BoatController/BoatController';
 import BoatWaveController from '../BoatWaveController/BoatWaveController';
 import CameraController from '../CameraController/CameraController';
-
 import GameLand from '../GameLand/GameLand';
-import GameLandBattleMachine from '../GameLandBattleMachine/GameLandBattleMachine';
+import MouseFollower from '../MouseFollower/MouseFollower';
 
 import {
   DIRECTIONAL_LIGHT_COLOR,
@@ -18,6 +18,8 @@ import {
   BOAT_CONSTANTS,
   CAMERA_CONSTANTS,
 } from '../../constants/constants';
+import { isOnBattleAtom } from '../../utils/atoms';
+
 import gradientBackground from '../../assets/textures/gradient-background.jpg';
 
 export default function Scene3DContents({
@@ -28,6 +30,7 @@ export default function Scene3DContents({
   verticalRotationAngle,
 }) {
   const [isInitialCameraSetup, setisInitialCameraSetup] = useState(false);
+  const [isOnBattle] = useAtom(isOnBattleAtom);
   const directionalLightRef = useRef();
 
   const { scene } = useThree();
@@ -60,10 +63,6 @@ export default function Scene3DContents({
     }
   }, [boatRef, cameraRef, pathPoints, directionalLightRef, isInitialCameraSetup]);
 
-  const handleBattleMachineClick = useCallback(() => {
-    console.log('배틀머신 클릭');
-  }, []);
-
   return (
     <>
       <directionalLight
@@ -89,7 +88,7 @@ export default function Scene3DContents({
       <Ocean directionalLightRef={directionalLightRef} boatRef={boatRef} />
       <Lands />
       <GameLand />
-      <GameLandBattleMachine onClick={handleBattleMachineClick} />
+      {isOnBattle && <MouseFollower />}
       {isInitialCameraSetup && (
         <>
           <CameraController

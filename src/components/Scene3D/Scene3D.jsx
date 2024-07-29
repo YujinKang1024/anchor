@@ -34,7 +34,7 @@ export default function Scene3D() {
       />
       <Canvas
         ref={canvasRef}
-        camera={{ fov: 40, near: 0.6, far: 1300 }}
+        camera={{ fov: 40, near: 0.6, far: 2000 }}
         style={{
           position: 'absolute',
           display: 'block',
@@ -63,7 +63,7 @@ export default function Scene3D() {
           />
         )}
         <EffectComposer>
-          <DepthOfField focusDistance={0} focalLength={1.5} bokehScale={6} height={800} />
+          <DepthOfField focusDistance={0} focalLength={2.0} bokehScale={6} height={800} />
           <Bloom intensity={0.4} luminanceThreshold={0.85} luminanceSmoothing={0.3} />
         </EffectComposer>
       </Canvas>
