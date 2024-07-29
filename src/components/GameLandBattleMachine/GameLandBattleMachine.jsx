@@ -5,7 +5,7 @@ import { useGLTF } from '@react-three/drei';
 import { isEnterIslandAtom, isOnBattleAtom } from '../../utils/atoms';
 import gameBattleMachine from '../../assets/models/gameLand-battleMachine.glb';
 
-const GameLandBattleMachine = forwardRef(({ onClick }, ref) => {
+const GameLandBattleMachine = forwardRef(({ onClick, handlePointerOut }, ref) => {
   const [isEnterIsland] = useAtom(isEnterIslandAtom);
   const [isOnBattle] = useAtom(isOnBattleAtom);
   const { scene: battleMachineScene } = useGLTF(gameBattleMachine);
@@ -38,10 +38,6 @@ const GameLandBattleMachine = forwardRef(({ onClick }, ref) => {
       document.body.style.cursor = 'pointer';
     }
   }, [isEnterIsland, isOnBattle]);
-
-  const handlePointerOut = useCallback(() => {
-    document.body.style.cursor = 'default';
-  }, []);
 
   return (
     <group ref={ref} scale={[1, 1, 1]} position={[0, 0, 0]}>

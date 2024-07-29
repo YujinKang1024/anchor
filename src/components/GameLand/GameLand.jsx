@@ -9,28 +9,13 @@ import gameLand from '../../assets/models/gameLand.glb';
 
 import Monster from '../Monster/Monster';
 import GameLandBattleMachine from '../GameLandBattleMachine/GameLandBattleMachine';
+import GameLandVendingMachine from '../GameLandVendingMachine/GameLandVendingMachine';
+import GameLandBattleSign from '../GameLandBattleSign/GameLandBattleSign';
 import MouseFollower from '../MouseFollower/MouseFollower';
 
+import { createGlowMesh } from '../../materials/GlowShaderMaterial';
 import { PLAYER_MAX_HP } from '../../constants/constants';
-
-const emissionColorMap = {
-  game_sign_emission: {
-    color: new THREE.Color(0x8000ff),
-    intensity: 2.0,
-  },
-  game_battle_machine_sign02: {
-    color: new THREE.Color(0xf73a54),
-    intensity: 1.5,
-  },
-  game_monitor_emission: {
-    color: new THREE.Color(0xbbd2ff),
-    intensity: 1.5,
-  },
-  game_vending_machine_emission: {
-    color: new THREE.Color(0x424242),
-    intensity: 30.0,
-  },
-};
+import { EMISSION_COLOR_MAP } from '../../constants/colorMapConstants';
 
 export default function GameLand() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -50,53 +35,13 @@ export default function GameLand() {
           child.castShadow = true;
           child.receiveShadow = true;
 
-          if (child.name in emissionColorMap) {
-            const { color, intensity } = emissionColorMap[child.name];
+          if (child.name in EMISSION_COLOR_MAP) {
+            const { color, intensity } = EMISSION_COLOR_MAP[child.name];
 
-            child.material.emissive = color;
+            child.material.emissive = new THREE.Color(color);
             child.material.emissiveIntensity = intensity * 0.5;
 
-            const glowMaterial = new THREE.ShaderMaterial({
-              uniforms: {
-                glowColor: { value: color },
-                glowIntensity: { value: intensity },
-                viewVector: { value: new THREE.Vector3() },
-              },
-              vertexShader: `
-                uniform vec3 viewVector;
-                varying float intensity;
-
-                void main() {
-                  vec3 vNormal = normalize(normalMatrix * normal);
-                  vec3 vNormel = normalize(normalMatrix * viewVector);
-                  intensity = pow(0.9 - dot(vNormal, vNormel), 3.0);
-
-                  vec3 expandedPosition = position + normal * 0.25;
-                  gl_Position = projectionMatrix * modelViewMatrix * vec4(expandedPosition, 1.0);
-                }
-             `,
-              fragmentShader: `
-                uniform vec3 glowColor;
-                uniform float glowIntensity;
-                varying float intensity;
-
-                void main() {
-                  vec3 glow = glowColor * intensity * glowIntensity * 1.5;
-                  gl_FragColor = vec4(glow, 1.0);
-                }
-              `,
-              side: THREE.FrontSide,
-              blending: THREE.AdditiveBlending,
-              transparent: true,
-              depthWrite: false,
-            });
-
-            const glowMesh = new THREE.Mesh(child.geometry, glowMaterial);
-            glowMesh.position.copy(child.position);
-            glowMesh.rotation.copy(child.rotation);
-            glowMesh.scale.copy(child.scale);
-            glowMesh.renderOrder = child.renderOrder - 1;
-
+            const glowMesh = createGlowMesh(child, color, intensity);
             child.parent.add(glowMesh);
             glowMeshesRef.current.push(glowMesh);
           }
@@ -129,6 +74,10 @@ export default function GameLand() {
       setIsOnBattle(true);
     }
   }, [isOnBattle, setIsOnBattle, isEnterIsland]);
+
+  const handleVendingMachineClick = useCallback(() => {
+    console.log('자판기 클릭!');
+  }, []);
 
   const handleMouseMove = useCallback((event) => {
     const x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -166,10 +115,23 @@ export default function GameLand() {
     }
   }, [playerHP, setPlayerHP]);
 
+  const handlePointerOut = useCallback(() => {
+    document.body.style.cursor = 'default';
+  }, []);
+
   return (
     <>
       <primitive object={scene} ref={sceneRef} />
-      <GameLandBattleMachine ref={battleMachineRef} onClick={handleBattleMachineClick} />
+      <GameLandBattleMachine
+        ref={battleMachineRef}
+        onClick={handleBattleMachineClick}
+        handlePointerOut={handlePointerOut}
+      />
+      <GameLandVendingMachine
+        onClick={handleVendingMachineClick}
+        handlePointerOut={handlePointerOut}
+      />
+      <GameLandBattleSign />
       <Monster position={[-400, 40, -370]} onAttack={() => handlePlayerDamage(10)} />
       {isOnBattle && mousePosition && (
         <MouseFollower
