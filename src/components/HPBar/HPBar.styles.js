@@ -19,7 +19,7 @@ export const HPBarContainer = styled.div`
 
 export const HPFill = styled.div`
   height: 100%;
-  width: 10%;
+  width: ${({ $playerHP = 100 }) => `${$playerHP}%`};
   background-color: #ff4136;
   border-radius: 8px;
 `;

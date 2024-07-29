@@ -4,12 +4,14 @@ import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
-import { isEnterIslandAtom, isOnBattleAtom } from '../../utils/atoms';
+import { isEnterIslandAtom, isOnBattleAtom, playerHPAtom } from '../../utils/atoms';
 import gameLand from '../../assets/models/gameLand.glb';
 
 import Monster from '../Monster/Monster';
 import GameLandBattleMachine from '../GameLandBattleMachine/GameLandBattleMachine';
 import MouseFollower from '../MouseFollower/MouseFollower';
+
+import { PLAYER_MAX_HP } from '../../constants/constants';
 
 const emissionColorMap = {
   game_sign_emission: {
@@ -32,8 +34,9 @@ const emissionColorMap = {
 
 export default function GameLand() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isEnterIsland] = useAtom(isEnterIslandAtom);
+  const [isEnterIsland, setIsEnterIsland] = useAtom(isEnterIslandAtom);
   const [isOnBattle, setIsOnBattle] = useAtom(isOnBattleAtom);
+  const [playerHP, setPlayerHP] = useAtom(playerHPAtom);
   const { scene } = useGLTF(gameLand);
   const glowMeshesRef = useRef([]);
   const mouseFollowerRef = useRef(null);
@@ -124,7 +127,6 @@ export default function GameLand() {
   const handleBattleMachineClick = useCallback(() => {
     if (!isOnBattle && isEnterIsland) {
       setIsOnBattle(true);
-      console.log('배틀 시작!');
     }
   }, [isOnBattle, setIsOnBattle, isEnterIsland]);
 
@@ -139,11 +141,36 @@ export default function GameLand() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [handleMouseMove]);
 
+  const handlePlayerDamage = useCallback(
+    (damage) => {
+      setPlayerHP((prevHP) => {
+        const newHP = Math.max(prevHP - damage, 0);
+        if (newHP === 0) {
+          setIsEnterIsland(false);
+          setIsOnBattle(false);
+          return 0;
+        }
+        return newHP;
+      });
+    },
+    [setPlayerHP, setIsEnterIsland, setIsOnBattle],
+  );
+
+  useEffect(() => {
+    if (playerHP === 0) {
+      const timer = setTimeout(() => {
+        setPlayerHP(PLAYER_MAX_HP);
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [playerHP, setPlayerHP]);
+
   return (
     <>
       <primitive object={scene} ref={sceneRef} />
       <GameLandBattleMachine ref={battleMachineRef} onClick={handleBattleMachineClick} />
-      <Monster position={[-400, 40, -370]} mouseFollowerRef={mouseFollowerRef} />
+      <Monster position={[-400, 40, -370]} onAttack={() => handlePlayerDamage(10)} />
       {isOnBattle && mousePosition && (
         <MouseFollower
           ref={mouseFollowerRef}

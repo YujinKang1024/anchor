@@ -1,70 +1,69 @@
-import { useRef, useState, useEffect, useMemo } from 'react';
+import { useRef, useState, useMemo } from 'react';
 import { useAtom } from 'jotai';
 import { useFrame } from '@react-three/fiber';
 import { Box, Cylinder } from '@react-three/drei';
 import * as THREE from 'three';
 
 import { LaserShaderMaterial } from '../../materials/LaserShaderMaterial';
-import { isOnBattleAtom } from '../../utils/atoms';
+import { isOnBattleAtom, mouseFollowerPositionAtom } from '../../utils/atoms';
 
-export default function Monster({ position, mouseFollowerRef }) {
+export default function Monster({ position, onAttack }) {
   const [isOnBattle] = useAtom(isOnBattleAtom);
+  const [mouseFollowerPosition] = useAtom(mouseFollowerPositionAtom);
   const [isFiring, setIsFiring] = useState(false);
 
   const monsterRef = useRef();
   const laserRef = useRef();
-  const intervalRef = useRef(null);
+  const lastFireTimeRef = useRef(0);
 
   const laserMaterial = useMemo(() => LaserShaderMaterial.clone(), []);
-  const raycaster = useMemo(() => new THREE.Raycaster(), []);
-
-  useEffect(() => {
-    if (isOnBattle) {
-      const fireLaser = () => {
-        setIsFiring(true);
-        setTimeout(() => setIsFiring(false), 500);
-      };
-      fireLaser();
-      intervalRef.current = setInterval(fireLaser, 2000);
-      return () => {
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-        }
-      };
-    }
-  }, [isOnBattle]);
 
   useFrame((state) => {
     if (monsterRef.current) {
       monsterRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime) * 3;
     }
-    if (isFiring && laserRef.current && isOnBattle && mouseFollowerRef.current) {
+
+    if (isOnBattle) {
+      const currentTime = state.clock.getElapsedTime();
+      if (currentTime - lastFireTimeRef.current >= 1.2) {
+        // 1초마다 발사
+        setIsFiring(true);
+        onAttack();
+        lastFireTimeRef.current = currentTime;
+
+        setTimeout(() => setIsFiring(false), 500);
+      }
+    }
+
+    if (isFiring && laserRef.current && isOnBattle && mouseFollowerPosition) {
       const monsterPosition = new THREE.Vector3(...position);
-      const targetPosition = mouseFollowerRef.current.position.clone();
+      const targetPosition = mouseFollowerPosition.clone();
 
       const direction = targetPosition.clone().sub(monsterPosition).normalize();
       const laserStartPoint = monsterPosition.clone().add(direction.clone().multiplyScalar(9));
 
-      // 레이캐스터 설정
-      raycaster.params.Points.threshold = 0.1;
-      raycaster.set(laserStartPoint, direction);
-      const maxDistance = 200;
+      const mouseFollowerRadius = 3; // MouseFollower의 반지름
+      const laserRadius = 1.5; // 레이저의 반지름
+      const maxDistance = 160;
 
-      const intersectObjects = [mouseFollowerRef.current, monsterRef.current];
-      const intersects = raycaster.intersectObjects(intersectObjects, true);
+      const distanceToFollower = laserStartPoint.distanceTo(targetPosition);
+      const collisionDistance = mouseFollowerRadius + laserRadius;
 
       let laserEndPoint;
-      if (intersects.length > 0 && intersects[0].distance < maxDistance) {
-        laserEndPoint = intersects[0].point.clone();
-        console.log('Collision detected:', intersects[0].object.name || 'Unknown object');
-        console.log('Collision distance:', intersects[0].distance);
-        console.log('Collision point:', laserEndPoint);
+      let laserLength;
+
+      if (distanceToFollower <= collisionDistance) {
+        // 충돌 발생
+        laserLength = distanceToFollower - collisionDistance;
+        laserEndPoint = laserStartPoint.clone().add(direction.clone().multiplyScalar(laserLength));
+        laserLength = Math.max(laserLength, 0); // Ensure laser length is not negative
+        console.log('충돌 발생! 레이저 길이:', laserLength);
       } else {
-        laserEndPoint = laserStartPoint.clone().add(direction.clone().multiplyScalar(maxDistance));
-        console.log('No collision, using max length');
+        // 충돌하지 않음
+        laserLength = Math.min(distanceToFollower - mouseFollowerRadius, maxDistance);
+        laserEndPoint = laserStartPoint.clone().add(direction.clone().multiplyScalar(laserLength));
       }
 
-      const laserLength = laserStartPoint.distanceTo(laserEndPoint);
       laserMaterial.uniforms.laserLength.value = laserLength / 100;
       laserMaterial.uniforms.time.value = state.clock.elapsedTime;
 
@@ -82,6 +81,8 @@ export default function Monster({ position, mouseFollowerRef }) {
       console.log('레이저 끝점:', laserEndPoint);
       console.log('레이저 길이:', laserLength);
       console.log('레이저 방향:', direction);
+      console.log('마우스 팔로워까지의 거리:', distanceToFollower);
+      console.log('충돌 거리:', collisionDistance);
     }
   });
 

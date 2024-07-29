@@ -1,9 +1,13 @@
 import { forwardRef, useMemo } from 'react';
+import { useAtom } from 'jotai';
 import { useThree, useFrame } from '@react-three/fiber';
 import { Sphere } from '@react-three/drei';
 import * as THREE from 'three';
 
+import { mouseFollowerPositionAtom } from '../../utils/atoms';
+
 const MouseFollower = forwardRef(({ mousePosition, gameLandRef, battleMachineRef }, ref) => {
+  const [mouseFollowerPosition, setMouseFollowerPosition] = useAtom(mouseFollowerPositionAtom);
   const { camera, raycaster } = useThree();
   const HOVER_HEIGHT = 4;
   const BATTLE_MACHINE_HOVER_HEIGHT = 6;
@@ -40,7 +44,9 @@ const MouseFollower = forwardRef(({ mousePosition, gameLandRef, battleMachineRef
         }
 
         ref.current.position.copy(position);
+        setMouseFollowerPosition(position);
         console.log('MouseFollower 위치', position);
+        console.log('전역상태 팔로워 위치', mouseFollowerPosition);
       } else {
         const dir = vector.normalize();
         const pos = camera.position.clone().add(dir.multiplyScalar(100));

@@ -6,6 +6,8 @@ export const DIRECTIONAL_LIGHT_COLOR = new THREE.Color(0xffffff);
 export const VERTICAL_DRAG_LIMIT = 5;
 export const DRAG_THRESHOLD = 10;
 
+export const PLAYER_MAX_HP = 100;
+
 export const INTERACTION_ZONE = {
   x: -749,
   z: -246,

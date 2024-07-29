@@ -1,9 +1,13 @@
 import { useRef, useEffect } from 'react';
+import { useAtom } from 'jotai';
 import { gsap } from 'gsap';
 
+import { playerHPAtom } from '../../utils/atoms';
+import { PLAYER_MAX_HP } from '../../constants/constants';
 import { HPBarContainer, HPFill } from './HPBar.styles';
 
-export default function HPBar({ hp, maxHp }) {
+export default function HPBar() {
+  const [playerHP] = useAtom(playerHPAtom);
   const containerRef = useRef(null);
   const fillRef = useRef(null);
 
@@ -17,16 +21,16 @@ export default function HPBar({ hp, maxHp }) {
       });
 
       gsap.to(fillRef.current, {
-        width: `${(hp / maxHp) * 100}%`,
+        width: `${(playerHP / PLAYER_MAX_HP) * 100}%`,
         duration: 0.5,
         ease: 'power2.out',
       });
     }
-  }, [hp, maxHp]);
+  }, [playerHP]);
 
   return (
     <HPBarContainer ref={containerRef}>
-      <HPFill ref={fillRef} />
+      <HPFill ref={fillRef} $playerHP={playerHP} />
     </HPBarContainer>
   );
 }

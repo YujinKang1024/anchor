@@ -44,7 +44,7 @@ export default function Scene3DUI({ isShowLandingUI, setIsShowLandingUI }) {
       {isEnterIsland && <LandSideMenu />}
       {isOnBattle && (
         <>
-          <HPBar hp={100} maxHP={100} />
+          <HPBar />
         </>
       )}
       <SoundToggleButton />
