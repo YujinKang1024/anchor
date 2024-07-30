@@ -19,7 +19,7 @@ export const Container = styled.div`
 
 export const SoundText = styled.p`
   font-size: 1rem;
-  margin-top: 40%;
+  margin-top: 25%;
   margin-right: 7%;
   color: #fff;
   font-family: 'Alegreya Sans', sans-serif;
@@ -35,7 +35,7 @@ export const IconWrapper = styled.div`
 
 export const IconLine = styled.div.attrs()`
   width: 1px;
-  height: 1.5rem;
+  height: 10px;
   background-color: #fff;
-  margin: 0 2px;
+  margin: 0 1px;
 `;

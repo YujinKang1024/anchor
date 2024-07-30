@@ -45,7 +45,6 @@ export default function Monster({ position, onAttack }) {
     if (isOnBattle) {
       const currentTime = state.clock.getElapsedTime();
       if (currentTime - lastFireTimeRef.current >= 1.2) {
-        // 1초마다 발사
         setIsFiring(true);
         onAttack();
         lastFireTimeRef.current = currentTime;
