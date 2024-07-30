@@ -86,6 +86,10 @@ export default function LandingUI({ onStartButtonClick }) {
   }, [animateIn]);
 
   const handleStartButtonClick = useCallback(async () => {
+    const effectAudio = new Audio('/sounds/boat-horn.mp3');
+    effectAudio.volume = 0.4;
+    effectAudio.play();
+
     await animateOut();
     onStartButtonClick();
   }, [animateOut, onStartButtonClick]);
