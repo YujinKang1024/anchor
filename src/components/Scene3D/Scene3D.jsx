@@ -1,7 +1,15 @@
 import { useRef, useState, useCallback } from 'react';
 import { Canvas } from '@react-three/fiber';
 import * as THREE from 'three';
-import { EffectComposer, Bloom, DepthOfField } from '@react-three/postprocessing';
+import {
+  EffectComposer,
+  Bloom,
+  DepthOfField,
+  Vignette,
+  BrightnessContrast,
+  HueSaturation,
+} from '@react-three/postprocessing';
+import { BlendFunction } from 'postprocessing';
 
 import Scene3DContents from '../Scene3DContents/Scene3DContents';
 import Scene3DUI from '../Scene3DUI/Scene3DUI';
@@ -59,7 +67,15 @@ export default function Scene3D() {
         )}
         <EffectComposer>
           <DepthOfField focusDistance={0} focalLength={1.0} bokehScale={6} height={800} />
-          <Bloom intensity={0.4} luminanceThreshold={0.85} luminanceSmoothing={0.3} />
+          <Bloom
+            intensity={0.6}
+            luminanceThreshold={0.75}
+            luminanceSmoothing={0.3}
+            blendFunction={BlendFunction.SCREEN}
+          />
+          <Vignette eskil={false} offset={0.1} darkness={0.35} />
+          <BrightnessContrast brightness={0.01} contrast={0.018} />
+          <HueSaturation blendFunction={BlendFunction.NORMAL} hue={0} saturation={0.1} />
         </EffectComposer>
       </Canvas>
       <CameraDragHandler onRotate={handleRotate} />
