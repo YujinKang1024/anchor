@@ -8,3 +8,13 @@ export const StyledImage = styled.img`
   filter: ${({ $imageBlur = '3px', $applyColorEnhancement }) =>
     `blur(${$imageBlur}) ${$applyColorEnhancement ? 'brightness(0.7) contrast(1.8) saturate(1.5)' : ''}`};
 `;
+
+export const AnchorContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 40vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: -55vh;
+`;

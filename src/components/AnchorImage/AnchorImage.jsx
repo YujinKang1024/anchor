@@ -1,16 +1,23 @@
-import { StyledImage } from './AnchorImage.styles';
+import { forwardRef } from 'react';
+import { StyledImage, AnchorContainer } from './AnchorImage.styles';
 import anchor from '../../assets/images/anchor.png';
 
-export default function AnchorImage({ top, width, zIndex, imageBlur, applyColorEnhancement }) {
+const AnchorImage = forwardRef(({ top, width, zIndex, imageBlur, applyColorEnhancement }, ref) => {
   return (
-    <StyledImage
-      $top={top}
-      $width={width}
-      $zIndex={zIndex}
-      $imageBlur={imageBlur}
-      $applyColorEnhancement={applyColorEnhancement}
-      src={anchor}
-      alt="Anchor"
-    />
+    <AnchorContainer ref={ref}>
+      <StyledImage
+        $top={top}
+        $width={width}
+        $zIndex={zIndex}
+        $imageBlur={imageBlur}
+        $applyColorEnhancement={applyColorEnhancement}
+        src={anchor}
+        alt="Anchor"
+      />
+    </AnchorContainer>
   );
-}
+});
+
+AnchorImage.displayName = 'AnchorImage';
+
+export default AnchorImage;

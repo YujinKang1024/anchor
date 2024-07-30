@@ -9,7 +9,6 @@ import CameraDragHandler from '../CameraDragHandler/CameraDragHandler';
 import FullScreenContainer from '../../styled-components/FullScreenContainer';
 
 export default function Scene3D() {
-  const [isShowLandingUI, setIsShowLandingUI] = useState(false);
   const [rotationAngle, setRotationAngle] = useState(0);
   const [verticalRotationAngle, setVerticalRotationAngle] = useState(0);
   const [isCameraReady, setIsCameraReady] = useState(false);
@@ -27,11 +26,7 @@ export default function Scene3D() {
 
   return (
     <FullScreenContainer>
-      <Scene3DUI
-        isShowLandingUI={isShowLandingUI}
-        setIsShowLandingUI={setIsShowLandingUI}
-        boatRef={boatRef}
-      />
+      <Scene3DUI boatRef={boatRef} />
       <Canvas
         ref={canvasRef}
         camera={{ fov: 40, near: 0.6, far: 1800 }}

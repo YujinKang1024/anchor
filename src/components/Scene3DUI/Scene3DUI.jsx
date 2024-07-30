@@ -7,11 +7,11 @@ import {
   isLandMenuOpenAtom,
   isShowPerspectiveModalAtom,
   isShowAboutModalAtom,
+  isShowLandingUIAtom,
 } from '../../utils/atoms';
 
 import BaseButton from '../BaseButton/BaseButton';
-import Title from '../Title/Title';
-import AnchorImage from '../AnchorImage/AnchorImage';
+import LandingUI from '../LandingUI/LandingUI';
 import SoundToggleButton from '../SoundToggleButton/SoundToggleButton';
 import EnterIslandButton from '../EnterIslandButton/EnterIslandButton';
 import HPBar from '../HPBar/HPBar';
@@ -23,16 +23,17 @@ import AboutModal from '../AboutModal/AboutModal';
 
 import backIcon from '../../assets/images/back-icon.png';
 
-export default function Scene3DUI({ isShowLandingUI, setIsShowLandingUI }) {
+export default function Scene3DUI() {
   const [showWarning, setShowWarning] = useState(false);
+  const [isShowLandingUI, setIsShowLandingUI] = useAtom(isShowLandingUIAtom);
   const [isShowAboutModal, setIsShowAboutModal] = useAtom(isShowAboutModalAtom);
   const [isOnBattle] = useAtom(isOnBattleAtom);
   const [isEnterIsland, setIsEnterIsland] = useAtom(isEnterIslandAtom);
   const [, setIsLandMenuOpen] = useAtom(isLandMenuOpenAtom);
   const [isShowPerspectiveModal] = useAtom(isShowPerspectiveModalAtom);
 
-  function toggleLandingUI() {
-    setIsShowLandingUI(!isShowLandingUI);
+  function handleStartButtonClick() {
+    setIsShowLandingUI(false);
   }
 
   function handleClickBackButton(event) {
@@ -53,15 +54,7 @@ export default function Scene3DUI({ isShowLandingUI, setIsShowLandingUI }) {
 
   return (
     <>
-      {isShowLandingUI && (
-        <>
-          <Title>ANCHOR</Title>
-          <AnchorImage />
-          <BaseButton bottom="28%" toggleLandingUI={toggleLandingUI}>
-            Weigh Anchor
-          </BaseButton>
-        </>
-      )}
+      {isShowLandingUI && <LandingUI onStartButtonClick={handleStartButtonClick} />}
       {!isEnterIsland && (
         <>
           <BaseButton top="4%" right="4%" onClick={handleClickAboutButton}>

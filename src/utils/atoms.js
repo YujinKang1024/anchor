@@ -7,6 +7,7 @@ export const boatPositionAtom = atom({
   y: BOAT_CONSTANTS.INITIAL_BOAT_POSITION.y,
   z: BOAT_CONSTANTS.INITIAL_BOAT_POSITION.z,
 });
+export const isShowLandingUIAtom = atom(true);
 export const boatRotationAtom = atom(0);
 export const isMovingAtom = atom(false);
 export const isEnterIslandAtom = atom(false);

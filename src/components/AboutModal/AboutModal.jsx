@@ -3,13 +3,8 @@ import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 
 import AnchorImage from '../AnchorImage/AnchorImage';
-import {
-  ModalOverlay,
-  ModalContent,
-  TextContainer,
-  Text,
-  HighlightText,
-} from './AboutModal.styles';
+import { GradientBackground, ModalOverlay } from '../../styled-components/fullScreenModal';
+import { TextContainer, Text, HighlightText } from './AboutModal.styles';
 import CloseButton from '../../styled-components/CloseButton';
 
 import { isShowAboutModalAtom } from '../../utils/atoms';
@@ -79,7 +74,7 @@ export default function AboutModal() {
         imageBlur="0"
         applyColorEnhancement="true"
       />
-      <ModalContent ref={contentRef}>
+      <GradientBackground ref={contentRef}>
         <CloseButton onClick={handleClickCloseButton} />
         <TextContainer>
           <Text>
@@ -93,7 +88,7 @@ export default function AboutModal() {
           </Text>
           <Text color="#fff">yujinkang1024@gmail.com</Text>
         </TextContainer>
-      </ModalContent>
+      </GradientBackground>
     </ModalOverlay>
   );
 }
