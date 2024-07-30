@@ -1,16 +1,21 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { useAtom } from 'jotai';
 import * as THREE from 'three';
+import { Physics, useBox, usePlane } from '@react-three/cannon';
 
 import gameVendingMachine from '../../assets/models/gameLand-vendingMachine.glb';
 import { isEnterIslandAtom, isLandMenuOpenAtom } from '../../utils/atoms';
 import { EMISSION_COLOR_MAP } from '../../constants/colorMapConstants';
+import Can from '../Can/Can';
 
-export default function GameLandVendingMachine({ onClick }) {
-  const [isEnterIsland] = useAtom(isEnterIslandAtom);
-  const [isLandMenuOpen] = useAtom(isLandMenuOpenAtom);
+function VendingMachineBody({ onClick, onPointerOver, onPointerOut }) {
   const { scene: vendingMachineScene } = useGLTF(gameVendingMachine);
+  const [ref] = useBox(() => ({
+    mass: 0,
+    position: [-480, 10, -433],
+    args: [50, 110, 30],
+  }));
 
   useEffect(() => {
     vendingMachineScene.traverse((child) => {
@@ -25,6 +30,41 @@ export default function GameLandVendingMachine({ onClick }) {
     });
   }, [vendingMachineScene]);
 
+  return (
+    <>
+      <mesh
+        ref={ref}
+        onPointerDown={onClick}
+        onPointerOver={onPointerOver}
+        onPointerOut={onPointerOut}
+      >
+        <boxGeometry args={[50, 110, 30]} />
+        <meshStandardMaterial color="lightblue" visible={false} />
+      </mesh>
+      <primitive object={vendingMachineScene} />
+    </>
+  );
+}
+
+function GameLandFloor() {
+  const [ref] = usePlane(() => ({
+    rotation: [-Math.PI / 2, 0, 0],
+    position: [-390, 4.0, -290],
+  }));
+
+  return (
+    <mesh ref={ref}>
+      <planeGeometry args={[400, 300]} />
+      <meshStandardMaterial visible={false} />
+    </mesh>
+  );
+}
+
+export default function GameLandVendingMachine({ onClick }) {
+  const [isEnterIsland] = useAtom(isEnterIslandAtom);
+  const [isLandMenuOpen] = useAtom(isLandMenuOpenAtom);
+  const [showCan, setShowCan] = useState(false);
+
   const handleClick = useCallback(
     (event) => {
       if (!isEnterIsland || isLandMenuOpen) return;
@@ -33,6 +73,8 @@ export default function GameLandVendingMachine({ onClick }) {
       if (onClick) {
         onClick(event);
       }
+
+      setShowCan(true);
     },
     [onClick, isEnterIsland, isLandMenuOpen],
   );
@@ -48,14 +90,14 @@ export default function GameLandVendingMachine({ onClick }) {
   }, [isEnterIsland, isLandMenuOpen]);
 
   return (
-    <group scale={[1, 1, 1]} position={[0, 0, 0]}>
-      <mesh
-        onPointerDown={handleClick}
+    <Physics>
+      <VendingMachineBody
+        onClick={handleClick}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
-      >
-        <primitive object={vendingMachineScene} />
-      </mesh>
-    </group>
+      />
+      {showCan && <Can position={[-480, 10, -420]} />}
+      <GameLandFloor />
+    </Physics>
   );
 }

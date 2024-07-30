@@ -29,14 +29,14 @@ export default function PerspectiveModal() {
       opacity: 1,
       scale: 1,
       y: 0,
-      duration: 0.5,
+      duration: 0.8,
     }).to(
       youtubeElement,
       {
         opacity: 1,
         scale: 1,
         y: 0,
-        duration: 0.5,
+        duration: 0.8,
       },
       '-=0.3',
     );
@@ -47,7 +47,7 @@ export default function PerspectiveModal() {
       gsap.to(modalRef.current, {
         rotateY: isHovered ? '18deg' : '30deg',
         rotateX: isHovered ? '2deg' : '4deg',
-        duration: 0.5,
+        duration: 0.8,
         ease: 'power2.out',
       });
     }
@@ -68,14 +68,14 @@ export default function PerspectiveModal() {
       opacity: 0,
       scale: 0.8,
       y: 20,
-      duration: 0.3,
+      duration: 0.5,
     }).to(
       modalElement,
       {
         opacity: 0,
         scale: 0.8,
         y: 20,
-        duration: 0.3,
+        duration: 0.5,
       },
       '-=0.15',
     );

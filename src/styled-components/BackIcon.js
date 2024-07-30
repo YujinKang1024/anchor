@@ -8,9 +8,9 @@ export const BackIconButton = styled.img`
   z-index: 1000;
   cursor: pointer;
   pointer-events: auto;
-  filter: brightness(1.4);
+  filter: brightness(1.5);
 
   &:hover {
-    filter: brightness(1.1);
+    filter: brightness(1.3);
   }
 `;
