@@ -1,8 +1,9 @@
+import { forwardRef } from 'react';
 import { FrameContainer, StyledIframe } from './YouTubeFrame.styles';
 
-export default function YoutubeFrame({ videoId }) {
+const YoutubeFrame = forwardRef(({ videoId }, ref) => {
   return (
-    <FrameContainer>
+    <FrameContainer ref={ref}>
       <StyledIframe
         src={`https://www.youtube.com/embed/${videoId}`}
         allowFullScreen
@@ -10,4 +11,8 @@ export default function YoutubeFrame({ videoId }) {
       />
     </FrameContainer>
   );
-}
+});
+
+YoutubeFrame.displayName = 'YoutubeFrame';
+
+export default YoutubeFrame;

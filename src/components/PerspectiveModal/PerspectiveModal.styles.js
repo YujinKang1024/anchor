@@ -6,18 +6,13 @@ export const StyledPerspectiveDModal = styled.div`
   height: 70%;
   top: 12%;
   left: 9%;
-  transform: rotateY(30deg) rotateX(4deg);
   padding: 20px;
   background: rgba(255, 255, 255, 0.8);
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transform-style: preserve-3d;
-  transition: transform 1.5s;
   z-index: 1200;
-
-  &:hover {
-    transform: rotateY(18deg) rotateX(2deg);
-  }
+  pointer-events: auto;
 `;
 
 export const ModalBackdrop = styled.div`

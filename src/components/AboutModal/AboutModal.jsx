@@ -1,3 +1,7 @@
+import { useAtom } from 'jotai';
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+
 import AnchorImage from '../AnchorImage/AnchorImage';
 import {
   ModalOverlay,
@@ -8,12 +12,75 @@ import {
 } from './AboutModal.styles';
 import CloseButton from '../../styled-components/CloseButton';
 
+import { isShowAboutModalAtom } from '../../utils/atoms';
+
 export default function AboutModal() {
+  const [, setIsShowAboutModal] = useAtom(isShowAboutModalAtom);
+  const modalRef = useRef(null);
+  const contentRef = useRef(null);
+  const imageRef = useRef(null);
+
+  useEffect(() => {
+    const modalElement = modalRef.current;
+    const contentElement = contentRef.current;
+    const imageElement = imageRef.current;
+
+    gsap.set(modalElement, { opacity: 0 });
+    gsap.set([contentElement, imageElement], { scale: 0.8, opacity: 0 });
+
+    const tl = gsap.timeline();
+
+    tl.to(modalElement, {
+      opacity: 1,
+      duration: 0.3,
+    }).to(
+      [contentElement, imageElement],
+      {
+        scale: 1,
+        opacity: 1,
+        duration: 0.5,
+        ease: 'back.out(1.7)',
+        stagger: 0.1,
+      },
+      '-=0.1',
+    );
+  }, []);
+
+  function handleClickCloseButton() {
+    const modalElement = modalRef.current;
+    const contentElement = contentRef.current;
+    const imageElement = imageRef.current;
+
+    const tl = gsap.timeline();
+
+    tl.to([contentElement, imageElement], {
+      scale: 0.8,
+      opacity: 0,
+      duration: 0.3,
+      stagger: 0.1,
+    }).to(
+      modalElement,
+      {
+        opacity: 0,
+        duration: 0.3,
+        onComplete: () => setIsShowAboutModal(false),
+      },
+      '-=0.1',
+    );
+  }
+
   return (
-    <ModalOverlay>
-      <AnchorImage top="78%" width="11rem" zIndex="6" imageBlur="0" applyColorEnhancement="true" />
-      <ModalContent>
-        <CloseButton />
+    <ModalOverlay ref={modalRef}>
+      <AnchorImage
+        ref={imageRef}
+        top="75%"
+        width="11rem"
+        zIndex="6"
+        imageBlur="0"
+        applyColorEnhancement="true"
+      />
+      <ModalContent ref={contentRef}>
+        <CloseButton onClick={handleClickCloseButton} />
         <TextContainer>
           <Text>
             안녕하세요, 프론트엔드 개발자

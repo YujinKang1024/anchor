@@ -9,6 +9,8 @@ const CloseButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
+  pointer-events: auto;
+  z-index: 1500;
 
   &:before,
   &:after {

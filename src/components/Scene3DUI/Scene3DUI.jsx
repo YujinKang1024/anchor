@@ -6,6 +6,7 @@ import {
   isEnterIslandAtom,
   isLandMenuOpenAtom,
   isShowPerspectiveModalAtom,
+  isShowAboutModalAtom,
 } from '../../utils/atoms';
 
 import BaseButton from '../BaseButton/BaseButton';
@@ -18,11 +19,13 @@ import LandSideMenu from '../LandSideMenu/LandSideMenu';
 import PerspectiveModal from '../PerspectiveModal/PerspectiveModal';
 import WarningMessage from '../WarningMessage/WarningMessage';
 import { BackIconButton } from '../../styled-components/BackIcon';
+import AboutModal from '../AboutModal/AboutModal';
 
 import backIcon from '../../assets/images/back-icon.png';
 
 export default function Scene3DUI({ isShowLandingUI, setIsShowLandingUI }) {
   const [showWarning, setShowWarning] = useState(false);
+  const [isShowAboutModal, setIsShowAboutModal] = useAtom(isShowAboutModalAtom);
   const [isOnBattle] = useAtom(isOnBattleAtom);
   const [isEnterIsland, setIsEnterIsland] = useAtom(isEnterIslandAtom);
   const [, setIsLandMenuOpen] = useAtom(isLandMenuOpenAtom);
@@ -44,6 +47,10 @@ export default function Scene3DUI({ isShowLandingUI, setIsShowLandingUI }) {
     }
   }
 
+  function handleClickAboutButton() {
+    setIsShowAboutModal(true);
+  }
+
   return (
     <>
       {isShowLandingUI && (
@@ -57,12 +64,13 @@ export default function Scene3DUI({ isShowLandingUI, setIsShowLandingUI }) {
       )}
       {!isEnterIsland && (
         <>
-          <BaseButton top="4%" right="4%">
+          <BaseButton top="4%" right="4%" onClick={handleClickAboutButton}>
             About
           </BaseButton>
           <EnterIslandButton />
         </>
       )}
+      {isShowAboutModal && <AboutModal />}
       {isEnterIsland && (
         <>
           <LandSideMenu />
