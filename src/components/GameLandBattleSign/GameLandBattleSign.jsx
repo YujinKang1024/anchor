@@ -21,6 +21,9 @@ export default function GameLandBattleSign({ isGlowing }) {
       wholeSignRef.current.traverse((child) => {
         if (child.isMesh) {
           if (child.name in EMISSION_COLOR_MAP) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+
             const { color } = EMISSION_COLOR_MAP[child.name];
             child.material.emissive = new THREE.Color(color);
           }
@@ -48,7 +51,7 @@ export default function GameLandBattleSign({ isGlowing }) {
 
           let targetIntensity;
           if (isOnBattle) {
-            const blinkFactor = (Math.sin(time * 10) + 5) / 2;
+            const blinkFactor = (Math.sin(time * 10) + 3) / 2;
             targetIntensity = intensity * (0.1 + blinkFactor);
           } else {
             targetIntensity = isGlowing ? intensity : 0;
