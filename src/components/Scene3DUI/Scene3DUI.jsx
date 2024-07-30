@@ -2,7 +2,6 @@ import { useAtom } from 'jotai';
 
 import { isOnBattleAtom, isEnterIslandAtom } from '../../utils/atoms';
 
-import GradientButton from '../GradientButton/GradientButton';
 import BaseButton from '../BaseButton/BaseButton';
 import Title from '../Title/Title';
 import AnchorImage from '../AnchorImage/AnchorImage';
@@ -25,9 +24,6 @@ export default function Scene3DUI({ isShowLandingUI, setIsShowLandingUI }) {
         <>
           <Title>ANCHOR</Title>
           <AnchorImage />
-          <GradientButton startColor="#fbc2eb" endColor="#a6c1ee">
-            P O R T F O L I O
-          </GradientButton>
           <BaseButton bottom="28%" toggleLandingUI={toggleLandingUI}>
             Weigh Anchor
           </BaseButton>

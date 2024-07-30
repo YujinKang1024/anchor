@@ -4,7 +4,12 @@ import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
-import { isEnterIslandAtom, isOnBattleAtom, playerHPAtom } from '../../utils/atoms';
+import {
+  isEnterIslandAtom,
+  isOnBattleAtom,
+  playerHPAtom,
+  isLandMenuOpenAtom,
+} from '../../utils/atoms';
 import gameLand from '../../assets/models/gameLand.glb';
 
 import Monster from '../Monster/Monster';
@@ -19,6 +24,7 @@ import { EMISSION_COLOR_MAP } from '../../constants/colorMapConstants';
 
 export default function GameLand() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isLandMenuOpen] = useAtom(isLandMenuOpenAtom);
   const [isBattleMachineHovered, setIsBattleMachineHovered] = useState(false);
   const [isEnterIsland, setIsEnterIsland] = useAtom(isEnterIslandAtom);
   const [isOnBattle, setIsOnBattle] = useAtom(isOnBattleAtom);
@@ -71,17 +77,17 @@ export default function GameLand() {
   });
 
   const handleBattleMachineClick = useCallback(() => {
-    if (!isOnBattle && isEnterIsland) {
+    if (!isOnBattle && isEnterIsland && !isLandMenuOpen) {
       setIsOnBattle(true);
     }
-  }, [isOnBattle, setIsOnBattle, isEnterIsland]);
+  }, [isOnBattle, setIsOnBattle, isEnterIsland, isLandMenuOpen]);
 
   const handleBattleMachinePointerOver = useCallback(() => {
-    if (isEnterIsland && !isOnBattle) {
+    if (isEnterIsland && !isOnBattle && !isLandMenuOpen) {
       document.body.style.cursor = 'pointer';
       setIsBattleMachineHovered(true);
     }
-  }, [isEnterIsland, isOnBattle]);
+  }, [isEnterIsland, isOnBattle, isLandMenuOpen]);
 
   const handleBattleMachinePointerOut = useCallback(() => {
     document.body.style.cursor = 'default';
@@ -89,8 +95,10 @@ export default function GameLand() {
   }, []);
 
   const handleVendingMachineClick = useCallback(() => {
-    console.log('자판기 클릭!');
-  }, []);
+    if (isEnterIsland && !isLandMenuOpen) {
+      console.log('자판기 클릭!');
+    }
+  }, [isEnterIsland, isLandMenuOpen]);
 
   const handleMouseMove = useCallback((event) => {
     const x = (event.clientX / window.innerWidth) * 2 - 1;

@@ -3,6 +3,8 @@ import styled from 'styled-components';
 export const StyledButton = styled.button`
   position: absolute;
   font-size: 1.5rem;
+  left: 30%;
+  bottom: 15%;
   padding: 15px 40px;
   color: #fff;
   background: linear-gradient(
@@ -11,8 +13,9 @@ export const StyledButton = styled.button`
   );
   border: none;
   border-radius: 10px;
-  z-index: 2;
+  z-index: 1001;
   cursor: pointer;
+  pointer-events: auto;
   transition: 0.5s ease;
   background-size: 200% auto;
   box-shadow:

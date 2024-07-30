@@ -2,12 +2,13 @@ import { useEffect, forwardRef } from 'react';
 import { useAtom } from 'jotai';
 import { useGLTF } from '@react-three/drei';
 
-import { isEnterIslandAtom, isOnBattleAtom } from '../../utils/atoms';
+import { isEnterIslandAtom, isOnBattleAtom, isLandMenuOpenAtom } from '../../utils/atoms';
 import gameBattleMachine from '../../assets/models/gameLand-battleMachine.glb';
 
 const GameLandBattleMachine = forwardRef(({ onClick, onPointerOut, onPointerOver }, ref) => {
   const [isEnterIsland] = useAtom(isEnterIslandAtom);
   const [isOnBattle] = useAtom(isOnBattleAtom);
+  const [isLandMenuOpen] = useAtom(isLandMenuOpenAtom);
   const { scene: battleMachineScene } = useGLTF(gameBattleMachine);
 
   useEffect(() => {
@@ -22,8 +23,8 @@ const GameLandBattleMachine = forwardRef(({ onClick, onPointerOut, onPointerOver
   }, [ref]);
 
   const handleClick = (event) => {
-    if (!isEnterIsland || isOnBattle) return;
     event.stopPropagation();
+    if (!isEnterIsland || isOnBattle || isLandMenuOpen) return;
     if (onClick) onClick(event);
   };
 

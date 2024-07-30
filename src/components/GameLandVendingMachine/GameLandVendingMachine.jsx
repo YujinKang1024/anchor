@@ -4,11 +4,12 @@ import { useAtom } from 'jotai';
 import * as THREE from 'three';
 
 import gameVendingMachine from '../../assets/models/gameLand-vendingMachine.glb';
-import { isEnterIslandAtom } from '../../utils/atoms';
+import { isEnterIslandAtom, isLandMenuOpenAtom } from '../../utils/atoms';
 import { EMISSION_COLOR_MAP } from '../../constants/colorMapConstants';
 
 export default function GameLandVendingMachine({ onClick }) {
   const [isEnterIsland] = useAtom(isEnterIslandAtom);
+  const [isLandMenuOpen] = useAtom(isLandMenuOpenAtom);
   const { scene: vendingMachineScene } = useGLTF(gameVendingMachine);
 
   useEffect(() => {
@@ -26,14 +27,14 @@ export default function GameLandVendingMachine({ onClick }) {
 
   const handleClick = useCallback(
     (event) => {
-      if (!isEnterIsland) return;
+      if (!isEnterIsland || isLandMenuOpen) return;
 
       event.stopPropagation();
       if (onClick) {
         onClick(event);
       }
     },
-    [onClick, isEnterIsland],
+    [onClick, isEnterIsland, isLandMenuOpen],
   );
 
   const handlePointerOut = useCallback(() => {
@@ -41,10 +42,10 @@ export default function GameLandVendingMachine({ onClick }) {
   }, []);
 
   const handlePointerOver = useCallback(() => {
-    if (isEnterIsland) {
+    if (isEnterIsland && !isLandMenuOpen) {
       document.body.style.cursor = 'pointer';
     }
-  }, [isEnterIsland]);
+  }, [isEnterIsland, isLandMenuOpen]);
 
   return (
     <group scale={[1, 1, 1]} position={[0, 0, 0]}>
