@@ -31,7 +31,7 @@ export const ButtonContainer = styled.div`
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0.5);
-  cursor: pointer;
+  cursor: ${({ $isShowPerspectiveModal }) => ($isShowPerspectiveModal ? 'default' : 'pointer')};
   pointer-events: auto;
   z-index: 1000;
 `;

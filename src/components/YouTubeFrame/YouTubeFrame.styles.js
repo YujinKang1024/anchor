@@ -7,7 +7,7 @@ export const FrameContainer = styled.div`
   width: 40%;
   height: 48%;
   transform: rotateY(-10deg);
-  z-index: 10;
+  z-index: 1200
   overflow: hidden;
 `;
 
@@ -16,4 +16,5 @@ export const StyledIframe = styled.iframe`
   width: 100%;
   height: 100%;
   border: 0;
+  pointer-events: auto;
 `;

@@ -13,7 +13,7 @@ export const StyledPerspectiveDModal = styled.div`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transform-style: preserve-3d;
   transition: transform 1.5s;
-  z-index: 35;
+  z-index: 1200;
 
   &:hover {
     transform: rotateY(18deg) rotateX(2deg);
@@ -29,6 +29,7 @@ export const ModalBackdrop = styled.div`
   height: 100vh;
   background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
-  z-index: 32;
+  z-index: 1100;
+  pointer-events: auto;
   perspective: 1200px;
 `;

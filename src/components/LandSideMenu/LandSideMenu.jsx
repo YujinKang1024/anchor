@@ -13,19 +13,21 @@ import {
   DescriptionContainer,
 } from './LandSideMenu.styles';
 import GradientButton from '../GradientButton/GradientButton';
-import { isLandMenuOpenAtom } from '../../utils/atoms';
+import { isLandMenuOpenAtom, isShowPerspectiveModalAtom } from '../../utils/atoms';
 import arrowImage from '../../assets/images/arrow.png';
 
 export default function LandSideMenu() {
   const [isLandMenuOpen, setIsLandMenuOpen] = useAtom(isLandMenuOpenAtom);
+  const [isShowPerspectiveModal, setIsShowPerspectiveModal] = useAtom(isShowPerspectiveModalAtom);
   const [isAnimating, setIsAnimating] = useState(false);
+
   const menuRef = useRef(null);
   const textContainerRef = useRef(null);
   const buttonContainerRef = useRef(null);
   const buttonRef = useRef(null);
 
   const toggleMenu = () => {
-    if (isAnimating) return;
+    if (isAnimating || isShowPerspectiveModal) return;
 
     setIsAnimating(true);
     const newIsOpen = !isLandMenuOpen;
@@ -60,9 +62,17 @@ export default function LandSideMenu() {
     gsap.set(buttonRef.current, { rotation: 180 });
   }, []);
 
+  const handlePortfolioClick = () => {
+    setIsShowPerspectiveModal(true);
+  };
+
   return (
     <SideMenuContainer ref={menuRef}>
-      <ButtonContainer ref={buttonContainerRef} onClick={toggleMenu}>
+      <ButtonContainer
+        ref={buttonContainerRef}
+        onClick={toggleMenu}
+        $isShowPerspectiveModal={isShowPerspectiveModal}
+      >
         <ButtonImage ref={buttonRef} src={arrowImage} alt="Arrow Button" />
       </ButtonContainer>
       <TextContainer ref={textContainerRef}>
@@ -81,7 +91,7 @@ export default function LandSideMenu() {
         </DescriptionContainer>
         <DescriptionSmall>블렌더에 맞서기로 한 영웅,</DescriptionSmall>
         <DescriptionSmall>{`'마야'의 이야기는 포트폴리오에서 확인하실 수 있습니다!`}</DescriptionSmall>
-        <GradientButton startColor="#fbc2eb" endColor="#a6c1ee">
+        <GradientButton startColor="#fbc2eb" endColor="#a6c1ee" onClick={handlePortfolioClick}>
           P O R T F O L I O
         </GradientButton>
       </TextContainer>
