@@ -3,7 +3,7 @@ import { useAtom } from 'jotai';
 import { gsap } from 'gsap';
 import { CSSPlugin } from 'gsap/CSSPlugin';
 
-import { isEnterIslandAtom } from '../../utils/atoms';
+import { isEnterIslandAtom, isLandMenuOpenAtom } from '../../utils/atoms';
 import { useInteractionZone } from '../../hooks/useInteractionZone';
 import { ButtonContainer, ButtonImage, ButtonText } from './EnterIslandButton.styles';
 import anchorIconImage from '../../assets/images/anchor-white.png';
@@ -11,6 +11,7 @@ import anchorIconImage from '../../assets/images/anchor-white.png';
 gsap.registerPlugin(CSSPlugin);
 
 export default function EnterIslandButton() {
+  const [, setIsLandMenuOpen] = useAtom(isLandMenuOpenAtom);
   const [isVisible, setIsVisible] = useState(false);
   const [isEnterIsland, setIsEnterIsland] = useAtom(isEnterIslandAtom);
   const buttonRef = useRef(null);
@@ -78,6 +79,7 @@ export default function EnterIslandButton() {
   function handleClickEnterButton() {
     setIsEnterIsland(true);
     setIsVisible(false);
+    setIsLandMenuOpen(true);
     console.log(isEnterIsland);
   }
 

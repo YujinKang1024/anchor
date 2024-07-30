@@ -18,4 +18,10 @@ export const StyledButton = styled.button`
   font-family: 'Alegreya Sans', sans-serif;
   font-weight: 300;
   font-style: normal;
+  pointer-events: auto;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(1.2);
+  }
 `;

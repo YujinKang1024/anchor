@@ -24,7 +24,7 @@ import { EMISSION_COLOR_MAP } from '../../constants/colorMapConstants';
 
 export default function GameLand() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isLandMenuOpen] = useAtom(isLandMenuOpenAtom);
+  const [isLandMenuOpen, setIsLandMenuOpen] = useAtom(isLandMenuOpenAtom);
   const [isBattleMachineHovered, setIsBattleMachineHovered] = useState(false);
   const [isEnterIsland, setIsEnterIsland] = useAtom(isEnterIslandAtom);
   const [isOnBattle, setIsOnBattle] = useAtom(isOnBattleAtom);
@@ -78,6 +78,7 @@ export default function GameLand() {
 
   const handleBattleMachineClick = useCallback(() => {
     if (!isOnBattle && isEnterIsland && !isLandMenuOpen) {
+      console.log('Menu open state:', isLandMenuOpen);
       setIsOnBattle(true);
     }
   }, [isOnBattle, setIsOnBattle, isEnterIsland, isLandMenuOpen]);
@@ -118,12 +119,13 @@ export default function GameLand() {
         if (newHP === 0) {
           setIsEnterIsland(false);
           setIsOnBattle(false);
+          setIsLandMenuOpen(false);
           return 0;
         }
         return newHP;
       });
     },
-    [setPlayerHP, setIsEnterIsland, setIsOnBattle],
+    [setPlayerHP, setIsEnterIsland, setIsOnBattle, setIsLandMenuOpen],
   );
 
   useEffect(() => {

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useAtom } from 'jotai';
 
 import {
@@ -15,15 +16,32 @@ import EnterIslandButton from '../EnterIslandButton/EnterIslandButton';
 import HPBar from '../HPBar/HPBar';
 import LandSideMenu from '../LandSideMenu/LandSideMenu';
 import PerspectiveModal from '../PerspectiveModal/PerspectiveModal';
+import WarningMessage from '../WarningMessage/WarningMessage';
+import { BackIconButton } from '../../styled-components/BackIcon';
+
+import backIcon from '../../assets/images/back-icon.png';
 
 export default function Scene3DUI({ isShowLandingUI, setIsShowLandingUI }) {
+  const [showWarning, setShowWarning] = useState(false);
   const [isOnBattle] = useAtom(isOnBattleAtom);
-  const [isEnterIsland] = useAtom(isEnterIslandAtom);
-  const [isLandMenuOpen] = useAtom(isLandMenuOpenAtom);
+  const [isEnterIsland, setIsEnterIsland] = useAtom(isEnterIslandAtom);
+  const [, setIsLandMenuOpen] = useAtom(isLandMenuOpenAtom);
   const [isShowPerspectiveModal] = useAtom(isShowPerspectiveModalAtom);
 
   function toggleLandingUI() {
     setIsShowLandingUI(!isShowLandingUI);
+  }
+
+  function handleClickBackButton(event) {
+    event.stopPropagation();
+    if (isShowPerspectiveModal) return;
+    if (isOnBattle) {
+      setShowWarning(true);
+      setTimeout(() => setShowWarning(false), 2000);
+    } else if (!isShowPerspectiveModal) {
+      setIsEnterIsland(false);
+      setIsLandMenuOpen(false);
+    }
   }
 
   return (
@@ -45,8 +63,14 @@ export default function Scene3DUI({ isShowLandingUI, setIsShowLandingUI }) {
           <EnterIslandButton />
         </>
       )}
-      {isEnterIsland && <LandSideMenu />}
-      {isLandMenuOpen && isShowPerspectiveModal && <PerspectiveModal />}
+      {isEnterIsland && (
+        <>
+          <LandSideMenu />
+          <BackIconButton src={backIcon} onClick={handleClickBackButton} />
+        </>
+      )}
+      {showWarning && <WarningMessage message="전투 중에는 벗어날 수 없습니다!" />}
+      {isShowPerspectiveModal && <PerspectiveModal />}
       {isOnBattle && <HPBar />}
       <SoundToggleButton />
     </>
