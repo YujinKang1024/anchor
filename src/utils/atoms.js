@@ -16,5 +16,6 @@ export const isOnBattleAtom = atom(false);
 export const isLandMenuOpenAtom = atom(true);
 export const isShowPerspectiveModalAtom = atom(false);
 export const isShowAboutModalAtom = atom(false);
+export const isShowSoldOutMessageAtom = atom(false);
 export const mouseFollowerPositionAtom = atom(new THREE.Vector3());
 export const playerHPAtom = atom(100);

@@ -1,13 +1,21 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, memo, useMemo } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { useAtom } from 'jotai';
 import * as THREE from 'three';
 import { Physics, useBox, usePlane } from '@react-three/cannon';
 
 import gameVendingMachine from '../../assets/models/gameLand-vendingMachine.glb';
-import { isEnterIslandAtom, isLandMenuOpenAtom } from '../../utils/atoms';
+import { isEnterIslandAtom, isLandMenuOpenAtom, isShowSoldOutMessageAtom } from '../../utils/atoms';
 import { EMISSION_COLOR_MAP } from '../../constants/colorMapConstants';
 import Can from '../Can/Can';
+
+useGLTF.preload('../../assets/models/can.glb');
+
+const CanWrapper = memo(({ position }) => {
+  return <Can position={position} />;
+});
+
+CanWrapper.displayName = 'CanWrapper';
 
 function VendingMachineBody({ onClick, onPointerOver, onPointerOut }) {
   const { scene: vendingMachineScene } = useGLTF(gameVendingMachine);
@@ -49,7 +57,10 @@ function VendingMachineBody({ onClick, onPointerOver, onPointerOut }) {
 function GameLandFloor() {
   const [ref] = usePlane(() => ({
     rotation: [-Math.PI / 2, 0, 0],
-    position: [-390, 4.0, -290],
+    position: [-390, 4.5, -290],
+    type: 'Static',
+    restitution: 0.1,
+    friction: 0.8,
   }));
 
   return (
@@ -60,10 +71,11 @@ function GameLandFloor() {
   );
 }
 
-export default function GameLandVendingMachine({ onClick }) {
+function GameLandVendingMachineContent({ onClick }) {
   const [isEnterIsland] = useAtom(isEnterIslandAtom);
   const [isLandMenuOpen] = useAtom(isLandMenuOpenAtom);
-  const [showCan, setShowCan] = useState(false);
+  const [, setIsShowSoldOutMessage] = useAtom(isShowSoldOutMessageAtom);
+  const [cans, setCans] = useState([]);
 
   const handleClick = useCallback(
     (event) => {
@@ -74,9 +86,24 @@ export default function GameLandVendingMachine({ onClick }) {
         onClick(event);
       }
 
-      setShowCan(true);
+      if (cans.length < 5) {
+        setCans((prevCans) => [
+          ...prevCans,
+          {
+            id: Date.now(),
+            position: [
+              -480 + (Math.random() - 0.5) * 2,
+              10 + prevCans.length,
+              -420 + (Math.random() - 0.5) * 2,
+            ],
+          },
+        ]);
+      } else {
+        setIsShowSoldOutMessage(true);
+        setTimeout(() => setIsShowSoldOutMessage(false), 2000);
+      }
     },
-    [onClick, isEnterIsland, isLandMenuOpen],
+    [onClick, isEnterIsland, isLandMenuOpen, cans.length, setIsShowSoldOutMessage],
   );
 
   const handlePointerOut = useCallback(() => {
@@ -89,15 +116,27 @@ export default function GameLandVendingMachine({ onClick }) {
     }
   }, [isEnterIsland, isLandMenuOpen]);
 
+  const canElements = useMemo(() => {
+    return cans.map((can) => <Can key={can.id} initialPosition={can.position} />);
+  }, [cans]);
+
   return (
-    <Physics>
+    <>
       <VendingMachineBody
         onClick={handleClick}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
       />
-      {showCan && <Can position={[-480, 10, -420]} />}
+      {canElements}
       <GameLandFloor />
+    </>
+  );
+}
+
+export default function GameLandVendingMachine({ onClick }) {
+  return (
+    <Physics>
+      <GameLandVendingMachineContent onClick={onClick} />
     </Physics>
   );
 }

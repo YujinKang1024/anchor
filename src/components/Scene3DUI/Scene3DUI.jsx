@@ -9,6 +9,7 @@ import {
   isShowAboutModalAtom,
   isShowLandingUIAtom,
   isSoundPlayingAtom,
+  isShowSoldOutMessageAtom,
 } from '../../utils/atoms';
 
 import BaseButton from '../BaseButton/BaseButton';
@@ -18,7 +19,7 @@ import EnterIslandButton from '../EnterIslandButton/EnterIslandButton';
 import HPBar from '../HPBar/HPBar';
 import LandSideMenu from '../LandSideMenu/LandSideMenu';
 import PerspectiveModal from '../PerspectiveModal/PerspectiveModal';
-import WarningMessage from '../WarningMessage/WarningMessage';
+import PopupMessage from '../PopupMessage/PopupMessage';
 import { BackIconButton } from '../../styled-components/BackIcon';
 import AboutModal from '../AboutModal/AboutModal';
 
@@ -32,6 +33,7 @@ export default function Scene3DUI() {
   const [isOnBattle] = useAtom(isOnBattleAtom);
   const [isEnterIsland, setIsEnterIsland] = useAtom(isEnterIslandAtom);
   const [, setIsLandMenuOpen] = useAtom(isLandMenuOpenAtom);
+  const [isShowSoldOutMessage] = useAtom(isShowSoldOutMessageAtom);
   const [isShowPerspectiveModal] = useAtom(isShowPerspectiveModalAtom);
 
   function handleStartButtonClick() {
@@ -77,7 +79,21 @@ export default function Scene3DUI() {
           <BackIconButton src={backIcon} onClick={handleClickBackButton} />
         </>
       )}
-      {showWarning && <WarningMessage message="전투 중에는 벗어날 수 없습니다!" />}
+      {showWarning && (
+        <PopupMessage
+          message="전투 중에는 벗어날 수 없습니다!"
+          backgroundColor="rgba(255, 0, 0, 0.7)"
+          duration={2}
+        />
+      )}
+      {isShowSoldOutMessage && (
+        <PopupMessage
+          message="음료수가 품절되었습니다!"
+          backgroundColor="rgba(0, 0, 0, 0.7)"
+          duration={2}
+          textColor="#fff"
+        />
+      )}
       {isShowPerspectiveModal && <PerspectiveModal />}
       {isOnBattle && <HPBar />}
       <SoundToggleButton toggleSound={toggleSound} />

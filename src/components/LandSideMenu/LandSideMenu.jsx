@@ -86,10 +86,10 @@ export default function LandSideMenu() {
             {`사악한 기계 통치자 '블렌더'의 수하가 자리를 굳건히 지키고 있기 때문이에요.`}
           </Description>
           <Description>
-            이어지는 팽팽한 긴장감 속에서 섬은 자유를 되찾을 날을 묵묵히 기다리고 있습니다.
+            팽팽한 긴장감 속에서 섬은 자유를 되찾을 날을 묵묵히 기다리고 있습니다.
           </Description>
         </DescriptionContainer>
-        <DescriptionSmall>블렌더에 맞서기로 한 영웅,</DescriptionSmall>
+        <DescriptionSmall>블렌더에 용감히 맞서는 한 영웅,</DescriptionSmall>
         <DescriptionSmall>{`'마야'의 이야기는 포트폴리오에서 확인하실 수 있습니다!`}</DescriptionSmall>
         <GradientButton startColor="#fbc2eb" endColor="#a6c1ee" onClick={handlePortfolioClick}>
           P O R T F O L I O
