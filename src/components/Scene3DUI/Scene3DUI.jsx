@@ -8,6 +8,7 @@ import {
   isShowPerspectiveModalAtom,
   isShowAboutModalAtom,
   isShowLandingUIAtom,
+  isSoundPlayingAtom,
 } from '../../utils/atoms';
 
 import BaseButton from '../BaseButton/BaseButton';
@@ -27,6 +28,7 @@ export default function Scene3DUI() {
   const [showWarning, setShowWarning] = useState(false);
   const [isShowLandingUI, setIsShowLandingUI] = useAtom(isShowLandingUIAtom);
   const [isShowAboutModal, setIsShowAboutModal] = useAtom(isShowAboutModalAtom);
+  const [isSoundPlaying, setIsSoundPlaying] = useAtom(isSoundPlayingAtom);
   const [isOnBattle] = useAtom(isOnBattleAtom);
   const [isEnterIsland, setIsEnterIsland] = useAtom(isEnterIslandAtom);
   const [, setIsLandMenuOpen] = useAtom(isLandMenuOpenAtom);
@@ -34,6 +36,7 @@ export default function Scene3DUI() {
 
   function handleStartButtonClick() {
     setIsShowLandingUI(false);
+    setIsSoundPlaying(true);
   }
 
   function handleClickBackButton(event) {
@@ -50,6 +53,10 @@ export default function Scene3DUI() {
 
   function handleClickAboutButton() {
     setIsShowAboutModal(true);
+  }
+
+  function toggleSound() {
+    setIsSoundPlaying(!isSoundPlaying);
   }
 
   return (
@@ -73,7 +80,7 @@ export default function Scene3DUI() {
       {showWarning && <WarningMessage message="전투 중에는 벗어날 수 없습니다!" />}
       {isShowPerspectiveModal && <PerspectiveModal />}
       {isOnBattle && <HPBar />}
-      <SoundToggleButton />
+      <SoundToggleButton toggleSound={toggleSound} />
     </>
   );
 }

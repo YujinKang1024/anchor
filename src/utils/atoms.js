@@ -10,6 +10,7 @@ export const boatPositionAtom = atom({
 export const isShowLandingUIAtom = atom(true);
 export const boatRotationAtom = atom(0);
 export const isMovingAtom = atom(false);
+export const isSoundPlayingAtom = atom(false);
 export const isEnterIslandAtom = atom(false);
 export const isOnBattleAtom = atom(false);
 export const isLandMenuOpenAtom = atom(true);

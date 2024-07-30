@@ -1,22 +1,41 @@
-import { useRef, useState, useMemo } from 'react';
+import { useRef, useState, useMemo, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { useFrame } from '@react-three/fiber';
 import { Box, Cylinder } from '@react-three/drei';
 import * as THREE from 'three';
 
 import { LaserShaderMaterial } from '../../materials/LaserShaderMaterial';
-import { isOnBattleAtom, mouseFollowerPositionAtom } from '../../utils/atoms';
+import { isOnBattleAtom, mouseFollowerPositionAtom, isSoundPlayingAtom } from '../../utils/atoms';
 
 export default function Monster({ position, onAttack }) {
   const [isOnBattle] = useAtom(isOnBattleAtom);
+  const [isSoundPlaying] = useAtom(isSoundPlayingAtom);
   const [mouseFollowerPosition] = useAtom(mouseFollowerPositionAtom);
   const [isFiring, setIsFiring] = useState(false);
 
   const monsterRef = useRef();
   const laserRef = useRef();
+  const soundRef = useRef();
   const lastFireTimeRef = useRef(0);
 
   const laserMaterial = useMemo(() => LaserShaderMaterial.clone(), []);
+
+  useEffect(() => {
+    const listener = new THREE.AudioListener();
+    const sound = new THREE.Audio(listener);
+    const audioLoader = new THREE.AudioLoader();
+
+    audioLoader.load('/sounds/laser.wav', (buffer) => {
+      sound.setBuffer(buffer);
+      sound.setVolume(0.05);
+    });
+
+    soundRef.current = sound;
+
+    if (monsterRef.current) {
+      monsterRef.current.add(listener);
+    }
+  }, []);
 
   useFrame((state) => {
     if (monsterRef.current) {
@@ -30,6 +49,10 @@ export default function Monster({ position, onAttack }) {
         setIsFiring(true);
         onAttack();
         lastFireTimeRef.current = currentTime;
+
+        if (soundRef.current && isSoundPlaying) {
+          soundRef.current.play();
+        }
 
         setTimeout(() => setIsFiring(false), 500);
       }

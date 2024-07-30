@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { useAtom } from 'jotai';
+
+import { isSoundPlayingAtom } from '../../utils/atoms';
 import {
   StyledSoundButton,
   Container,
@@ -7,12 +10,34 @@ import {
   IconLine,
 } from './SoundToggleButton.styles';
 
-export default function SoundToggleButton() {
-  const [isSoundPlaying, setIsSoundPlaying] = useState(true);
+export default function SoundToggleButton({ toggleSound }) {
+  const [isSoundPlaying] = useAtom(isSoundPlayingAtom);
+  const audioRef = useRef(null);
 
-  function toggleSound() {
-    setIsSoundPlaying(!isSoundPlaying);
-  }
+  useEffect(() => {
+    audioRef.current = new Audio('/sounds/ocean-waves.mp3');
+    audioRef.current.loop = true;
+    audioRef.current.volume = 0.3;
+
+    if (isSoundPlaying) {
+      audioRef.current.play();
+    }
+
+    return () => {
+      audioRef.current.pause();
+      audioRef.current = null;
+    };
+  }, [isSoundPlaying]);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      if (isSoundPlaying) {
+        audioRef.current.play();
+      } else {
+        audioRef.current.pause();
+      }
+    }
+  }, [isSoundPlaying]);
 
   return (
     <StyledSoundButton onClick={toggleSound}>

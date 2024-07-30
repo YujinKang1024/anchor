@@ -8,7 +8,8 @@ export const StyledSoundButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
-  z-index: 2;
+  pointer-events: auto;
+  z-index: 20;
 `;
 
 export const Container = styled.div`
