@@ -99,7 +99,7 @@ export default function LandingUI({ onStartButtonClick }) {
       <GradientBackground ref={backgroundRef}>
         <ModalContent ref={contentRef}>
           <StyledTitle ref={titleRef}>ANCHOR</StyledTitle>
-          <AnchorImage ref={anchorRef} />
+          <AnchorImage ref={anchorRef} marginTop="-55vh" zIndex={1} />
           <BaseButton ref={buttonRef} bottom="20%" onClick={handleStartButtonClick}>
             Weigh Anchor
           </BaseButton>

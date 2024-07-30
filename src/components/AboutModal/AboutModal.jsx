@@ -68,9 +68,9 @@ export default function AboutModal() {
     <ModalOverlay ref={modalRef}>
       <AnchorImage
         ref={imageRef}
-        top="75%"
+        top="100%"
         width="11rem"
-        zIndex="6"
+        zIndex="2000"
         imageBlur="0"
         applyColorEnhancement="true"
       />
