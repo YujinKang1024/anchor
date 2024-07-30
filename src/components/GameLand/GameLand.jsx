@@ -18,12 +18,14 @@ import GameLandVendingMachine from '../GameLandVendingMachine/GameLandVendingMac
 import GameLandBattleSign from '../GameLandBattleSign/GameLandBattleSign';
 import MouseFollower from '../MouseFollower/MouseFollower';
 
-import { createGlowMesh } from '../../materials/GlowShaderMaterial';
 import { PLAYER_MAX_HP } from '../../constants/constants';
 import { EMISSION_COLOR_MAP } from '../../constants/colorMapConstants';
 
 export default function GameLand() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [signIntensity, setSignIntensity] = useState(5.0);
+  const [isBlinking, setIsBlinking] = useState(false);
+
   const [isLandMenuOpen, setIsLandMenuOpen] = useAtom(isLandMenuOpenAtom);
   const [isBattleMachineHovered, setIsBattleMachineHovered] = useState(false);
   const [isEnterIsland, setIsEnterIsland] = useAtom(isEnterIslandAtom);
@@ -47,33 +49,50 @@ export default function GameLand() {
 
             child.material.emissive = new THREE.Color(color);
             child.material.emissiveIntensity = intensity * 0.5;
-
-            const glowMesh = createGlowMesh(child, color, intensity);
-            child.parent.add(glowMesh);
-            glowMeshesRef.current.push(glowMesh);
           }
         }
       });
     }
   }, [scene]);
 
-  const cleanup = useCallback(() => {
-    glowMeshesRef.current.forEach((mesh) => {
-      if (mesh.parent) mesh.parent.remove(mesh);
-      mesh.geometry.dispose();
-      mesh.material.dispose();
-    });
-    glowMeshesRef.current = [];
+  useEffect(() => {
+    const blinkInterval = setInterval(() => {
+      setIsBlinking(true);
+      setTimeout(() => setIsBlinking(false), 800);
+    }, 3000);
+
+    return () => clearInterval(blinkInterval);
   }, []);
 
   useEffect(() => {
-    return cleanup;
-  }, [cleanup]);
+    if (isBlinking) {
+      const blinkEffect = setInterval(() => {
+        setSignIntensity(() => Math.random() * 22 + 10);
+      }, 100);
+
+      return () => clearInterval(blinkEffect);
+    } else {
+      setSignIntensity(28.0);
+    }
+  }, [isBlinking]);
 
   useFrame(({ camera }) => {
     glowMeshesRef.current.forEach((mesh) => {
       mesh.material.uniforms.viewVector.value.copy(camera.position).sub(mesh.position);
+
+      if (mesh.name === 'game_sign_emission') {
+        mesh.material.uniforms.glowColor.value.setRGB(0.5, 0, 1);
+        mesh.material.uniforms.coefficient.value = signIntensity;
+      }
     });
+
+    if (sceneRef.current) {
+      sceneRef.current.traverse((child) => {
+        if (child.isMesh && child.name === 'game_sign_emission') {
+          child.material.emissiveIntensity = signIntensity * 0.1;
+        }
+      });
+    }
   });
 
   const handleBattleMachineClick = useCallback(() => {
