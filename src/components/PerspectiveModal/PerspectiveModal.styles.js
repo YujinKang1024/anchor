@@ -6,7 +6,7 @@ export const StyledPerspectiveDModal = styled.div`
   height: 70%;
   top: 12%;
   left: 9%;
-  padding: 20px;
+  padding: 35px;
   background: rgba(255, 255, 255, 0.8);
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
