@@ -49,12 +49,21 @@ export default function Scene3DUI() {
     } else if (isOnBattle && monsterHP <= 0) {
       setShowBattleMessage(false);
       setShowVictoryMessage(true);
-      setIsOnBattle(false);
-    } else {
+
+      const timer = setTimeout(() => {
+        setIsOnBattle(false);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isOnBattle, monsterHP, setIsOnBattle]);
+
+  useEffect(() => {
+    if (!isOnBattle) {
       setShowBattleMessage(false);
       setShowVictoryMessage(false);
     }
-  }, [isOnBattle, monsterHP, setIsOnBattle]);
+  }, [isOnBattle]);
 
   useEffect(() => {
     if (battleMessageRef.current) {
