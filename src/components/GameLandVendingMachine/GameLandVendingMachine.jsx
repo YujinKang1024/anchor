@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, memo, useMemo } from 'react';
+import { useCallback, useEffect, useState, useMemo, Suspense, lazy } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { useAtom } from 'jotai';
 import * as THREE from 'three';
@@ -7,15 +7,9 @@ import { Physics, useBox, usePlane } from '@react-three/cannon';
 import gameVendingMachine from '../../assets/models/gameLand-vendingMachine.glb';
 import { isEnterIslandAtom, isLandMenuOpenAtom, isShowSoldOutMessageAtom } from '../../utils/atoms';
 import { EMISSION_COLOR_MAP } from '../../constants/colorMapConstants';
-import Can from '../Can/Can';
 
+const Can = lazy(() => import('../Can/Can'));
 useGLTF.preload('../../assets/models/can.glb');
-
-const CanWrapper = memo(({ position }) => {
-  return <Can position={position} />;
-});
-
-CanWrapper.displayName = 'CanWrapper';
 
 function VendingMachineBody({ onClick, onPointerOver, onPointerOut }) {
   const { scene: vendingMachineScene } = useGLTF(gameVendingMachine);
@@ -117,7 +111,11 @@ function GameLandVendingMachineContent({ onClick }) {
   }, [isEnterIsland, isLandMenuOpen]);
 
   const canElements = useMemo(() => {
-    return cans.map((can) => <Can key={can.id} initialPosition={can.position} />);
+    return cans.map((can) => (
+      <Suspense key={can.id} fallback={null}>
+        <Can initialPosition={can.position} />
+      </Suspense>
+    ));
   }, [cans]);
 
   return (
