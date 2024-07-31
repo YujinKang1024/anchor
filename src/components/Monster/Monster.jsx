@@ -4,14 +4,23 @@ import { useFrame } from '@react-three/fiber';
 import { Box, Cylinder } from '@react-three/drei';
 import * as THREE from 'three';
 
+import MonsterHPBar from '../MonsterHPBar/MonsterHPBar';
 import { LaserShaderMaterial } from '../../materials/LaserShaderMaterial';
-import { isOnBattleAtom, mouseFollowerPositionAtom, isSoundPlayingAtom } from '../../utils/atoms';
+import {
+  isOnBattleAtom,
+  mouseFollowerPositionAtom,
+  isSoundPlayingAtom,
+  monsterHPAtom,
+  decreaseMonsterHPAtom,
+} from '../../utils/atoms';
 
 export default function Monster({ position, onAttack }) {
+  const [isFiring, setIsFiring] = useState(false);
   const [isOnBattle] = useAtom(isOnBattleAtom);
+  const [, decreaseMonsterHP] = useAtom(decreaseMonsterHPAtom);
   const [isSoundPlaying] = useAtom(isSoundPlayingAtom);
   const [mouseFollowerPosition] = useAtom(mouseFollowerPositionAtom);
-  const [isFiring, setIsFiring] = useState(false);
+  const [monsterHP] = useAtom(monsterHPAtom);
 
   const monsterRef = useRef();
   const laserRef = useRef();
@@ -19,6 +28,28 @@ export default function Monster({ position, onAttack }) {
   const lastFireTimeRef = useRef(0);
 
   const laserMaterial = useMemo(() => LaserShaderMaterial.clone(), []);
+
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      if (isOnBattle && event.code === 'Space') {
+        decreaseMonsterHP(1.5);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [isOnBattle, decreaseMonsterHP]);
+
+  const hpBarPosition = useMemo(() => {
+    return new THREE.Vector3(position[0], position[1] + 15, position[2]);
+  }, [position]);
+
+  useEffect(() => {
+    console.log('Monster rendered', { position, monsterHP, hpBarPosition });
+  }, [position, monsterHP, hpBarPosition]);
 
   useEffect(() => {
     const listener = new THREE.AudioListener();
@@ -38,11 +69,11 @@ export default function Monster({ position, onAttack }) {
   }, []);
 
   useFrame((state) => {
-    if (monsterRef.current) {
+    if (monsterRef.current && monsterHP > 0) {
       monsterRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime) * 3;
     }
 
-    if (isOnBattle) {
+    if (isOnBattle && monsterHP > 0) {
       const currentTime = state.clock.getElapsedTime();
       if (currentTime - lastFireTimeRef.current >= 1.2) {
         setIsFiring(true);
@@ -55,9 +86,11 @@ export default function Monster({ position, onAttack }) {
 
         setTimeout(() => setIsFiring(false), 500);
       }
+    } else {
+      setIsFiring(false);
     }
 
-    if (isFiring && laserRef.current && isOnBattle && mouseFollowerPosition) {
+    if (isFiring && laserRef.current && isOnBattle && mouseFollowerPosition && monsterHP > 0) {
       const monsterPosition = new THREE.Vector3(...position);
       const targetPosition = mouseFollowerPosition.clone();
 
@@ -110,6 +143,7 @@ export default function Monster({ position, onAttack }) {
 
   return (
     <>
+      {isOnBattle && <MonsterHPBar monsterRef={monsterRef} hp={monsterHP} />}
       <Box
         ref={monsterRef}
         args={[18, 18, 18]}

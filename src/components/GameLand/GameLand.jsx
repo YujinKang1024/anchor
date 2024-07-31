@@ -8,6 +8,7 @@ import {
   isEnterIslandAtom,
   isOnBattleAtom,
   playerHPAtom,
+  monsterHPAtom,
   isLandMenuOpenAtom,
 } from '../../utils/atoms';
 import gameLand from '../../assets/models/gameLand.glb';
@@ -31,6 +32,7 @@ export default function GameLand() {
   const [isEnterIsland, setIsEnterIsland] = useAtom(isEnterIslandAtom);
   const [isOnBattle, setIsOnBattle] = useAtom(isOnBattleAtom);
   const [playerHP, setPlayerHP] = useAtom(playerHPAtom);
+  const [, setMonsterHP] = useAtom(monsterHPAtom);
   const { scene } = useGLTF(gameLand);
   const glowMeshesRef = useRef([]);
   const mouseFollowerRef = useRef(null);
@@ -139,12 +141,13 @@ export default function GameLand() {
           setIsEnterIsland(false);
           setIsOnBattle(false);
           setIsLandMenuOpen(false);
+          setMonsterHP(100);
           return 0;
         }
         return newHP;
       });
     },
-    [setPlayerHP, setIsEnterIsland, setIsOnBattle, setIsLandMenuOpen],
+    [setPlayerHP, setIsEnterIsland, setIsOnBattle, setIsLandMenuOpen, setMonsterHP],
   );
 
   useEffect(() => {

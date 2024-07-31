@@ -4,10 +4,12 @@ import { useThree, useFrame } from '@react-three/fiber';
 import { Sphere } from '@react-three/drei';
 import * as THREE from 'three';
 
-import { mouseFollowerPositionAtom } from '../../utils/atoms';
+import { mouseFollowerPositionAtom, monsterHPAtom } from '../../utils/atoms';
 
 const MouseFollower = forwardRef(({ mousePosition, gameLandRef, battleMachineRef }, ref) => {
   const [mouseFollowerPosition, setMouseFollowerPosition] = useAtom(mouseFollowerPositionAtom);
+  const [monsterHP] = useAtom(monsterHPAtom);
+
   const { camera, raycaster } = useThree();
   const HOVER_HEIGHT = 4;
   const BATTLE_MACHINE_HOVER_HEIGHT = 6;
@@ -24,7 +26,8 @@ const MouseFollower = forwardRef(({ mousePosition, gameLandRef, battleMachineRef
       mousePosition &&
       mousePosition.x !== undefined &&
       mousePosition.y !== undefined &&
-      intersectObjects.length > 0
+      intersectObjects.length > 0 &&
+      monsterHP > 0
     ) {
       const vector = new THREE.Vector3(mousePosition.x, mousePosition.y, 0.5);
       vector.unproject(camera);
@@ -58,9 +61,13 @@ const MouseFollower = forwardRef(({ mousePosition, gameLandRef, battleMachineRef
   });
 
   return (
-    <Sphere ref={ref} args={[3, 16, 16]}>
-      <meshBasicMaterial color="orange" transparent opacity={0.7} />
-    </Sphere>
+    <>
+      {monsterHP > 0 && (
+        <Sphere ref={ref} args={[3, 16, 16]}>
+          <meshBasicMaterial color="orange" transparent opacity={0.7} />
+        </Sphere>
+      )}
+    </>
   );
 });
 

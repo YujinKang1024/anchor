@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAtom } from 'jotai';
+import { gsap } from 'gsap/gsap-core';
 
 import {
   isOnBattleAtom,
@@ -10,6 +11,7 @@ import {
   isShowLandingUIAtom,
   isSoundPlayingAtom,
   isShowSoldOutMessageAtom,
+  monsterHPAtom,
 } from '../../utils/atoms';
 
 import BaseButton from '../BaseButton/BaseButton';
@@ -21,6 +23,7 @@ import LandSideMenu from '../LandSideMenu/LandSideMenu';
 import PerspectiveModal from '../PerspectiveModal/PerspectiveModal';
 import PopupMessage from '../PopupMessage/PopupMessage';
 import { BackIconButton } from '../../styled-components/BackIcon';
+import { BattleMessage, VictoryMessage } from '../../styled-components/Message';
 import AboutModal from '../AboutModal/AboutModal';
 
 import backIcon from '../../assets/images/back-icon.png';
@@ -30,11 +33,81 @@ export default function Scene3DUI() {
   const [isShowLandingUI, setIsShowLandingUI] = useAtom(isShowLandingUIAtom);
   const [isShowAboutModal, setIsShowAboutModal] = useAtom(isShowAboutModalAtom);
   const [isSoundPlaying, setIsSoundPlaying] = useAtom(isSoundPlayingAtom);
-  const [isOnBattle] = useAtom(isOnBattleAtom);
+  const [isOnBattle, setIsOnBattle] = useAtom(isOnBattleAtom);
   const [isEnterIsland, setIsEnterIsland] = useAtom(isEnterIslandAtom);
   const [, setIsLandMenuOpen] = useAtom(isLandMenuOpenAtom);
   const [isShowSoldOutMessage] = useAtom(isShowSoldOutMessageAtom);
   const [isShowPerspectiveModal] = useAtom(isShowPerspectiveModalAtom);
+
+  const [monsterHP] = useAtom(monsterHPAtom);
+  const [showBattleMessage, setShowBattleMessage] = useState(false);
+  const [showVictoryMessage, setShowVictoryMessage] = useState(false);
+  const battleMessageRef = useRef(null);
+  const victoryMessageRef = useRef(null);
+
+  useEffect(() => {
+    if (isOnBattle && monsterHP > 0) {
+      setShowBattleMessage(true);
+      setShowVictoryMessage(false);
+    } else if (isOnBattle && monsterHP <= 0) {
+      setShowBattleMessage(false);
+      setShowVictoryMessage(true);
+      setIsOnBattle(false);
+    } else {
+      setShowBattleMessage(false);
+      setShowVictoryMessage(false);
+    }
+  }, [isOnBattle, monsterHP, setIsOnBattle]);
+
+  useEffect(() => {
+    if (battleMessageRef.current) {
+      if (showBattleMessage) {
+        gsap.to(battleMessageRef.current, {
+          opacity: 1,
+          duration: 0.5,
+          ease: 'power2.out',
+        });
+
+        gsap.to(battleMessageRef.current, {
+          x: '+=5',
+          yoyo: true,
+          repeat: -1,
+          duration: 0.1,
+          ease: 'none',
+        });
+      } else {
+        gsap.to(battleMessageRef.current, {
+          opacity: 0,
+          duration: 0.5,
+          ease: 'power2.in',
+        });
+      }
+    }
+  }, [showBattleMessage]);
+
+  useEffect(() => {
+    if (victoryMessageRef.current) {
+      if (showVictoryMessage) {
+        gsap.to(victoryMessageRef.current, {
+          opacity: 1,
+          scale: 1.2,
+          duration: 1,
+          ease: 'elastic.out(1, 0.3)',
+          onComplete: () => {
+            gsap.to(victoryMessageRef.current, {
+              opacity: 0,
+              scale: 1,
+              duration: 1,
+              delay: 2,
+              ease: 'power2.in',
+            });
+          },
+        });
+      } else {
+        gsap.set(victoryMessageRef.current, { opacity: 0, scale: 1 });
+      }
+    }
+  }, [showVictoryMessage]);
 
   function handleStartButtonClick() {
     setIsShowLandingUI(false);
@@ -96,6 +169,10 @@ export default function Scene3DUI() {
       )}
       {isShowPerspectiveModal && <PerspectiveModal />}
       {isOnBattle && <HPBar />}
+      <BattleMessage ref={battleMessageRef}>{showBattleMessage && 'PRESS SPACEBAR!'}</BattleMessage>
+      <VictoryMessage ref={victoryMessageRef}>
+        {showVictoryMessage && "YOU'RE HERO!"}
+      </VictoryMessage>
       <SoundToggleButton toggleSound={toggleSound} />
     </>
   );
