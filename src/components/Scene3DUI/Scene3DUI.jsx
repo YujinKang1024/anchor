@@ -8,14 +8,12 @@ import {
   isLandMenuOpenAtom,
   isShowPerspectiveModalAtom,
   isShowAboutModalAtom,
-  isShowLandingUIAtom,
   isSoundPlayingAtom,
   isShowSoldOutMessageAtom,
   monsterHPAtom,
 } from '../../utils/atoms';
 
 import BaseButton from '../BaseButton/BaseButton';
-import LandingUI from '../LandingUI/LandingUI';
 import SoundToggleButton from '../SoundToggleButton/SoundToggleButton';
 import EnterIslandButton from '../EnterIslandButton/EnterIslandButton';
 import HPBar from '../HPBar/HPBar';
@@ -30,7 +28,6 @@ import backIcon from '../../assets/images/back-icon.png';
 
 export default function Scene3DUI() {
   const [showWarning, setShowWarning] = useState(false);
-  const [isShowLandingUI, setIsShowLandingUI] = useAtom(isShowLandingUIAtom);
   const [isShowAboutModal, setIsShowAboutModal] = useAtom(isShowAboutModalAtom);
   const [isSoundPlaying, setIsSoundPlaying] = useAtom(isSoundPlayingAtom);
   const [isOnBattle, setIsOnBattle] = useAtom(isOnBattleAtom);
@@ -109,11 +106,6 @@ export default function Scene3DUI() {
     }
   }, [showVictoryMessage]);
 
-  function handleStartButtonClick() {
-    setIsShowLandingUI(false);
-    setIsSoundPlaying(true);
-  }
-
   function handleClickBackButton(event) {
     event.stopPropagation();
     if (isShowPerspectiveModal) return;
@@ -136,7 +128,6 @@ export default function Scene3DUI() {
 
   return (
     <>
-      {isShowLandingUI && <LandingUI onStartButtonClick={handleStartButtonClick} />}
       {!isEnterIsland && (
         <>
           <BaseButton top="4%" right="4%" onClick={handleClickAboutButton}>

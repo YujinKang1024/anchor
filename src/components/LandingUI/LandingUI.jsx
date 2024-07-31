@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { gsap } from 'gsap';
+import styled from 'styled-components';
 import { StyledTitle } from './LandingUI.styles';
 
 import AnchorImage from '../AnchorImage/AnchorImage';
@@ -10,12 +11,35 @@ import {
   ModalOverlay,
 } from '../../styled-components/fullScreenModal';
 
+const LandingOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9998;
+  opacity: 0;
+`;
+
 export default function LandingUI({ onStartButtonClick }) {
   const anchorRef = useRef(null);
   const titleRef = useRef(null);
   const buttonRef = useRef(null);
   const contentRef = useRef(null);
   const backgroundRef = useRef(null);
+  const overlayRef = useRef(null);
+
+  useEffect(() => {
+    gsap.to(overlayRef.current, {
+      opacity: 1,
+      duration: 1,
+      ease: 'power2.inOut',
+    });
+  }, []);
 
   const animateIn = useCallback(() => {
     const tl = gsap.timeline();
@@ -95,16 +119,18 @@ export default function LandingUI({ onStartButtonClick }) {
   }, [animateOut, onStartButtonClick]);
 
   return (
-    <ModalOverlay>
-      <GradientBackground ref={backgroundRef}>
-        <ModalContent ref={contentRef}>
-          <StyledTitle ref={titleRef}>ANCHOR</StyledTitle>
-          <AnchorImage ref={anchorRef} marginTop="-55vh" zIndex={1} />
-          <BaseButton ref={buttonRef} bottom="20%" onClick={handleStartButtonClick}>
-            Weigh Anchor
-          </BaseButton>
-        </ModalContent>
-      </GradientBackground>
-    </ModalOverlay>
+    <LandingOverlay ref={overlayRef}>
+      <ModalOverlay>
+        <GradientBackground ref={backgroundRef}>
+          <ModalContent ref={contentRef}>
+            <StyledTitle ref={titleRef}>ANCHOR</StyledTitle>
+            <AnchorImage ref={anchorRef} marginTop="-55vh" zIndex={1} />
+            <BaseButton ref={buttonRef} bottom="20%" onClick={handleStartButtonClick}>
+              Weigh Anchor
+            </BaseButton>
+          </ModalContent>
+        </GradientBackground>
+      </ModalOverlay>
+    </LandingOverlay>
   );
 }
