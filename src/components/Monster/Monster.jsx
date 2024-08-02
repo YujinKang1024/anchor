@@ -1,8 +1,11 @@
 import { useRef, useState, useMemo, useEffect } from 'react';
+import { useGLTF } from '@react-three/drei';
 import { useAtom } from 'jotai';
 import { useFrame } from '@react-three/fiber';
-import { Box, Cylinder } from '@react-three/drei';
+import { Cylinder } from '@react-three/drei';
 import * as THREE from 'three';
+
+import monster from '../../assets/models/monster.glb';
 
 import MonsterHPBar from '../MonsterHPBar/MonsterHPBar';
 import { LaserShaderMaterial } from '../../materials/LaserShaderMaterial';
@@ -14,7 +17,10 @@ import {
   decreaseMonsterHPAtom,
 } from '../../utils/atoms';
 
+const ROTATION_ANGLE = Math.PI / 4;
+
 export default function Monster({ position, onAttack }) {
+  const { scene: monsterScene } = useGLTF(monster);
   const [isFiring, setIsFiring] = useState(false);
   const [isOnBattle] = useAtom(isOnBattleAtom);
   const [, decreaseMonsterHP] = useAtom(decreaseMonsterHPAtom);
@@ -26,8 +32,19 @@ export default function Monster({ position, onAttack }) {
   const laserRef = useRef();
   const soundRef = useRef();
   const lastFireTimeRef = useRef(0);
+  const emissionMeshRef = useRef();
 
   const laserMaterial = useMemo(() => LaserShaderMaterial.clone(), []);
+
+  useEffect(() => {
+    const emissionMesh = monsterScene.getObjectByName('monster_emission');
+    if (emissionMesh) {
+      emissionMeshRef.current = emissionMesh;
+      console.log('Emission mesh found:', emissionMesh);
+    } else {
+      console.warn('Emission mesh not found in the monster scene');
+    }
+  }, [monsterScene]);
 
   useEffect(() => {
     const handleKeyPress = (event) => {
@@ -94,11 +111,23 @@ export default function Monster({ position, onAttack }) {
       const monsterPosition = new THREE.Vector3(...position);
       const targetPosition = mouseFollowerPosition.clone();
 
-      const direction = targetPosition.clone().sub(monsterPosition).normalize();
-      const laserStartPoint = monsterPosition.clone().add(direction.clone().multiplyScalar(9));
+      let emissionPosition = new THREE.Vector3();
+      if (emissionMeshRef.current && monsterRef.current) {
+        monsterRef.current.updateWorldMatrix(true, false);
+        emissionMeshRef.current.getWorldPosition(emissionPosition);
+        emissionPosition.y += 15;
 
-      const mouseFollowerRadius = 3; // MouseFollower의 반지름
-      const laserRadius = 1.5; // 레이저의 반지름
+        console.log('Emission mesh world position:', emissionPosition);
+      } else {
+        console.warn('Using fallback position for laser start point');
+        emissionPosition.copy(monsterPosition);
+      }
+
+      const direction = targetPosition.clone().sub(emissionPosition).normalize();
+      const laserStartPoint = emissionPosition.clone();
+
+      const mouseFollowerRadius = 3;
+      const laserRadius = 1.5;
       const maxDistance = 160;
 
       const distanceToFollower = laserStartPoint.distanceTo(targetPosition);
@@ -144,15 +173,14 @@ export default function Monster({ position, onAttack }) {
   return (
     <>
       {isOnBattle && <MonsterHPBar monsterRef={monsterRef} hp={monsterHP} />}
-      <Box
+      <primitive
+        object={monsterScene}
         ref={monsterRef}
-        args={[18, 18, 18]}
         position={new THREE.Vector3(...position)}
+        rotation={[0, ROTATION_ANGLE, 0]}
         castShadow
         receiveShadow
-      >
-        <meshStandardMaterial color="red" />
-      </Box>
+      />
       {isFiring && isOnBattle && (
         <Cylinder ref={laserRef} args={[3.0, 3.0, 1, 8, 1, true]} material={laserMaterial} />
       )}
