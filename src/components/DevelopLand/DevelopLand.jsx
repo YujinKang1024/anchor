@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { useEffect, useRef, useCallback, useState, forwardRef } from 'react';
 import { useAtom } from 'jotai';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
@@ -22,7 +22,7 @@ import MouseFollower from '../MouseFollower/MouseFollower';
 import { PLAYER_MAX_HP } from '../../constants/constants';
 import { EMISSION_COLOR_MAP } from '../../constants/colorMapConstants';
 
-export default function GameLand() {
+const DevelopLand = forwardRef((props, ref) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [signIntensity, setSignIntensity] = useState(5.0);
   const [isBlinking, setIsBlinking] = useState(false);
@@ -37,11 +37,10 @@ export default function GameLand() {
   const glowMeshesRef = useRef([]);
   const mouseFollowerRef = useRef(null);
   const battleMachineRef = useRef(null);
-  const sceneRef = useRef(null);
 
   useEffect(() => {
-    if (sceneRef.current) {
-      sceneRef.current.traverse((child) => {
+    if (ref.current) {
+      ref.current.traverse((child) => {
         if (child.isMesh) {
           child.castShadow = true;
           child.receiveShadow = true;
@@ -55,7 +54,7 @@ export default function GameLand() {
         }
       });
     }
-  }, [scene]);
+  }, [ref]);
 
   useEffect(() => {
     const blinkInterval = setInterval(() => {
@@ -88,8 +87,8 @@ export default function GameLand() {
       }
     });
 
-    if (sceneRef.current) {
-      sceneRef.current.traverse((child) => {
+    if (ref.current) {
+      ref.current.traverse((child) => {
         if (child.isMesh && child.name === 'game_sign_emission') {
           child.material.emissiveIntensity = signIntensity * 0.1;
         }
@@ -162,7 +161,7 @@ export default function GameLand() {
 
   return (
     <>
-      <primitive object={scene} ref={sceneRef} />
+      <primitive object={scene} ref={ref} />
       <GameLandBattleMachine
         ref={battleMachineRef}
         onClick={handleBattleMachineClick}
@@ -176,10 +175,14 @@ export default function GameLand() {
         <MouseFollower
           ref={mouseFollowerRef}
           mousePosition={mousePosition}
-          gameLandRef={sceneRef}
+          developLandRef={ref}
           battleMachineRef={battleMachineRef}
         />
       )}
     </>
   );
-}
+});
+
+DevelopLand.displayName = 'DevelopLand';
+
+export default DevelopLand;
