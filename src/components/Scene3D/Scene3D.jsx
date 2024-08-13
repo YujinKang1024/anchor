@@ -113,6 +113,7 @@ export default function Scene3D() {
                   boatRef={boatRef}
                   cameraRef={cameraRef}
                   developLandRef={developLandRef}
+                  orbitControlsRef={orbitControlsRef}
                 />
                 <OrbitControls
                   ref={orbitControlsRef}

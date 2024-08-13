@@ -21,7 +21,7 @@ import { isOnBattleAtom } from '../../utils/atoms';
 
 import gradientBackground from '../../assets/textures/gradient-background.jpg';
 
-export default function Scene3DContents({ boatRef, cameraRef, developLandRef }) {
+export default function Scene3DContents({ boatRef, cameraRef, developLandRef, orbitControlsRef }) {
   const [isInitialCameraSetup, setisInitialCameraSetup] = useState(false);
   const [isOnBattle] = useAtom(isOnBattleAtom);
   const directionalLightRef = useRef();
@@ -51,10 +51,15 @@ export default function Scene3DContents({ boatRef, cameraRef, developLandRef }) 
         cameraRef.current.position.copy(initialCameraPosition);
         cameraRef.current.lookAt(boatPosition);
 
+        if (orbitControlsRef.current) {
+          orbitControlsRef.current.target.copy(boatPosition);
+          orbitControlsRef.current.update();
+        }
+
         setisInitialCameraSetup(true);
       }
     }
-  }, [boatRef, cameraRef, directionalLightRef, isInitialCameraSetup]);
+  }, [boatRef, cameraRef, directionalLightRef, isInitialCameraSetup, orbitControlsRef]);
 
   return (
     <>
