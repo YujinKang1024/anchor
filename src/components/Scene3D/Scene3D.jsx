@@ -5,7 +5,7 @@ import { Canvas } from '@react-three/fiber';
 import * as THREE from 'three';
 import { OrbitControls } from '@react-three/drei';
 
-import { isSoundPlayingAtom } from '../../utils/atoms';
+import { isSoundPlayingAtom, isEnterIslandAtom } from '../../utils/atoms';
 
 import {
   EffectComposer,
@@ -30,6 +30,7 @@ export default function Scene3D() {
   const [showLandingUI, setShowLandingUI] = useState(false);
   const [showScene, setShowScene] = useState(false);
   const [, setIsSoundPlaying] = useAtom(isSoundPlayingAtom);
+  const [isEnterIsland] = useAtom(isEnterIslandAtom);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const orbitControlsRef = useRef();
@@ -119,8 +120,8 @@ export default function Scene3D() {
                   enableZoom={true}
                   minPolarAngle={Math.PI / 4}
                   maxPolarAngle={Math.PI / 2}
-                  minDistance={20}
-                  maxDistance={100}
+                  minDistance={50}
+                  maxDistance={isEnterIsland ? 450 : 110}
                 />
                 <CameraController
                   cameraRef={cameraRef}

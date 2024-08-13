@@ -18,8 +18,10 @@ export default function CameraController({ cameraRef, boatRef, orbitControlsRef,
   const lastBoatPosition = useRef(new THREE.Vector3());
   const transitionStarted = useRef(false);
   const transitionProgress = useRef(0);
+
   const islandCenter = useRef(new THREE.Vector3());
-  const islandCameraOffset = useRef(new THREE.Vector3(500, 300, 500));
+  const islandCameraOffset = useRef(new THREE.Vector3(-350, 60, 200));
+  const currentZoomDistance = useRef(0);
 
   useEffect(() => {
     if (orbitControlsRef.current) {
@@ -27,10 +29,12 @@ export default function CameraController({ cameraRef, boatRef, orbitControlsRef,
       orbitControlsRef.current.dampingFactor = 0.05;
     }
 
-    // 섬의 중심점 계산
+    // 섬의 중심점 계산, 줌 거리 초기화
     if (developLandRef.current) {
       const boundingBox = new THREE.Box3().setFromObject(developLandRef.current);
+
       boundingBox.getCenter(islandCenter.current);
+      currentZoomDistance.current = islandCameraOffset.current.length();
     }
   }, [orbitControlsRef, developLandRef]);
 
@@ -56,8 +60,8 @@ export default function CameraController({ cameraRef, boatRef, orbitControlsRef,
         const rotatedOffset = new THREE.Vector3().setFromSpherical(spherical);
         const newCameraPosition = boatPosition.clone().add(rotatedOffset);
 
-        cameraRef.current.position.lerp(newCameraPosition, 0.5);
-        orbitControlsRef.current.target.lerp(boatPosition, 0.5);
+        cameraRef.current.position.lerp(newCameraPosition, 0.3);
+        orbitControlsRef.current.target.lerp(boatPosition, 0.3);
 
         lastBoatPosition.current.copy(boatPosition);
       } else if (transitionStarted.current) {
@@ -82,11 +86,13 @@ export default function CameraController({ cameraRef, boatRef, orbitControlsRef,
       } else {
         // 섬 모드에서의 카메라 제어
         const currentOffset = cameraRef.current.position.clone().sub(islandCenter.current);
-        const distance = currentOffset.length();
-        currentOffset
-          .normalize()
-          .multiplyScalar(Math.max(distance, islandCameraOffset.current.length()));
-        const targetPosition = islandCenter.current.clone().add(currentOffset);
+        const currentDistance = currentOffset.length();
+
+        currentZoomDistance.current = currentDistance;
+
+        const targetPosition = islandCenter.current
+          .clone()
+          .add(currentOffset.normalize().multiplyScalar(currentZoomDistance.current));
 
         cameraRef.current.position.lerp(targetPosition, 0.05);
         orbitControlsRef.current.target.copy(islandCenter.current);
