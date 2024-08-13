@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useAtom } from 'jotai';
 import * as THREE from 'three';
@@ -6,12 +6,7 @@ import * as THREE from 'three';
 import { CAMERA_CONSTANTS } from '../../constants/constants';
 import { isEnterIslandAtom } from '../../utils/atoms';
 
-export default function CameraController({
-  cameraRef,
-  boatRef,
-  rotationAngle,
-  verticalRotationAngle,
-}) {
+export default function CameraController({ cameraRef, boatRef, orbitControlsRef, developLandRef }) {
   const [isEnterIsland] = useAtom(isEnterIslandAtom);
   const cameraOffset = useRef(
     new THREE.Vector3(
@@ -20,62 +15,90 @@ export default function CameraController({
       -CAMERA_CONSTANTS.DISTANCE,
     ),
   );
-  const [islandRotation, setIslandRotation] = useState({ theta: 0, phi: 0 });
-  const boatTargetCameraPosition = useRef(new THREE.Vector3());
-  const islandCameraPosition = useRef(new THREE.Vector3(-750, 90, -80));
-  const prevRotationAngle = useRef(0);
-  const prevVerticalRotationAngle = useRef(0);
+  const lastBoatPosition = useRef(new THREE.Vector3());
+  const transitionStarted = useRef(false);
+  const transitionProgress = useRef(0);
 
-  const updateIslandRotation = useCallback((deltaTheta, deltaPhi) => {
-    setIslandRotation((prev) => ({
-      theta: prev.theta + deltaTheta,
-      phi: THREE.MathUtils.clamp(prev.phi + deltaPhi, 0.1, Math.PI - 0.1),
-    }));
-  }, []);
+  const islandCenter = useRef(new THREE.Vector3());
+  const islandCameraOffset = useRef(new THREE.Vector3(-350, 60, 200));
+  const currentZoomDistance = useRef(0);
+
+  useEffect(() => {
+    if (orbitControlsRef.current) {
+      orbitControlsRef.current.enableDamping = true;
+      orbitControlsRef.current.dampingFactor = 0.05;
+    }
+
+    // 섬의 중심점 계산, 줌 거리 초기화
+    if (developLandRef.current) {
+      const boundingBox = new THREE.Box3().setFromObject(developLandRef.current);
+
+      boundingBox.getCenter(islandCenter.current);
+      currentZoomDistance.current = islandCameraOffset.current.length();
+    }
+  }, [orbitControlsRef, developLandRef]);
 
   useEffect(() => {
     if (isEnterIsland) {
-      setIslandRotation({ theta: 0, phi: Math.PI / 2 });
+      transitionStarted.current = true;
+      transitionProgress.current = 0;
+    } else {
+      transitionStarted.current = false;
     }
   }, [isEnterIsland]);
 
   useFrame(() => {
-    if (cameraRef.current && boatRef.current && !isEnterIsland) {
-      const newBoatPosition = new THREE.Vector3();
-      boatRef.current.getWorldPosition(newBoatPosition);
+    if (cameraRef.current && boatRef.current && orbitControlsRef.current) {
+      const boatPosition = new THREE.Vector3();
+      boatRef.current.getWorldPosition(boatPosition);
 
-      const rotatedOffset = cameraOffset.current
-        .clone()
-        .applyAxisAngle(new THREE.Vector3(0, 1, 0), rotationAngle)
-        .applyAxisAngle(new THREE.Vector3(1, 0, 0), verticalRotationAngle);
+      if (!isEnterIsland) {
+        const spherical = new THREE.Spherical().setFromVector3(
+          cameraRef.current.position.clone().sub(orbitControlsRef.current.target),
+        );
 
-      boatTargetCameraPosition.current.copy(newBoatPosition).add(rotatedOffset);
+        const rotatedOffset = new THREE.Vector3().setFromSpherical(spherical);
+        const newCameraPosition = boatPosition.clone().add(rotatedOffset);
 
-      cameraRef.current.position.lerp(boatTargetCameraPosition.current, 0.05);
-      cameraRef.current.lookAt(newBoatPosition);
+        cameraRef.current.position.lerp(newCameraPosition, 0.3);
+        orbitControlsRef.current.target.lerp(boatPosition, 0.3);
 
-      prevRotationAngle.current = rotationAngle;
-      prevVerticalRotationAngle.current = verticalRotationAngle;
-    }
-    if (isEnterIsland) {
-      cameraRef.current.position.lerp(new THREE.Vector3(-650, 100, 20), 0.02);
+        lastBoatPosition.current.copy(boatPosition);
+      } else if (transitionStarted.current) {
+        // 섬 모드 전환
+        transitionProgress.current += 0.01;
+        if (transitionProgress.current > 1) {
+          transitionProgress.current = 1;
+          transitionStarted.current = false;
+        }
 
-      const deltaTheta = rotationAngle - prevRotationAngle.current;
-      const deltaPhi = verticalRotationAngle - prevVerticalRotationAngle.current;
+        const startPosition = lastBoatPosition.current.clone().add(cameraOffset.current);
+        const targetPosition = islandCenter.current.clone().add(islandCameraOffset.current);
 
-      updateIslandRotation(deltaTheta * 0.05, deltaPhi * 0.05);
+        cameraRef.current.position.lerpVectors(
+          startPosition,
+          targetPosition,
+          transitionProgress.current,
+        );
 
-      const lookAtPosition = new THREE.Vector3(
-        Math.sin(islandRotation.phi) * Math.cos(islandRotation.theta),
-        Math.cos(islandRotation.phi),
-        Math.sin(islandRotation.phi) * Math.sin(islandRotation.theta),
-      ).multiplyScalar(200);
+        cameraRef.current.lookAt(islandCenter.current);
+        orbitControlsRef.current.target.copy(islandCenter.current);
+      } else {
+        // 섬 모드에서의 카메라 제어
+        const currentOffset = cameraRef.current.position.clone().sub(islandCenter.current);
+        const currentDistance = currentOffset.length();
 
-      lookAtPosition.add(islandCameraPosition.current);
-      cameraRef.current.lookAt(lookAtPosition);
+        currentZoomDistance.current = currentDistance;
 
-      prevRotationAngle.current = rotationAngle;
-      prevVerticalRotationAngle.current = verticalRotationAngle;
+        const targetPosition = islandCenter.current
+          .clone()
+          .add(currentOffset.normalize().multiplyScalar(currentZoomDistance.current));
+
+        cameraRef.current.position.lerp(targetPosition, 0.05);
+        orbitControlsRef.current.target.copy(islandCenter.current);
+      }
+
+      orbitControlsRef.current.update();
     }
   });
 

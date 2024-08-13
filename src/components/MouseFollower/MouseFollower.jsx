@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import { mouseFollowerPositionAtom, monsterHPAtom } from '../../utils/atoms';
 
-const MouseFollower = forwardRef(({ mousePosition, gameLandRef, battleMachineRef }, ref) => {
+const MouseFollower = forwardRef(({ mousePosition, developLandRef, battleMachineRef }, ref) => {
   const [mouseFollowerPosition, setMouseFollowerPosition] = useAtom(mouseFollowerPositionAtom);
   const [monsterHP] = useAtom(monsterHPAtom);
 
@@ -16,10 +16,10 @@ const MouseFollower = forwardRef(({ mousePosition, gameLandRef, battleMachineRef
 
   const intersectObjects = useMemo(() => {
     const objects = [];
-    if (gameLandRef?.current) objects.push(gameLandRef.current);
+    if (developLandRef?.current) objects.push(developLandRef.current);
     if (battleMachineRef?.current) objects.push(battleMachineRef.current);
     return objects;
-  }, [gameLandRef, battleMachineRef]);
+  }, [developLandRef, battleMachineRef]);
 
   useFrame(() => {
     if (

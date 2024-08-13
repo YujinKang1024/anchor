@@ -8,8 +8,7 @@ import Lands from '../Lands/Lands';
 import Ocean from '../Ocean/Ocean';
 import BoatController from '../BoatController/BoatController';
 import BoatWaveController from '../BoatWaveController/BoatWaveController';
-import CameraController from '../CameraController/CameraController';
-import GameLand from '../GameLand/GameLand';
+import DevelopLand from '../DevelopLand/DevelopLand';
 import MouseFollower from '../MouseFollower/MouseFollower';
 
 import {
@@ -22,13 +21,7 @@ import { isOnBattleAtom } from '../../utils/atoms';
 
 import gradientBackground from '../../assets/textures/gradient-background.jpg';
 
-export default function Scene3DContents({
-  boatRef,
-  cameraRef,
-  pathPoints,
-  rotationAngle,
-  verticalRotationAngle,
-}) {
+export default function Scene3DContents({ boatRef, cameraRef, developLandRef, orbitControlsRef }) {
   const [isInitialCameraSetup, setisInitialCameraSetup] = useState(false);
   const [isOnBattle] = useAtom(isOnBattleAtom);
   const directionalLightRef = useRef();
@@ -58,10 +51,15 @@ export default function Scene3DContents({
         cameraRef.current.position.copy(initialCameraPosition);
         cameraRef.current.lookAt(boatPosition);
 
+        if (orbitControlsRef.current) {
+          orbitControlsRef.current.target.copy(boatPosition);
+          orbitControlsRef.current.update();
+        }
+
         setisInitialCameraSetup(true);
       }
     }
-  }, [boatRef, cameraRef, pathPoints, directionalLightRef, isInitialCameraSetup]);
+  }, [boatRef, cameraRef, directionalLightRef, isInitialCameraSetup, orbitControlsRef]);
 
   return (
     <>
@@ -87,17 +85,10 @@ export default function Scene3DContents({
       <Boat ref={boatRef} />
       <Ocean directionalLightRef={directionalLightRef} boatRef={boatRef} />
       <Lands />
-      <GameLand />
+      <DevelopLand ref={developLandRef} />
       {isOnBattle && <MouseFollower />}
       {isInitialCameraSetup && (
         <>
-          <CameraController
-            cameraRef={cameraRef}
-            boatRef={boatRef}
-            directionalLightRef={directionalLightRef}
-            rotationAngle={rotationAngle}
-            verticalRotationAngle={verticalRotationAngle}
-          />
           <BoatController boatRef={boatRef} />
           <BoatWaveController boatRef={boatRef} />
         </>

@@ -3,8 +3,9 @@ import { useAtom } from 'jotai';
 import { gsap } from 'gsap/gsap-core';
 import { Canvas } from '@react-three/fiber';
 import * as THREE from 'three';
+import { OrbitControls } from '@react-three/drei';
 
-import { isSoundPlayingAtom } from '../../utils/atoms';
+import { isSoundPlayingAtom, isEnterIslandAtom } from '../../utils/atoms';
 
 import {
   EffectComposer,
@@ -18,31 +19,25 @@ import { BlendFunction } from 'postprocessing';
 
 import Scene3DContents from '../Scene3DContents/Scene3DContents';
 import Scene3DUI from '../Scene3DUI/Scene3DUI';
-import CameraDragHandler from '../CameraDragHandler/CameraDragHandler';
 import FullScreenContainer from '../../styled-components/FullScreenContainer';
 import LoadingScreen from '../LoadingScreen/LoadingScreen';
 import LandingUI from '../LandingUI/LandingUI';
+import CameraController from '../CameraController/CameraController';
 
 export default function Scene3D() {
-  const [rotationAngle, setRotationAngle] = useState(0);
-  const [verticalRotationAngle, setVerticalRotationAngle] = useState(0);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showLandingUI, setShowLandingUI] = useState(false);
   const [showScene, setShowScene] = useState(false);
   const [, setIsSoundPlaying] = useAtom(isSoundPlayingAtom);
+  const [isEnterIsland] = useAtom(isEnterIslandAtom);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
+  const orbitControlsRef = useRef();
   const canvasRef = useRef(null);
   const boatRef = useRef();
+  const developLandRef = useRef();
   const cameraRef = useRef();
-
-  const handleRotate = useCallback((deltaHorizontalAngle, deltaVerticalAngle) => {
-    setRotationAngle((prevAngle) => prevAngle + deltaHorizontalAngle);
-    setVerticalRotationAngle((prevAngle) => {
-      return Math.max(-Math.PI / 4, Math.min(Math.PI / 4, prevAngle + deltaVerticalAngle));
-    });
-  }, []);
 
   const handleLoadingComplete = useCallback(() => {
     setIsLoading(false);
@@ -100,14 +95,6 @@ export default function Scene3D() {
               },
             }}
           >
-            {isCameraReady && (
-              <Scene3DContents
-                boatRef={boatRef}
-                cameraRef={cameraRef}
-                rotationAngle={rotationAngle}
-                verticalRotationAngle={verticalRotationAngle}
-              />
-            )}
             <EffectComposer>
               <DepthOfField focusDistance={0} focalLength={1.0} bokehScale={6} height={800} />
               <Bloom
@@ -120,8 +107,32 @@ export default function Scene3D() {
               <BrightnessContrast brightness={0.01} contrast={0.018} />
               <HueSaturation blendFunction={BlendFunction.NORMAL} hue={0} saturation={0.1} />
             </EffectComposer>
+            {isCameraReady && (
+              <>
+                <Scene3DContents
+                  boatRef={boatRef}
+                  cameraRef={cameraRef}
+                  developLandRef={developLandRef}
+                  orbitControlsRef={orbitControlsRef}
+                />
+                <OrbitControls
+                  ref={orbitControlsRef}
+                  enablePan={false}
+                  enableZoom={true}
+                  minPolarAngle={Math.PI / 4}
+                  maxPolarAngle={Math.PI / 2}
+                  minDistance={50}
+                  maxDistance={isEnterIsland ? 450 : 110}
+                />
+                <CameraController
+                  cameraRef={cameraRef}
+                  boatRef={boatRef}
+                  orbitControlsRef={orbitControlsRef}
+                  developLandRef={developLandRef}
+                />
+              </>
+            )}
           </Canvas>
-          <CameraDragHandler onRotate={handleRotate} />
         </>
       )}
     </FullScreenContainer>
