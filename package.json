@@ -9,7 +9,9 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write .",
     "preview": "vite preview",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test": "vitest --config vite.config.js",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@react-three/cannon": "^6.6.0",
@@ -24,11 +26,14 @@
     "three": "^0.166.1"
   },
   "devDependencies": {
+    "@babel/plugin-syntax-jsx": "^7.24.7",
+    "@babel/plugin-transform-react-jsx": "^7.25.2",
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "@vitest/coverage-v8": "^2.0.5",
     "cypress": "^13.13.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
@@ -38,8 +43,10 @@
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
     "husky": "^8.0.0",
+    "jsdom": "^24.1.1",
     "prettier": "^3.3.2",
     "vite": "^5.3.1",
-    "vitest": "^2.0.2"
+    "vitest": "^2.0.2",
+    "vitest-canvas-mock": "^0.3.3"
   }
 }
