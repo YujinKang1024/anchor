@@ -36,8 +36,6 @@ export default defineConfig({
       '^@react-three/fiber$': fileURLToPath(
         new URL('./src/__mocks__/react-three-fiber.js', import.meta.url),
       ),
-      '^three$': fileURLToPath(new URL('./src/__mocks__/three.js', import.meta.url)),
-      '^lottie-web$': fileURLToPath(new URL('./src/__mocks__/lottie-web.js', import.meta.url)),
     },
     include: ['**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     transformMode: {
