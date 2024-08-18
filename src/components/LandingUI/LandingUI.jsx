@@ -119,7 +119,7 @@ export default function LandingUI({ onStartButtonClick }) {
   }, [animateOut, onStartButtonClick]);
 
   return (
-    <LandingOverlay ref={overlayRef}>
+    <LandingOverlay ref={overlayRef} data-testid="landing-ui">
       <ModalOverlay>
         <GradientBackground ref={backgroundRef}>
           <ModalContent ref={contentRef}>
