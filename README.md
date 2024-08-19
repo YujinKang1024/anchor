@@ -12,7 +12,7 @@
 <br>
 
 <p align="center">
-  <a href="https://anchor-portfolio.netlify.app/">website</a>
+  <a href="https://anchorportfolio.site/">website</a>
   <span> | </span>
   <a href="https://github.com/YujinKang1024/anchor">Repository</a>
 </p>
@@ -49,23 +49,70 @@
 이렇듯 '나'라는 개인을 웹을 통해 인상적으로 표현하고, 기술적 성장을 이루자는 바람에서 'Anchor' 프로젝트의 여정을 시작하게 되었습니다.<br>
 <br>
 
-# 🛟 Features
+# 🛟 주요 기능
 
-(각각 항목에 맞는 gif 파일 첨부)
+### 보트의 조작
+키보드의 w,a,s,d키로 보트를 조작하고 섬에 도달할 수 있습니다.
+  - `W`: 보트를 앞으로 이동
+  - `A`: 보트를 왼쪽으로 회전
+  - `S`: 보트를 뒤로 이동
+  - `D`: 보트를 오른쪽으로 회전
+    <details>
+    <summary> 미리 보기 </summary>
+    <br>
+    <img width="600" src="https://postfiles.pstatic.net/MjAyNDA4MTlfMTY4/MDAxNzI0MDUwNzAwODU4.No495pc6-tRIq8Q0VO4_vI5kJjwUNllkY-FOmrmqPXcg.wjdbDx-ID0FE9p090Slyy_1VBq75cEOfuPf1n7gcprwg.GIF/%EC%9D%B4%EB%8F%99.gif?type=w3840">
+    <p align="center">키보드 조작을 통한 보트의 이동</p>
+    </details>
 
-### 보트 조작
+### 시스템 상태
+시스템은 크게 두 가지 모드로 나눌 수 있습니다.
 
-### 섬 진입과 포트폴리오 모달
+#### 1. 보트 조작 모드
+- 사용자가 보트를 조작할 수 있는 상태입니다.
+- About 버튼을 통해 개발자에 대한 소개를 접할 수 있습니다.
+    <details>
+    <summary> 미리 보기 </summary>
+    <br>
+    <img width="600" src="https://postfiles.pstatic.net/MjAyNDA4MTlfOTUg/MDAxNzI0MDUxMTIyODQy.diDGtuFvHb7Xv074w7EYsKy9TuN9hV5TGsPE0509u68g.E2rKq6r8kSl2GRgoWAV4zSAgoxGpSy6OQSNpAK_yF1gg.GIF/%EC%96%B4%EB%B0%94%EC%9B%83.gif?type=w3840">
+    <p align="center">About 버튼 상호작용</p>
+    </details>
 
-### 섬에서의 상호작용
-
-#### 1. 몬스터와 전투
-
-#### 2. 자판기 음료수
-
+#### 2. 섬 진입 모드
+- 섬에 다가가면 등장하는 Enter Island 버튼을 통해 섬에 진입한 상태입니다.
+    <details>
+    <summary> 미리 보기 </summary>
+    <br>
+    <img width="600" src="https://postfiles.pstatic.net/MjAyNDA4MTlfMTgw/MDAxNzI0MDUxOTk0NDQ1.fMkOw1hUTMjjkC1QmiQBu_5j1Vnl-Ff9IlzQK34Pt4gg.ooK8bLi-0dHbwcAfHZlW47SxJK6Z3gkiPdQ9m4VRnPQg.GIF/%EC%84%AC%EC%A7%84%EC%9E%85.gif?type=w3840">
+    <p align="center">Enter Island 버튼으로 섬에 진입</p>
+    </details>
+    <br>
+- PORTFOLIO 버튼을 통해 개발자 포트폴리오에 대한 정보를 접할 수 있습니다.
+    <details>
+    <summary> 미리 보기 </summary>
+    <br>
+    <img width="600" src="https://postfiles.pstatic.net/MjAyNDA4MTlfODgg/MDAxNzI0MDUyMjUwODAx.Frt5O-ZYkCZch-yuO54dJlL_HgYcZBoEoVdjh8CLaE0g.5hvy_YLAA9U_wLb2NYOY73mSMAzD6LrZUbvlZTrTKCIg.GIF/%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4.gif?type=w3840">
+    <p align="center">Enter Island 버튼으로 섬에 진입</p>
+    </details>
+    <br>
+- 버튼 오브젝트를 클릭하면 몬스터와의 전투가 벌어집니다.
+    <details>
+    <summary> 미리 보기 </summary>
+    <br>
+    <img width="600" src="https://postfiles.pstatic.net/MjAyNDA4MTlfMTY4/MDAxNzI0MDUwNzAwODU4.No495pc6-tRIq8Q0VO4_vI5kJjwUNllkY-FOmrmqPXcg.wjdbDx-ID0FE9p090Slyy_1VBq75cEOfuPf1n7gcprwg.GIF/%EC%9D%B4%EB%8F%99.gif?type=w3840">
+    <p align="center">Enter Island 버튼으로 섬에 진입</p>
+    </details>
+    <br>
+- 자판기 오브젝트를 클릭해 음료수를 뽑을 수 있습니다.
+    <details>
+    <summary> 미리 보기 </summary>
+    <br>
+    <img width="600" src="https://postfiles.pstatic.net/MjAyNDA4MTlfMTY4/MDAxNzI0MDUwNzAwODU4.No495pc6-tRIq8Q0VO4_vI5kJjwUNllkY-FOmrmqPXcg.wjdbDx-ID0FE9p090Slyy_1VBq75cEOfuPf1n7gcprwg.GIF/%EC%9D%B4%EB%8F%99.gif?type=w3840">
+    <p align="center">Enter Island 버튼으로 섬에 진입</p>
+    </details>
+    <br>
 <br>
 
-# 🌊 Challenges
+# 🌊 구현 과정
 
 ### 1. 물을 어떻게해야 '예쁘게' 구현할 수 있을까?
 
@@ -192,11 +239,11 @@ GL_INVALID_OPERATION 경고:
 
 앞으로 다음과 같은 기능을 추가하며 Anchor 프로젝트를 발전시켜나갈 예정입니다.
 
-1. 섬 자동 이동 기능<br>
+1. 섬 자동 이동 기능<br><br>
    W,A,S,D를 통한 이동은 게임이 익숙하지 않은 사용자에게는 불친절하게 느껴질 수 있을 거 같습니다. 게임에 처음 진입하면 보트를 섬까지 자동으로 이동할 수 있는 기능을 추가하고자 합니다.<br><br>
-2. 튜토리얼 (조작 안내)<br>
+2. 튜토리얼 (조작 안내)<br><br>
    현재 조작 방식에 대한 안내가 이루어지지 않아 사용자가 처음 웹에 방문한 사용자에게 혼란을 야기할 수 있을 거 같습니다. 좀 더 친절하게 조작에 대한 안내를 추가할 예정입니다. <br><br>
-3. 소품을 제작 및 배치하여 그래픽 환경 보완<br>
+3. 소품을 제작 및 배치하여 그래픽 환경 보완<br><br>
    나무와 돌처럼 반복적으로 배치할 수 있는 소품을 제작하고 배치할 예정입니다. 사용자가 3D 공간을 보다 자연스럽고 조화롭게 느낄 수 있었으면 합니다.<br><br>
    <br>
 

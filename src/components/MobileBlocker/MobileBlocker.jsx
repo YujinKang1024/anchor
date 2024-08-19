@@ -26,9 +26,11 @@ const Message = styled.div`
 `;
 
 export default function MobileBlocker() {
-  <BlockerWrapper>
-    <Message>
-      모바일 기기에서는 이 웹사이트를 이용할 수 없습니다. 데스크톱으로 접속해 주세요.
-    </Message>
-  </BlockerWrapper>;
+  return (
+    <BlockerWrapper>
+      <Message>
+        모바일 기기에서는 이 웹사이트를 이용할 수 없습니다. 데스크톱으로 접속해 주세요.
+      </Message>
+    </BlockerWrapper>
+  );
 }
