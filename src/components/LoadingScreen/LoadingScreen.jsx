@@ -43,8 +43,19 @@ export default function LoadingScreen({ onLoadingComplete, isVisible, showText =
   }, [isVisible, onLoadingComplete]);
 
   return (
-    <LoadingOverlay ref={overlayRef} isVisible={isVisible}>
-      {showText && <LoadingText ref={textRef}>Loading...</LoadingText>}
+    <LoadingOverlay
+      ref={overlayRef}
+      style={{
+        opacity: isVisible ? 1 : 0,
+        pointerEvents: isVisible ? 'auto' : 'none',
+      }}
+      data-testid="loading-screen"
+    >
+      {showText && (
+        <LoadingText ref={textRef} data-testid="landing-ui">
+          Loading...
+        </LoadingText>
+      )}
     </LoadingOverlay>
   );
 }

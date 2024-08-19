@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Vitest coverage directory
+coverage/
+
+# environment variable
+.env
