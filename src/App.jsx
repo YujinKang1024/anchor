@@ -8,7 +8,7 @@ import MobileBlocker from './components/MobileBlocker/MobileBlocker';
 
 // Google Analytics
 function initializeGA() {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== 'undefined' && import.meta.env.PROD) {
     window.dataLayer = window.dataLayer || [];
     window.gtag = function () {
       window.dataLayer.push(arguments);
@@ -19,7 +19,7 @@ function initializeGA() {
 }
 
 function trackPageView() {
-  if (typeof window !== 'undefined' && window.gtag) {
+  if (typeof window !== 'undefined' && window.gtag && import.meta.env.PROD) {
     window.gtag('event', 'page_view', {
       page_title: document.title,
       page_location: window.location.href,
