@@ -85,7 +85,7 @@
     <img width="600" src="https://postfiles.pstatic.net/MjAyNDA4MTlfMTgw/MDAxNzI0MDUxOTk0NDQ1.fMkOw1hUTMjjkC1QmiQBu_5j1Vnl-Ff9IlzQK34Pt4gg.ooK8bLi-0dHbwcAfHZlW47SxJK6Z3gkiPdQ9m4VRnPQg.GIF/%EC%84%AC%EC%A7%84%EC%9E%85.gif?type=w3840">
     <p align="center">Enter Island 버튼으로 섬에 진입</p>
     </details>
-    <br>
+
 - PORTFOLIO 버튼을 통해 개발자 포트폴리오에 대한 정보를 접할 수 있습니다.
     <details>
     <summary> 미리 보기 </summary>
@@ -93,7 +93,7 @@
     <img width="600" src="https://postfiles.pstatic.net/MjAyNDA4MTlfODgg/MDAxNzI0MDUyMjUwODAx.Frt5O-ZYkCZch-yuO54dJlL_HgYcZBoEoVdjh8CLaE0g.5hvy_YLAA9U_wLb2NYOY73mSMAzD6LrZUbvlZTrTKCIg.GIF/%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4.gif?type=w3840">
     <p align="center">Enter Island 버튼으로 섬에 진입</p>
     </details>
-    <br>
+
 - 버튼 오브젝트를 클릭하면 몬스터와의 전투가 벌어집니다.
     <details>
     <summary> 미리 보기 </summary>
@@ -101,7 +101,7 @@
     <img width="600" src="https://postfiles.pstatic.net/MjAyNDA4MTlfMTY4/MDAxNzI0MDUwNzAwODU4.No495pc6-tRIq8Q0VO4_vI5kJjwUNllkY-FOmrmqPXcg.wjdbDx-ID0FE9p090Slyy_1VBq75cEOfuPf1n7gcprwg.GIF/%EC%9D%B4%EB%8F%99.gif?type=w3840">
     <p align="center">Enter Island 버튼으로 섬에 진입</p>
     </details>
-    <br>
+
 - 자판기 오브젝트를 클릭해 음료수를 뽑을 수 있습니다.
     <details>
     <summary> 미리 보기 </summary>
@@ -109,7 +109,6 @@
     <img width="600" src="https://postfiles.pstatic.net/MjAyNDA4MTlfMTY4/MDAxNzI0MDUwNzAwODU4.No495pc6-tRIq8Q0VO4_vI5kJjwUNllkY-FOmrmqPXcg.wjdbDx-ID0FE9p090Slyy_1VBq75cEOfuPf1n7gcprwg.GIF/%EC%9D%B4%EB%8F%99.gif?type=w3840">
     <p align="center">Enter Island 버튼으로 섬에 진입</p>
     </details>
-    <br>
 <br>
 
 # 🌊 구현 과정
