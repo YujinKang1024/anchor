@@ -3,9 +3,12 @@ import { useAtom } from 'jotai';
 import { gsap } from 'gsap';
 import { CSSPlugin } from 'gsap/CSSPlugin';
 
-import { isEnterIslandAtom, isLandMenuOpenAtom } from '../../utils/atoms';
+import { isEnterIslandAtom } from '../../atoms/gameStateAtoms';
+import { isLandMenuOpenAtom } from '../../atoms/uiStateAtoms';
+
 import { useInteractionZone } from '../../hooks/useInteractionZone';
 import { ButtonContainer, ButtonImage, ButtonText } from './EnterIslandButton.styles';
+
 import anchorIconImage from '../../assets/images/anchor-white.png';
 
 gsap.registerPlugin(CSSPlugin);

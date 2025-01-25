@@ -9,13 +9,15 @@ import monster from '../../assets/models/monster.glb';
 
 import MonsterHPBar from '../MonsterHPBar/MonsterHPBar';
 import { LaserShaderMaterial } from '../../materials/LaserShaderMaterial';
+
+import { isOnBattleAtom } from '../../atoms/gameStateAtoms';
+import { isSoundPlayingAtom } from '../../atoms/audioAtoms';
+
 import {
-  isOnBattleAtom,
   mouseFollowerPositionAtom,
-  isSoundPlayingAtom,
   monsterHPAtom,
   decreaseMonsterHPAtom,
-} from '../../utils/atoms';
+} from '../../atoms/battleAtoms';
 
 const ROTATION_ANGLE = Math.PI / 4;
 

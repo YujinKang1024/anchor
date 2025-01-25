@@ -7,7 +7,7 @@ import YoutubeFrame from '../YouTubeFrame/YouTubeFrame';
 import CloseButton from '../../styled-components/CloseButton';
 import { ModalBackdrop, StyledPerspectiveDModal } from './PerspectiveModal.styles';
 import { StyledBR } from '../AboutModal/AboutModal.styles';
-import { isShowPerspectiveModalAtom } from '../../utils/atoms';
+import { isShowPerspectiveModalAtom } from '../../atoms/uiStateAtoms';
 
 import steamIcon from '../../assets/images/steam.png';
 

@@ -4,7 +4,7 @@ import { useAtom } from 'jotai';
 import * as THREE from 'three';
 
 import { CAMERA_CONSTANTS } from '../../constants/constants';
-import { isEnterIslandAtom } from '../../utils/atoms';
+import { isEnterIslandAtom } from '../../atoms/gameStateAtoms';
 
 export default function CameraController({ cameraRef, boatRef, orbitControlsRef, developLandRef }) {
   const [isEnterIsland] = useAtom(isEnterIslandAtom);

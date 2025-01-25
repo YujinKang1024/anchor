@@ -2,16 +2,16 @@ import { useState, useEffect, useRef } from 'react';
 import { useAtom } from 'jotai';
 import { gsap } from 'gsap/gsap-core';
 
+import { isOnBattleAtom } from '../../atoms/gameStateAtoms';
+import { isEnterIslandAtom } from '../../atoms/gameStateAtoms';
 import {
-  isOnBattleAtom,
-  isEnterIslandAtom,
   isLandMenuOpenAtom,
-  isShowPerspectiveModalAtom,
   isShowAboutModalAtom,
-  isSoundPlayingAtom,
+  isShowPerspectiveModalAtom,
   isShowSoldOutMessageAtom,
-  monsterHPAtom,
-} from '../../utils/atoms';
+} from '../../atoms/uiStateAtoms';
+import { isSoundPlayingAtom } from '../../atoms/audioAtoms';
+import { monsterHPAtom } from '../../atoms/battleAtoms';
 
 import BaseButton from '../BaseButton/BaseButton';
 import SoundToggleButton from '../SoundToggleButton/SoundToggleButton';

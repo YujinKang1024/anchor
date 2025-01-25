@@ -4,15 +4,12 @@ import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
-import {
-  isEnterIslandAtom,
-  isOnBattleAtom,
-  playerHPAtom,
-  monsterHPAtom,
-  isLandMenuOpenAtom,
-} from '../../utils/atoms';
-import gameLand from '../../assets/models/gameLand.glb';
+import { isLandMenuOpenAtom } from '../../atoms/uiStateAtoms';
+import { isEnterIslandAtom } from '../../atoms/gameStateAtoms';
+import { playerHPAtom, monsterHPAtom } from '../../atoms/battleAtoms';
+import { isOnBattleAtom } from '../../atoms/gameStateAtoms';
 
+import gameLand from '../../assets/models/gameLand.glb';
 import Monster from '../Monster/Monster';
 import GameLandBattleMachine from '../GameLandBattleMachine/GameLandBattleMachine';
 import GameLandVendingMachine from '../GameLandVendingMachine/GameLandVendingMachine';

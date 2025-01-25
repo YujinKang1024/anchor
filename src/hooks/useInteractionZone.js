@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAtom } from 'jotai';
-import { boatPositionAtom, isEnterIslandAtom } from '../utils/atoms';
+import { boatPositionAtom } from '../atoms/boatAtoms';
+import { isEnterIslandAtom } from '../atoms/gameStateAtoms';
 
 import { INTERACTION_ZONE } from '../constants/constants';
 

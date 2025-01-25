@@ -5,7 +5,8 @@ import * as THREE from 'three';
 import { Physics, useBox, usePlane } from '@react-three/cannon';
 
 import gameVendingMachine from '../../assets/models/gameLand-vendingMachine.glb';
-import { isEnterIslandAtom, isLandMenuOpenAtom, isShowSoldOutMessageAtom } from '../../utils/atoms';
+import { isEnterIslandAtom } from '../../atoms/gameStateAtoms';
+import { isLandMenuOpenAtom, isShowSoldOutMessageAtom } from '../../atoms/uiStateAtoms';
 import { EMISSION_COLOR_MAP } from '../../constants/colorMapConstants';
 
 const Can = lazy(() => import('../Can/Can'));

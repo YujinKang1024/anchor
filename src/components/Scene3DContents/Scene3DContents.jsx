@@ -17,7 +17,7 @@ import {
   BOAT_CONSTANTS,
   CAMERA_CONSTANTS,
 } from '../../constants/constants';
-import { isOnBattleAtom } from '../../utils/atoms';
+import { isOnBattleAtom } from '../../atoms/gameStateAtoms';
 
 import gradientBackground from '../../assets/textures/gradient-background.jpg';
 

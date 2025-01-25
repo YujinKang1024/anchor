@@ -5,12 +5,14 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
 import gameBattleSign from '../../assets/models/gameLand-battleSign.glb';
-import { isOnBattleAtom } from '../../utils/atoms';
+import { isOnBattleAtom } from '../../atoms/gameStateAtoms';
 import { EMISSION_COLOR_MAP } from '../../constants/colorMapConstants';
 
 export default function GameLandBattleSign({ isGlowing }) {
   const [isOnBattle] = useAtom(isOnBattleAtom);
+
   const { scene: battleSignScene } = useGLTF(gameBattleSign);
+
   const wholeSignRef = useRef();
   const floatingSignRef = useRef();
   const glowingSignRef = useRef();

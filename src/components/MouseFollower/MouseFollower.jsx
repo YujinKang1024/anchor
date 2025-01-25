@@ -4,7 +4,7 @@ import { useThree, useFrame } from '@react-three/fiber';
 import { Sphere } from '@react-three/drei';
 import * as THREE from 'three';
 
-import { mouseFollowerPositionAtom, monsterHPAtom } from '../../utils/atoms';
+import { mouseFollowerPositionAtom, monsterHPAtom } from '../../atoms/battleAtoms';
 
 const MouseFollower = forwardRef(({ mousePosition, developLandRef, battleMachineRef }, ref) => {
   const [mouseFollowerPosition, setMouseFollowerPosition] = useAtom(mouseFollowerPositionAtom);

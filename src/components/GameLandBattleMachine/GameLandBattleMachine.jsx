@@ -2,7 +2,10 @@ import { useEffect, forwardRef } from 'react';
 import { useAtom } from 'jotai';
 import { useGLTF } from '@react-three/drei';
 
-import { isEnterIslandAtom, isOnBattleAtom, isLandMenuOpenAtom } from '../../utils/atoms';
+import { isEnterIslandAtom } from '../../atoms/gameStateAtoms';
+import { isLandMenuOpenAtom } from '../../atoms/uiStateAtoms';
+import { isOnBattleAtom } from '../../atoms/gameStateAtoms';
+
 import gameBattleMachine from '../../assets/models/gameLand-battleMachine.glb';
 
 const GameLandBattleMachine = forwardRef(({ onClick, onPointerOut, onPointerOver }, ref) => {

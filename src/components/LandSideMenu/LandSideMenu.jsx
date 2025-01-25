@@ -13,7 +13,7 @@ import {
   DescriptionContainer,
 } from './LandSideMenu.styles';
 import GradientButton from '../GradientButton/GradientButton';
-import { isLandMenuOpenAtom, isShowPerspectiveModalAtom } from '../../utils/atoms';
+import { isLandMenuOpenAtom, isShowPerspectiveModalAtom } from '../../atoms/uiStateAtoms';
 import arrowImage from '../../assets/images/arrow.png';
 
 export default function LandSideMenu() {

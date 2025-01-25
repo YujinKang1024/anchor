@@ -4,7 +4,8 @@ import { useAtom } from 'jotai';
 import * as THREE from 'three';
 
 import { BOAT_CONSTANTS } from '../../constants/constants';
-import { boatPositionAtom, boatRotationAtom, isEnterIslandAtom } from '../../utils/atoms';
+import { boatPositionAtom, boatRotationAtom } from '../../atoms/boatAtoms';
+import { isEnterIslandAtom } from '../../atoms/gameStateAtoms';
 import { useBoatControl } from '../../hooks/useBoatControl';
 
 export default function BoatController({ boatRef }) {

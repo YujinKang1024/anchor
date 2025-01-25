@@ -5,7 +5,8 @@ import { Canvas } from '@react-three/fiber';
 import * as THREE from 'three';
 import { OrbitControls } from '@react-three/drei';
 
-import { isSoundPlayingAtom, isEnterIslandAtom } from '../../utils/atoms';
+import { isSoundPlayingAtom } from '../../atoms/audioAtoms';
+import { isEnterIslandAtom } from '../../atoms/gameStateAtoms';
 
 import {
   EffectComposer,

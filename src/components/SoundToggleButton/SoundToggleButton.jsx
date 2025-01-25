@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useAtom } from 'jotai';
 import { gsap } from 'gsap/gsap-core';
 
-import { isSoundPlayingAtom } from '../../utils/atoms';
+import { isSoundPlayingAtom } from '../../atoms/audioAtoms';
 import {
   StyledSoundButton,
   Container,

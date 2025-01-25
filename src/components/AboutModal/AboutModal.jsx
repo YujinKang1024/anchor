@@ -7,7 +7,7 @@ import { GradientBackground, ModalOverlay } from '../../styled-components/fullSc
 import { TextContainer, Text, HighlightText, StyledBR } from './AboutModal.styles';
 import CloseButton from '../../styled-components/CloseButton';
 
-import { isShowAboutModalAtom } from '../../utils/atoms';
+import { isShowAboutModalAtom } from '../../atoms/uiStateAtoms';
 
 export default function AboutModal() {
   const [isShowAboutModal, setIsShowAboutModal] = useAtom(isShowAboutModalAtom);

@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useAtom } from 'jotai';
-import { boatPositionAtom, boatRotationAtom, isMovingAtom } from '../utils/atoms';
+import { boatPositionAtom, boatRotationAtom, isBoatMovingAtom } from '../atoms/boatAtoms';
 
 import { BOAT_CONSTANTS } from '../constants/constants';
 
 export function useBoatControl() {
   const [boatPosition, setBoatPosition] = useAtom(boatPositionAtom);
   const [boatRotation, setBoatRotation] = useAtom(boatRotationAtom);
-  const [isMoving, setIsMoving] = useAtom(isMovingAtom);
+  const [isBoatMoving, setIsBoatMoving] = useAtom(isBoatMovingAtom);
 
   const keysPressed = useRef({});
 
@@ -38,11 +38,11 @@ export function useBoatControl() {
     if (moving) {
       setBoatPosition(newPosition);
       setBoatRotation(newRotation);
-      setIsMoving(true);
-    } else if (isMoving) {
-      setIsMoving(false);
+      setIsBoatMoving(true);
+    } else if (isBoatMoving) {
+      setIsBoatMoving(false);
     }
-  }, [boatPosition, boatRotation, setBoatPosition, setBoatRotation, setIsMoving, isMoving]);
+  }, [boatPosition, boatRotation, setBoatPosition, setBoatRotation, setIsBoatMoving, isBoatMoving]);
 
   const handleKeyDown = useCallback((event) => {
     keysPressed.current[event.key.toLowerCase()] = true;

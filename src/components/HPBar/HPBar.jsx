@@ -2,7 +2,7 @@ import { useRef, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { gsap } from 'gsap';
 
-import { playerHPAtom } from '../../utils/atoms';
+import { playerHPAtom } from '../../atoms/battleAtoms';
 import { PLAYER_MAX_HP } from '../../constants/constants';
 import { HPBarContainer, HPFill } from './HPBar.styles';
 
