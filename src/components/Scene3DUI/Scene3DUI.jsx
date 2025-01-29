@@ -27,7 +27,6 @@ import AboutModal from '../AboutModal/AboutModal';
 import backIcon from '../../assets/images/back-icon.png';
 
 export default function Scene3DUI() {
-  const [showWarning, setShowWarning] = useState(false);
   const [isShowAboutModal, setIsShowAboutModal] = useAtom(isShowAboutModalAtom);
   const [isSoundPlaying, setIsSoundPlaying] = useAtom(isSoundPlayingAtom);
   const [isOnBattle, setIsOnBattle] = useAtom(isOnBattleAtom);
@@ -35,10 +34,12 @@ export default function Scene3DUI() {
   const [, setIsLandMenuOpen] = useAtom(isLandMenuOpenAtom);
   const [isShowSoldOutMessage] = useAtom(isShowSoldOutMessageAtom);
   const [isShowPerspectiveModal] = useAtom(isShowPerspectiveModalAtom);
-
   const [monsterHP] = useAtom(monsterHPAtom);
+
   const [showBattleMessage, setShowBattleMessage] = useState(false);
   const [showVictoryMessage, setShowVictoryMessage] = useState(false);
+  const [showWarningMessage, setShowWarningMessage] = useState(false);
+
   const battleMessageRef = useRef(null);
   const victoryMessageRef = useRef(null);
 
@@ -119,8 +120,8 @@ export default function Scene3DUI() {
     event.stopPropagation();
     if (isShowPerspectiveModal) return;
     if (isOnBattle) {
-      setShowWarning(true);
-      setTimeout(() => setShowWarning(false), 2000);
+      setShowWarningMessage(true);
+      setTimeout(() => setShowWarningMessage(false), 2000);
     } else if (!isShowPerspectiveModal) {
       setIsEnterIsland(false);
       setIsLandMenuOpen(false);
@@ -152,7 +153,7 @@ export default function Scene3DUI() {
           <BackIconButton src={backIcon} onClick={handleClickBackButton} />
         </>
       )}
-      {showWarning && (
+      {showWarningMessage && (
         <PopupMessage
           message="전투 중에는 벗어날 수 없습니다!"
           backgroundColor="rgba(255, 0, 0, 0.7)"

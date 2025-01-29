@@ -10,8 +10,11 @@ import heightTextureUrl from '../../assets/textures/water-height.png';
 import roughnessTextureUrl from '../../assets/textures/water-roughness.jpg';
 import aoTextureUrl from '../../assets/textures/water-ao.jpg';
 
-import { OCEAN_CONSTANTS } from '../../constants/constants';
-import { LIGHT_POSITION, DIRECTIONAL_LIGHT_COLOR } from '../../constants/constants';
+import {
+  LIGHT_POSITION,
+  DIRECTIONAL_LIGHT_COLOR,
+  OCEAN_CONSTANTS,
+} from '../../constants/constants';
 
 const vertexShader = `
   uniform mat4 u_textureMatrix;

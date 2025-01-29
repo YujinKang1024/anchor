@@ -23,7 +23,9 @@ const ROTATION_ANGLE = Math.PI / 4;
 
 export default function Monster({ position, onAttack }) {
   const { scene: monsterScene } = useGLTF(monster);
+
   const [isFiring, setIsFiring] = useState(false);
+
   const [isOnBattle] = useAtom(isOnBattleAtom);
   const [, decreaseMonsterHP] = useAtom(decreaseMonsterHPAtom);
   const [isSoundPlaying] = useAtom(isSoundPlayingAtom);
