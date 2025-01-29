@@ -19,35 +19,18 @@
 
 <br>
 
-# 🛠️ Tech Stack
 
-- Javascript
-- React
-- React Three Fiber
-- Jotai
-- styled components
+# 📒 목차
 
-<br>
-
-# 📒 Contents
-
-- [⛵ Motivation](#-motivation)
-- [🛟 Features](#-features)
-- [🌊 Challenges](#-challenges)
+- [🛟 주요 기능](#🛟-주요-기능)
+- [⛵ 프로젝트 기획](#⛵-프로젝트-기획)
+- [🛠️ 기술 스택](#🛠️-기술-스택)
+- [🌊 구현 과정](#🌊-구현-과정)
 - [🔧 Future Enhancements](#-future-enhancements)
 - [🏝️ Review](#-review)
 
 <br>
 
-# ⛵ Motivation
-
-웹을 활용하여 '나'에 대한 정보를 효과적으로 전달하고 사용자에게 깊은 인상을 남기려면 어떻게 해야할까요? 저는 웹 사이트를 단순한 정보 전달의 수단이 아닌 '나'에 대한 표현 수단으로 승화시키고자 했습니다. <br>
-인생의 여정을 바다에 비유하여 사용자가 보트를 조작해 직접 바다를 누비며 저 자신에 대해 알아가는 경험을 제공함으로써 개성 있는 포트폴리오 웹사이트를 구성하고 싶었습니다. <br>
-<br>
-'사용자 참여'와 '몰입'의 요소를 극대화하기 위해 3D 그래픽 요소를 더했습니다. 3D 그래픽이 제공하는 깊이감과 입체감을 통해 사용자의 시선을 자연스럽게 끌어들이고, 직접 보트를 조종하며 웹에서의 경험에 더욱 몰입할 수 있게 구성했습니다. 또한, 웹에서의 3D 구현과 사용자와의 상호작용을 고려하는 과정에서 기술적인 성장을 이룰 수 있을 것이라 기대했습니다.<br>
-<br>
-이렇듯 '나'라는 개인을 웹을 통해 인상적으로 표현하고, 기술적 성장을 이루자는 바람에서 'Anchor' 프로젝트의 여정을 시작하게 되었습니다.<br>
-<br>
 
 # 🛟 주요 기능
 
@@ -111,14 +94,107 @@
     </details>
 <br>
 
-# 🌊 구현 과정
+# ⛵ 프로젝트 기획
 
-### 1. 물을 어떻게해야 '예쁘게' 구현할 수 있을까?
+### 💭 기획 동기
 
+게임 개발, 특히 3D 배경 그래픽을 전공하며 쌓은 경험을 토대로, 웹 개발이라는 새로운 분야에 도전하게 되었습니다. 단순한 게임 콘텐츠를 넘어 실용적인 웹 서비스에 관심을 가지게 되었으나, 3D 그래픽에 대한 열정은 여전히 제 관심의 중심에 있었습니다.
+
+3차원 공간이 가진 생동감은 사용자의 몰입도를 높이는 강력한 도구라고 생각합니다. 이에 평면적인 웹사이트를 넘어, 사용자의 기억에 깊이 남을 수 있는 역동적인 3D 웹 경험을 설계하고자 했습니다.
+
+3D 그래픽과 웹 개발을 접목하는 이번 도전은 제게 특별한 의미를 가집니다. 이는 단순한 기술 스택의 확장을 넘어, 제가 추구하는 개발자로서의 정체성을 표현하는 기회이기도 했습니다. 그렇게 첫 개인 프로젝트로 '3D 요소를 역동적으로 표현한 포트폴리오 웹사이트'를 기획하게 되었습니다.
+### 💭 기획 과정
+#### 1. 컨셉 결정
+자기표현의 수단으로 가장 적절한 컨셉을 고민하는 과정에서, 주변인들의 의견이 큰 도움이 되었습니다. 끊임없이 변화하는 기술의 바다 속에서 꾸준히 성장해나가는 모습이 항해하는 배와 닮았다는 피드백을 받았습니다. '바다' 구현의 기술적 난이도에 대한 우려가 있었으나, 도전 가치가 있다고 판단했습니다.
+
+이러한 고민 끝에 인생을 바다에 비유하여, 항해 중 닻을 내린 정박지를 소개하는 컨셉으로 'Anchor'라는 프로젝트명을 확정하였습니다.
+
+#### 2. 레이아웃 구성 및 콘티 작성
 <p align="center">
   <img width=600 alt="anchor" src="https://postfiles.pstatic.net/MjAyNDA4MDhfMTcw/MDAxNzIzMDk1Mzg3NzA1.DNBFnaMDdWggQzSHHNqgA17siPilA9sFp4IHpNiSoS8g.0dKauKs28nwC65cNh-Fbj39K7jEHLSiXOu4TQfB6miQg.PNG/%EB%A9%94%EC%9D%B8_%EA%B5%AC%EC%84%B1.png?type=w966" />
 <br>Anchor의 초기 컨셉안
 </p>
+
+초기 컨셉은 광활한 바다와 탁 트인 하늘을 배경으로, 사용자가 보트를 통해 여러 섬을 탐험할 수 있는 구조였습니다.
+
+<p align="center">
+  <img width=600 alt="anchor" src="https://postfiles.pstatic.net/MjAyNTAxMjlfMzIg/MDAxNzM4MTI5ODcyNzA2.hY25tfHSK6pkeo7mZoqCJKPFISuiuME2Wr7IsF1l3YMg.UjWZbBks6lW3ekO27wESCa3fia8QP83qC0Ksmv-0mxIg.PNG/%EC%9D%BC%EB%9F%AC%EC%8A%A4%ED%8A%B822_211.png?type=w966" />
+</p>
+
+처음에는 스크롤 이벤트를 통한 고정된 이동 경로와 다수의 섬을 계획했으나, 최종적으로는 사용자가 자유롭게 이동할 수 있는 키보드 인터랙션 방식을 채택하고, 접근 가능한 섬을 1개로 축소하여 개발을 진행했습니다.
+
+<p align="center">
+  <img width=600 alt="anchor" src="https://postfiles.pstatic.net/MjAyNTAxMjlfMjkz/MDAxNzM4MTI5ODcyNzM0.XglIo2TTqHfwQnfOG46jDJX0tEpctmiXC15FxCsGdjUg.8q3wibZtNCUcdXIDWwXmeJo-kHWsTfxJEvU1VN9qYv8g.PNG/%EA%B2%8C%EC%9E%84%EC%84%AC%EC%BD%98%ED%8B%B0.png?type=w966" />
+<br>'게임 섬' 초기 컨셉안
+</p>
+<p align="center">
+  <img width=600 alt="anchor" src="https://postfiles.pstatic.net/MjAyNTAxMjlfMTQ0/MDAxNzM4MTI5ODcyNzA0.WyNPpIAkbMvmIudVvunRDmBMtY6IogFQO7z65KWRcu8g.qAcgPAYYZTlJaVxN50nkt6Q2Eu3LghxXsJ3idETR4F4g.PNG/%EC%BD%98%ED%8B%B02.png?type=w966" />
+<br> 포트폴리오 소개 UI 구상안
+</p>
+
+섬에 도착하면 상공에서 내려다보는 뷰로 전환되며, 섬 내 오브젝트들과 상호작용할 수 있도록 구성했습니다. <br>
+또한, UI 버튼을 통해 포트폴리오의 상세 내용을 확인할 수 있도록 설계했습니다.
+
+<br>
+
+# 🛠️ 기술 스택
+<div>
+  <img alt="Static Badge" src="https://img.shields.io/badge/Javascript-%23F7DF1E?style=flat-square&logo=javascript&logoColor=black">
+  <img alt="Static Badge" src="https://img.shields.io/badge/React-%2361DAFB?style=flat-square&logo=react&logoColor=black">
+  <img alt="Static Badge" src="https://img.shields.io/badge/React Three Fiber-%23000000?style=flat-square&logo=threedotjs&logoColor=white">
+  <img alt="Static Badge" src="https://img.shields.io/badge/Jotai-%23000000?style=flat-square&logo=jotai&logoColor=white"/>
+  </br>
+  <img src="https://img.shields.io/badge/styled components-DB7093?style=flat-square&logo=styled-components&logoColor=white"/>
+  <img src="https://img.shields.io/badge/GSAP-93CF2B?style=flat-square&logo=greensock&logoColor=white"/>
+  <img alt="Static Badge" src="https://img.shields.io/badge/Vite-%23646CFF?style=flat-square&logo=vitess&logoColor=white">
+  <img alt="Static Badge" src="https://img.shields.io/badge/Vitest-%236E9F18?style=flat-square&logo=vitess&logoColor=white">
+<div>
+
+
+### ⚙️ React & React Three Fiber
+1. **컴포넌트 단위의 3D 요소 관리**
+   - Three.js의 3D 오브젝트들을 React 컴포넌트로 모듈화하여 관리할 수 있습니다.
+   - 복잡한 3D 씬을 작은 단위의 컴포넌트로 분리하여 코드의 재사용성과 유지보수성을 높였습니다.
+2. **상태관리의 용이성**
+    - 사용자 인터랙션에 따른 카메라 이동, 오브젝트 상태 변화 등을 React의 상태 관리 시스템으로 효율적으로 제어할 수 있습니다.
+    - useFrame, useThree 등 Three.js와 관련된 커스텀 훅을 활용해 애니메이션과 렌더링 로직을 단순화했습니다.
+3. **WebGL 기반 3D 구현**
+   - Three.js를 통해 브라우저에서 고성능 3D 렌더링을 구현할 수 있었습니다
+   - React Three Fiber를 통해 선언적인 방식으로 Three.js를 사용할 수 있었습니다
+
+### ⚙️ Jotai (상태 관리)
+1. **효율적인 상태 관리**
+   - atom 단위의 상태 관리로 3D 오브젝트별 독립적인 상태 관리가 가능했습니다
+   - 카메라 위치, 오브젝트 상태 등을 컴포넌트 간에 효율적으로 공유할 수 있었습니다
+
+2. **간결한 구현**
+    - Context API 기반의 다른 라이브러리들과 비교했을 때 보일러플레이트가 적었습니다.
+    - Bottom-up 방식의 상태 전파로 코드 작성이 직관적이었습니다.
+
+### ⚙️ Styled Components (스타일링)
+1. **컴포넌트 기반 스타일링**
+   - React 컴포넌트와 동일한 방식으로 스타일을 관리할 수 있습니다.
+   - 3D 씬의 상태에 따라 UI 스타일을 동적으로 변경할 필요성이 있는 상황에서, props를 통한 동적 스타일링이 직관적이었습니다.
+2. **스타일 캡슐화**
+    - 컴포넌트별로 스타일을 격리하여 관리할 수 있습니다.
+    - CSS 클래스 이름 충돌 걱정 없이 스타일을 작성할 수 있습니다.
+
+### ⚙️ GSAP (애니메이션)
+1. **타임라인 기반 제어**
+   - 여러 요소의 애니메이션을 시간 순서대로 제어해야 했습니다.
+   - GSAP의 타임라인 기능으로 복잡한 애니메이션 시퀀스를 관리할 수 있었습니다.
+
+2. **성능**
+   - CSS 애니메이션과 비교해 더 부드러운 성능을 제공했습니다.
+   - 3D 트랜스폼과의 호환성이 우수했습니다.
+
+<br>
+
+# 🌊 구현 과정
+
+### 1. 물을 어떻게해야 '예쁘게' 구현할 수 있을까?
+
+
 Anchor는 바다를 배경으로 하고 있습니다. 때문에, 웹에 접속한 사용자가 마주할 화면에서 '물'이 차지하는 비중이 상당했습니다. '물을 예쁘게 구현하는 것'이 자연스럽게 큰 챌린지가 되었습니다.<br><br>
 그렇다면 물은 어떤 식으로 구현해볼 수 있을까요? 먼저 제가 구현해야 할 물, 정확히는 바다의 특징에 대해 분석했습니다.<br><br>
   1. 사물이 물에 비쳐보여야 한다. <br>
