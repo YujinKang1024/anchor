@@ -22,10 +22,10 @@
 
 # 📒 목차
 
-- [🛟 주요 기능](#🛟-주요-기능)
-- [⛵ 프로젝트 기획](#⛵-프로젝트-기획)
-- [🛠️ 기술 스택](#🛠️-기술-스택)
-- [🌊 구현 과정](#🌊-구현-과정)
+- [🛟 주요 기능](#-주요-기능)
+- [⛵ 프로젝트 기획](#-프로젝트-기획)
+- [🛠️ 기술 스택](#-기술-스택)
+- [🌊 구현 과정](#-구현-과정)
 - [🔧 Future Enhancements](#-future-enhancements)
 - [🏝️ Review](#-review)
 
@@ -192,48 +192,61 @@
 
 # 🌊 구현 과정
 
-### 1. 물을 어떻게해야 '예쁘게' 구현할 수 있을까?
+### 💦 바다 구현하기
 
+1. **도전 과제**
+<br>프로젝트의 주요 배경인 바다를 구현하는 것은 큰 도전 과제였습니다. 사실적인 바다 표현을 위해 다음과 같은 요소들이 필요했습니다:
 
-Anchor는 바다를 배경으로 하고 있습니다. 때문에, 웹에 접속한 사용자가 마주할 화면에서 '물'이 차지하는 비중이 상당했습니다. '물을 예쁘게 구현하는 것'이 자연스럽게 큰 챌린지가 되었습니다.<br><br>
-그렇다면 물은 어떤 식으로 구현해볼 수 있을까요? 먼저 제가 구현해야 할 물, 정확히는 바다의 특징에 대해 분석했습니다.<br><br>
-  1. 사물이 물에 비쳐보여야 한다. <br>
-  2. 파도가 표현되어 수면이 움직여야 한다. <br>
-  3. 그림자가 질 수 있어야 한다. <br>
-  4. 투명도가 있어야 한다. <br>
-  5. 수면에 비쳐 맺힌 상(像)에 대한 굴절이 이루어져야 한다. <br>
+    - 물의 반사와 투명도
+    - 실시간으로 움직이는 파도
+    - 물결에 따른 그림자 처리
+    - 수면 아래의 깊이감 표현
+    - 물의 굴절과 프레넬 효과
+  
+    <p align="center">
+      <img width=400 alt="anchor" src="https://postfiles.pstatic.net/MjAyNTAxMjlfNTUg/MDAxNzM4MTM0OTk2Mzk5.oQHAyB0MGqoZhQSt6lvvGz2aKajLTdH1UEP4IMIlL3sg.8XLEi34YSP4Ax5HJIoCeXjHUnOeBn9m5MRfmOqBieuog.GIF/%EB%B0%94%EB%8B%A4_(1).gif?type=w3840" />
+      <br> 위 특징을 반영해 구현한 바다의 모습
+    </p>
+
 <br>
-<p align="center">
-  <img width=600 alt="anchor" src="https://postfiles.pstatic.net/MjAyNDA4MDhfNzIg/MDAxNzIzMDk4NDIwNDgz.oRM9QkK9NJ1buB_BOrY5B248XRB-8DenBi9Xa7ykws4g.NF_bstbnlm3JfjvUEIfLDStRlWIyg1BR-1pXdwo4Pysg.GIF/%ED%99%94%EB%A9%B4_%EA%B8%B0%EB%A1%9D_2024-08-08_%EC%98%A4%ED%9B%84_3.10.59_(1).gif?type=w3840" />
-</p>
-위 특징의 1~4번을 반영해 구현한 물의 모습입니다. 구현 과정 속에 여러 우여곡절이 많았는데요, 어떤 과정을 거쳐 물을 구현하였는지 차례로 살펴보겠습니다.
-<br>
 
-#### 1-1. 단순 평면 모델링을 물처럼 보이게 하는 법
-
-<p align="center">
-  <img width=600 alt="anchor" src="https://postfiles.pstatic.net/MjAyNDA4MDhfMTQ1/MDAxNzIzMDk4OTc4MDA2.BnZhs1bamVmYOSIJEmKffTCjGI5ZUtBnSAVvlHXS9Hwg.dcjLxztuv1FpCb-Mh9yfBBE9xUI4n3gaShGX3onN3LEg.PNG/SE-b6a5150e-0d14-4386-9e9a-46a284e6fe3b.png?type=w966" />
-</p>
-물은 단순한 평면으로 이루어져 있습니다. 이러한 평면을 물처럼 보이게 하는 것은 '재질'입니다. Three.js에서는 머테리얼(Material)을 활용하여 모델링에 입혀질 재질에 대해 결정할 수 있습니다.<br><br>
+2. **구현 방식**
+<br></br>
+2-1. **셰이더를 활용한 물 표면 구현**
+<br><p align="center">
+  <img width=400 alt="anchor" src="https://postfiles.pstatic.net/MjAyNDA4MDhfMTQ1/MDAxNzIzMDk4OTc4MDA2.BnZhs1bamVmYOSIJEmKffTCjGI5ZUtBnSAVvlHXS9Hwg.dcjLxztuv1FpCb-Mh9yfBBE9xUI4n3gaShGX3onN3LEg.PNG/SE-b6a5150e-0d14-4386-9e9a-46a284e6fe3b.png?type=w966" /></p>
+  바다의 메쉬는 단순한 평면으로 이루어져 있습니다. 이러한 평면을 바다처럼 보이게 하는 것은 '재질'입니다. Three.js에서는 머테리얼(Material)을 활용하여 모델링에 입혀질 재질에 대해 결정할 수 있습니다.<br><br>
 머테리얼에도 여러 종류가 있지만 물을 구현하기 위해서는 셰이더 머테리얼(Shader Material)을 활용해야겠다고 판단했습니다. 물의 특성 상 실시간으로, 동적으로 모델링의 모양과 입혀질 색에 대한 변형이 이루어져야하기 때문입니다. 이렇듯 그래픽에 대한 동적인 변형은 셰이더를 통해 구현할 수 있습니다. <br><br>
 셰이더가 무엇이기에 이러한 그래픽의 동적 변형을 가능하게 하는 걸까요?
+    >셰이더(Shader)란 무엇일까?
+    <br>
 
-#### 1-2. 셰이더(Shader)란 무엇일까?
+    셰이더는 간단히 말해 **화면에 출력할 픽셀의 위치와 색상을 계산하는 함수**입니다. 셰이더는 그래픽 처리장치(GPU)에서 처리되며, 주로 그래픽에 대한 조작이 실시간으로 이루어져야 할 때 활용합니다.
 
-셰이더는 간단히 말해 **화면에 출력할 픽셀의 위치와 색상을 계산하는 함수**입니다. 셰이더는 그래픽 처리장치(GPU)에서 처리되며, 주로 그래픽에 대한 조작이 실시간으로 이루어져야 할 때 활용합니다. <br>
-<br>
-Three.js에서의 셰이더 머테리얼을 활용하면 프로그래머가 작성한 셰이더 코드를 프로젝트에 적용할 수 있습니다. 여기서 또 한가지 알아야 할 것은, 셰이더 머테리얼을 구성하는 요소로 **버텍스 셰이더(Vertex Shader)** 와 **프래그먼트 셰이더(Fragment Shader)** 두 가지가 있다는 것입니다.
+    Three.js에서의 셰이더 머테리얼을 활용하면 프로그래머가 작성한 셰이더 코드를 프로젝트에 적용할 수 있습니다. 여기서 또 한가지 알아야 할 것은, 셰이더 머테리얼을 구성하는 요소로 **버텍스 셰이더(Vertex Shader)** 와 **프래그먼트 셰이더(Fragment Shader)** 두 가지가 있다는 것입니다.
 
-<p align="center">
-<br>
-<img src="https://postfiles.pstatic.net/MjAyNDA4MDdfMTE2/MDAxNzIzMDIzNDI0MzI2.sUnzEpyxaasxWLgL-OJbLTio6cWbajFnuZH-hdYKBfsg.zLnz_ms3UEbZphqFWtjJCA6lyKpAnozxmcIGsw2Z-u0g.PNG/c2_pipeline.png?type=w966" width="600px">
-<br>
-</p>
+    <p align="center">
+    <br>
+    <img src="https://postfiles.pstatic.net/MjAyNDA4MDdfMTE2/MDAxNzIzMDIzNDI0MzI2.sUnzEpyxaasxWLgL-OJbLTio6cWbajFnuZH-hdYKBfsg.zLnz_ms3UEbZphqFWtjJCA6lyKpAnozxmcIGsw2Z-u0g.PNG/c2_pipeline.png?type=w966" width="600px">
+    <br>
+    </p>
 
-3D 모델링은 수 많은 정점(Vertex)으로 이루어져 있습니다. Vertex Shader는 이러한 정점에 대한 변형 동작을 수행하며, 각 정점의 위치가 화면 상의 어느 위치에 그려질 것인지에 대한 값을 출력합니다. 버텍스 셰이더가 출력한 값을 기반으로 실제 화면의 픽셀에 그려질 최종적인 모습을 결정하는 것이 프래그먼트 셰이더입니다.
-<br><br>
-버텍스 셰이더는 정점 단위로, 프래그먼트 셰이더는 픽셀 단위로 연산을 수행한다고 정리해볼 수 있겠습니다.
+    3D 모델링은 수 많은 정점(Vertex)으로 이루어져 있습니다. Vertex Shader는 이러한 정점에 대한 변형 동작을 수행하며, 각 정점의 위치가 화면 상의 어느 위치에 그려질 것인지에 대한 값을 출력합니다. 버텍스 셰이더가 출력한 값을 기반으로 실제 화면의 픽셀에 그려질 최종적인 모습을 결정하는 것이 프래그먼트 셰이더입니다.
 
+    버텍스 셰이더는 정점 단위로, 프래그먼트 셰이더는 픽셀 단위로 연산을 수행한다고 정리해볼 수 있겠습니다.
+
+    구현한 바다 셰이더에서, 버텍스 셰이더와 프래그먼트 셰이더는 각각 다음의 역할을 수행합니다.
+
+    <br>
+
+    (1) **버텍스 셰이더** : 파도의 움직임 구현<br>
+    - 시간에 따른 파도의 높낮이 계산<br>
+    - 수면의 움직임을 위한 정점 위치 조정<br>
+
+  (2) **프래그먼트 셰이더**
+    - 물의 색상과 투명도 처리
+    - 프레넬 효과를 통한 반사율 조정
+    - 깊이에 따른 색상 변화
 #### 1-3. 물의 반사를 어떻게 구현해야 할까?
 
 물에 반사되어 맺히는 상은 실제 보이는 화면을 거꾸로 뒤집어 놓은 형태여야 합니다. 이를 구현하기 위해 다음과 같은 방법을 사용했습니다.
