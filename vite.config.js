@@ -1,13 +1,14 @@
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'url';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => ({
   plugins: [react()],
   assetsInclude: ['**/*.glb'],
   resolve: {
-    alias:
-      mode === 'test'
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      ...(mode === 'test'
         ? {
             '@react-three/cannon': fileURLToPath(
               new URL('./src/__mocks__/react-three-cannon.js', import.meta.url),
@@ -19,7 +20,8 @@ export default defineConfig(({ mode }) => ({
               new URL('./src/__mocks__/react-three-fiber.js', import.meta.url),
             ),
           }
-        : {},
+        : {}),
+    },
   },
   test: {
     environment: 'jsdom',
