@@ -1,0 +1,5 @@
+export const CAMERA_CONSTANTS = {
+  LATERAL_DISTANCE: 65,
+  HEIGHT: 16,
+  DISTANCE: -70,
+};

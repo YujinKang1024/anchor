@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { isMobile } from 'react-device-detect';
 
-import Scene3D from './components/Scene3D/Scene3D';
-import AboutModal from './components/AboutModal/AboutModal';
-import PerspectiveModal from './components/PerspectiveModal/PerspectiveModal';
-import MobileBlocker from './components/MobileBlocker/MobileBlocker';
+import { Scene3D } from './domains/scene';
+import { AboutModal, PerspectiveModal } from './shared/components/Modals';
+import { MobileBlocker } from './shared/components/Utils';
 
 // Google Analytics
 function initializeGA() {
