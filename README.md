@@ -42,9 +42,12 @@
   - `D`: 보트를 오른쪽으로 회전
     <details>
     <summary> 미리 보기 </summary>
+      
     <br>
-    <img width="600" src="https://postfiles.pstatic.net/MjAyNDA4MTlfMTY4/MDAxNzI0MDUwNzAwODU4.No495pc6-tRIq8Q0VO4_vI5kJjwUNllkY-FOmrmqPXcg.wjdbDx-ID0FE9p090Slyy_1VBq75cEOfuPf1n7gcprwg.GIF/%EC%9D%B4%EB%8F%99.gif?type=w3840">
-    <p align="center">키보드 조작을 통한 보트의 이동</p>
+    <div align="center">
+      <img width="600" src="https://postfiles.pstatic.net/MjAyNDA4MTlfMTY4/MDAxNzI0MDUwNzAwODU4.No495pc6-tRIq8Q0VO4_vI5kJjwUNllkY-FOmrmqPXcg.wjdbDx-ID0FE9p090Slyy_1VBq75cEOfuPf1n7gcprwg.GIF/%EC%9D%B4%EB%8F%99.gif?type=w3840">
+      <p>키보드 조작을 통한 보트의 이동</p>
+    </div>
     </details>
 
 ### 시스템 상태
@@ -55,42 +58,59 @@
 - About 버튼을 통해 개발자에 대한 소개를 접할 수 있습니다.
     <details>
     <summary> 미리 보기 </summary>
+      
     <br>
-    <img width="600" src="https://postfiles.pstatic.net/MjAyNDA4MTlfOTUg/MDAxNzI0MDUxMTIyODQy.diDGtuFvHb7Xv074w7EYsKy9TuN9hV5TGsPE0509u68g.E2rKq6r8kSl2GRgoWAV4zSAgoxGpSy6OQSNpAK_yF1gg.GIF/%EC%96%B4%EB%B0%94%EC%9B%83.gif?type=w3840">
-    <p align="center">About 버튼 상호작용</p>
+    <div align="center">
+      <img width="600" src="https://postfiles.pstatic.net/MjAyNDA4MTlfOTUg/MDAxNzI0MDUxMTIyODQy.diDGtuFvHb7Xv074w7EYsKy9TuN9hV5TGsPE0509u68g.E2rKq6r8kSl2GRgoWAV4zSAgoxGpSy6OQSNpAK_yF1gg.GIF/%EC%96%B4%EB%B0%94%EC%9B%83.gif?type=w3840">
+      <p>About 버튼 상호작용</p>
+    </div>
     </details>
 
 #### 2. 섬 진입 모드
 - 섬에 다가가면 등장하는 Enter Island 버튼을 통해 섬에 진입한 상태입니다.
     <details>
     <summary> 미리 보기 </summary>
+      
     <br>
-    <img width="600" src="https://postfiles.pstatic.net/MjAyNDA4MTlfMTgw/MDAxNzI0MDUxOTk0NDQ1.fMkOw1hUTMjjkC1QmiQBu_5j1Vnl-Ff9IlzQK34Pt4gg.ooK8bLi-0dHbwcAfHZlW47SxJK6Z3gkiPdQ9m4VRnPQg.GIF/%EC%84%AC%EC%A7%84%EC%9E%85.gif?type=w3840">
-    <p align="center">Enter Island 버튼으로 섬에 진입</p>
+    <div align="center">
+      <img width="600" src="https://postfiles.pstatic.net/MjAyNDA4MTlfMTgw/MDAxNzI0MDUxOTk0NDQ1.fMkOw1hUTMjjkC1QmiQBu_5j1Vnl-Ff9IlzQK34Pt4gg.ooK8bLi-0dHbwcAfHZlW47SxJK6Z3gkiPdQ9m4VRnPQg.GIF/%EC%84%AC%EC%A7%84%EC%9E%85.gif?type=w3840">
+      <p>Enter Island 버튼으로 섬에 진입</p>
+    </div>
     </details>
 
 - PORTFOLIO 버튼을 통해 개발자 포트폴리오에 대한 정보를 접할 수 있습니다.
     <details>
     <summary> 미리 보기 </summary>
+      
     <br>
-    <img width="600" src="https://postfiles.pstatic.net/MjAyNDA4MTlfODgg/MDAxNzI0MDUyMjUwODAx.Frt5O-ZYkCZch-yuO54dJlL_HgYcZBoEoVdjh8CLaE0g.5hvy_YLAA9U_wLb2NYOY73mSMAzD6LrZUbvlZTrTKCIg.GIF/%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4.gif?type=w3840">
-    <p align="center">Enter Island 버튼으로 섬에 진입</p>
+    <div align="center">
+      <img width="600" src="https://postfiles.pstatic.net/MjAyNDA4MjBfMjMy/MDAxNzI0MTQyNTY0Mzcw.iqw3Jz2zcHTZmWmSZg2UnnMpfCU6ty6ZMX5lkQ1E3YMg.isaAy_wUSC2lvI6L_VC39j-_IRp_fRdi3vZoUY1FfnYg.GIF/%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4_(1).gif?type=w3840">
+      <p>프로젝트 여명 포트폴리오 정보</p>
+    </div>
     </details>
 
-- 버튼 오브젝트를 클릭하면 몬스터와의 전투가 벌어집니다.
+- 버튼 오브젝트를 클릭하면 몬스터와의 전투가 벌어집니다. 스페이스 바를 통해 몬스터를 공격할 수 있습니다.
     <details>
     <summary> 미리 보기 </summary>
+      
     <br>
-    <img width="600" src="https://postfiles.pstatic.net/MjAyNDA4MTlfMTY4/MDAxNzI0MDUwNzAwODU4.No495pc6-tRIq8Q0VO4_vI5kJjwUNllkY-FOmrmqPXcg.wjdbDx-ID0FE9p090Slyy_1VBq75cEOfuPf1n7gcprwg.GIF/%EC%9D%B4%EB%8F%99.gif?type=w3840">
-    <p align="center">Enter Island 버튼으로 섬에 진입</p>
+      <div align="center">
+        <img width="600" src="https://postfiles.pstatic.net/MjAyNDA4MjBfNTcg/MDAxNzI0MTQzMTU0ODQw.BlAPLZS7hLS5AoPbcPEH-VafqwN2Gl7m9SSjIe--gPQg.RD3t13T1fG5x9qM5D1sh6M2WzyEqTCe0cVEvEUidbf8g.GIF/%EC%A0%84%ED%88%AC%ED%8C%A8%EB%B0%B0.gif?type=w3840">
+        <p>전투 패배 시 섬에서 퇴장하게 됩니다.</p>
+        <img width ="600" src="https://postfiles.pstatic.net/MjAyNDA4MjBfMzgg/MDAxNzI0MTQzMzgxMTA1.zFdXvYNKxSGlCm_DYnGIp2bXleq-WuAtGa0ORBh9zzAg.ysu89Sxml7xyBuhWblfOxAVA3btgWM1HA6jqVSpY18cg.GIF/%EC%A0%84%ED%88%AC%EC%8A%B9%EB%A6%AC.gif?type=w3840">
+        <p>전투 승리 시 승리 UI가 출력됩니다.</p>
+      </div>
     </details>
 
 - 자판기 오브젝트를 클릭해 음료수를 뽑을 수 있습니다.
     <details>
     <summary> 미리 보기 </summary>
+      
     <br>
-    <img width="600" src="https://postfiles.pstatic.net/MjAyNDA4MTlfMTY4/MDAxNzI0MDUwNzAwODU4.No495pc6-tRIq8Q0VO4_vI5kJjwUNllkY-FOmrmqPXcg.wjdbDx-ID0FE9p090Slyy_1VBq75cEOfuPf1n7gcprwg.GIF/%EC%9D%B4%EB%8F%99.gif?type=w3840">
-    <p align="center">Enter Island 버튼으로 섬에 진입</p>
+    <div align="center">
+      <img width="600" src="https://postfiles.pstatic.net/MjAyNDA4MjBfMjU4/MDAxNzI0MTQzNjcyODgz.znp81R-GkoxsHUbElutPbBikZCzPRKI4nq40OQ28P4cg.dBh86Uf99AUimION5dYJytIfA8WlWD2qeW7WPXZxL1Eg.GIF/%EC%9E%90%ED%8C%90%EA%B8%B0.gif?type=w3840">
+      <p>음료수를 5번 이상 뽑으면 품절됩니다.</p>
+    </div>
     </details>
 <br>
 
