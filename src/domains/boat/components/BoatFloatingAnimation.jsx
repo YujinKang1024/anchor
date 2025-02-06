@@ -4,18 +4,18 @@ import { useAtom } from 'jotai';
 import * as THREE from 'three';
 
 import { BOAT_CONSTANTS } from '@/domains/boat/constants/boat.constants';
-import { isBoatMovingAtom } from '@/domains/boat/atoms/boatAtoms';
+import { boatStateAtom } from '@/domains/boat/atoms';
 
 import { calculateSimplifiedWaveHeight } from '@/domains/boat/utils/boatUtils';
 
 export const BoatFloatingAnimation = ({ boatRef }) => {
-  const [isBoatMoving] = useAtom(isBoatMovingAtom);
+  const [boatState] = useAtom(boatStateAtom);
   const timeRef = useRef(0);
 
   useFrame((state, delta) => {
     if (boatRef.current) {
       const currentPosition = boatRef.current.position;
-      timeRef.current += delta * (isBoatMoving ? 0.4 : 1);
+      timeRef.current += delta * (boatState.isMoving ? 0.4 : 1);
 
       const waveHeight = calculateSimplifiedWaveHeight(
         currentPosition.x,
@@ -23,7 +23,7 @@ export const BoatFloatingAnimation = ({ boatRef }) => {
         timeRef.current,
       );
 
-      if (!isBoatMoving) {
+      if (!boatState.isMoving) {
         const targetY = BOAT_CONSTANTS.INITIAL_BOAT_POSITION.y + waveHeight;
         boatRef.current.position.y = THREE.MathUtils.lerp(boatRef.current.position.y, targetY, 0.1);
       }
