@@ -10,9 +10,9 @@ import { CAMERA_CONSTANTS } from '@/domains/camera';
 import { isOnBattleAtom } from '@/domains/island/atoms';
 
 import { Boat, BoatController, BoatFloatingAnimation } from '@/domains/boat';
-import { Ocean } from '@/domains/ocean';
-import { BasicLand } from '@/domains/island/basicLand';
-import { GameLand, MouseFollower } from '@/domains/island/gameLand';
+import { Ocean, OceanBoundaryCollision } from '@/domains/ocean';
+import { BasicLand, LandCollisionMesh } from '@/domains/island/basicLand';
+import { GameLand, MouseFollower, GameLandCollisionMesh } from '@/domains/island/gameLand';
 
 import gradientBackground from '@/assets/textures/gradient-background.jpg';
 
@@ -79,8 +79,11 @@ export const Scene3DContents = ({ boatRef, cameraRef, gameLandRef, orbitControls
       <ambientLight color={new THREE.Color(0xfffacd)} intensity={0.5} />
       <Boat ref={boatRef} />
       <Ocean directionalLightRef={directionalLightRef} boatRef={boatRef} />
+      <OceanBoundaryCollision />
       <BasicLand />
+      <LandCollisionMesh />
       <GameLand ref={gameLandRef} />
+      <GameLandCollisionMesh />
       {isOnBattle && <MouseFollower />}
       {isInitialCameraSetup && (
         <>

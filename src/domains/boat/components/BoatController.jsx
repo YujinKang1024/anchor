@@ -8,22 +8,15 @@ import { boatStateAtom } from '@/domains/boat/atoms/boatAtoms';
 import { isEnterIslandAtom } from '@/domains/island/atoms/playerStateAtoms';
 
 import { useBoatControl } from '@/domains/boat/hooks/useBoatControl';
-import { checkCollision } from '@/domains/boat/utils/boatUtils';
+import { checkCollision, handleCollision } from '@/domains/boat/utils/boatUtils';
 
 export const BoatController = ({ boatRef }) => {
   const [boatState, setBoatState] = useAtom(boatStateAtom);
   const [isEnterIsland] = useAtom(isEnterIslandAtom);
   const keysPressed = useBoatControl();
 
-  const raycasters = useRef([
-    new THREE.Raycaster(), // 정면
-    new THREE.Raycaster(), // 좌측
-    new THREE.Raycaster(), // 우측
-  ]);
-
   const targetRotation = useRef(new THREE.Euler());
   const prevPosition = useRef(new THREE.Vector3());
-  const collisionCooldown = useRef(0);
 
   const updateBoatMovement = (keysPressed) => {
     let newPosition = { ...boatState.position };
@@ -63,29 +56,42 @@ export const BoatController = ({ boatRef }) => {
     return { moving, newPosition, newRotation };
   };
 
-  useFrame(({ scene }, delta) => {
+  useFrame(({ scene }) => {
     if (!boatRef.current || isEnterIsland) return;
 
-    const forward = new THREE.Vector3(
-      Math.cos(boatState.rotation),
-      0,
-      Math.sin(boatState.rotation),
-    ).normalize();
-    const right = new THREE.Vector3().crossVectors(forward, new THREE.Vector3(0, 1, 0));
-    const left = right.clone().negate();
-
-    // 이전 y 위치 보존
     const currentY = boatRef.current.position.y;
     prevPosition.current.copy(boatRef.current.position);
 
-    const intersection = checkCollision(scene, forward, left, right, raycasters, boatRef);
-    const collision = intersection !== null;
+    const intersections = checkCollision(scene, boatRef);
 
-    if (!collision && collisionCooldown.current <= 0) {
+    if (intersections.length > 0) {
+      const collisionResult = handleCollision(
+        intersections,
+        prevPosition.current,
+        currentY,
+        boatState,
+      );
+
+      if (collisionResult) {
+        const { position: newPosition, repulsionForce } = collisionResult;
+
+        const lerpFactor = THREE.MathUtils.clamp(repulsionForce * 0.25, 0.15, 0.5);
+        boatRef.current.position.lerp(newPosition, lerpFactor);
+
+        setBoatState((prev) => ({
+          ...prev,
+          position: {
+            x: boatRef.current.position.x,
+            y: boatRef.current.position.y,
+            z: boatRef.current.position.z,
+          },
+          isMoving: true,
+        }));
+      }
+    } else {
       const { moving, newPosition, newRotation } = updateBoatMovement(keysPressed);
 
       if (moving) {
-        // x,z 축만 lerp로 움직임
         const newPos = new THREE.Vector3(newPosition.x, currentY, newPosition.z);
         boatRef.current.position.lerp(newPos, BOAT_CONSTANTS.MOVE_SPEED);
 
@@ -96,32 +102,7 @@ export const BoatController = ({ boatRef }) => {
           BOAT_CONSTANTS.ROTATION_SPEED,
         );
       }
-    } else if (collision) {
-      const normal = intersection.face.normal;
-      normal.y = 0;
-      normal.normalize();
-
-      const reflectionVector = forward.clone().reflect(normal).multiplyScalar(0.1);
-      reflectionVector.y = 0;
-
-      // y 위치 보존하면서 충돌 처리
-      const newPosition = prevPosition.current.clone().add(reflectionVector);
-      newPosition.y = currentY;
-      boatRef.current.position.copy(newPosition);
-
-      collisionCooldown.current = 0.3;
-
-      setBoatState((prev) => ({
-        ...prev,
-        position: {
-          x: boatRef.current.position.x,
-          y: boatRef.current.position.y,
-          z: boatRef.current.position.z,
-        },
-      }));
     }
-
-    collisionCooldown.current = Math.max(0, collisionCooldown.current - delta);
   });
 
   return null;
