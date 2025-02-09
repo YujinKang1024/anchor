@@ -15,7 +15,7 @@ import {
   monsterHPAtom,
 } from '@/domains/island/atoms';
 
-import { Monster, MouseFollower } from '@/domains/island/gameLand/battle';
+import { Monster } from '@/domains/island/gameLand/battle';
 import {
   GameLandBattleMachine,
   GameLandVendingMachine,
@@ -37,7 +37,6 @@ export const GameLand = forwardRef((props, ref) => {
   const [, setMonsterHP] = useAtom(monsterHPAtom);
   const { scene } = useGLTF(gameLand);
   const glowMeshesRef = useRef([]);
-  const mouseFollowerRef = useRef(null);
   const battleMachineRef = useRef(null);
 
   useEffect(() => {
@@ -172,15 +171,11 @@ export const GameLand = forwardRef((props, ref) => {
       />
       <GameLandVendingMachine onClick={handleVendingMachineClick} />
       <GameLandBattleSign isGlowing={isBattleMachineHovered} />
-      <Monster position={[-400, 40, -370]} onAttack={() => handlePlayerDamage(10)} />
-      {isOnBattle && mousePosition && (
-        <MouseFollower
-          ref={mouseFollowerRef}
-          mousePosition={mousePosition}
-          gameLandRef={ref}
-          battleMachineRef={battleMachineRef}
-        />
-      )}
+      <Monster
+        position={[-400, 40, -370]}
+        onAttack={() => handlePlayerDamage(10)}
+        mousePosition={mousePosition}
+      />
     </>
   );
 });

@@ -18,6 +18,7 @@ import { PerspectiveModal, AboutModal } from '@/shared/components/Modals';
 import { ToastMessage } from '@/shared/components/Utils';
 import { BattleMessage, VictoryMessage } from '@/shared/components/UI/Messages';
 import { BackIconButton } from '@/shared/components/UI/Buttons';
+import { MouseFollowerUI } from '@/domains/island/gameLand';
 
 import backIcon from '@/assets/images/back-icon.png';
 
@@ -164,7 +165,12 @@ export const Scene3DUI = () => {
         />
       )}
       {isShowPerspectiveModal && <PerspectiveModal />}
-      {isOnBattle && <HPBar />}
+      {isOnBattle && (
+        <>
+          <HPBar />
+          <MouseFollowerUI />
+        </>
+      )}
       <BattleMessage ref={battleMessageRef}>{showBattleMessage && 'PRESS SPACEBAR!'}</BattleMessage>
       <VictoryMessage ref={victoryMessageRef}>
         {showVictoryMessage && "YOU'RE HERO!"}

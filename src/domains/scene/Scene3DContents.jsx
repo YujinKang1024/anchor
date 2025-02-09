@@ -1,24 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { useThree, useLoader } from '@react-three/fiber';
-import { useAtom } from 'jotai';
 import * as THREE from 'three';
 
 import { DIRECTIONAL_LIGHT_COLOR, LIGHT_POSITION } from '@/shared/constants';
 import { BOAT_CONSTANTS } from '@/domains/boat';
 import { CAMERA_CONSTANTS } from '@/domains/camera';
 
-import { isOnBattleAtom } from '@/domains/island/atoms';
-
 import { Boat, BoatController, BoatFloatingAnimation } from '@/domains/boat';
 import { Ocean, OceanBoundaryCollision } from '@/domains/ocean';
 import { BasicLand, LandCollisionMesh } from '@/domains/island/basicLand';
-import { GameLand, MouseFollower, GameLandCollisionMesh } from '@/domains/island/gameLand';
+import { GameLand, GameLandCollisionMesh } from '@/domains/island/gameLand';
 
 import gradientBackground from '@/assets/textures/gradient-background.jpg';
 
 export const Scene3DContents = ({ boatRef, cameraRef, gameLandRef, orbitControlsRef }) => {
   const [isInitialCameraSetup, setisInitialCameraSetup] = useState(false);
-  const [isOnBattle] = useAtom(isOnBattleAtom);
   const directionalLightRef = useRef();
 
   const { scene } = useThree();
@@ -84,7 +80,6 @@ export const Scene3DContents = ({ boatRef, cameraRef, gameLandRef, orbitControls
       <LandCollisionMesh />
       <GameLand ref={gameLandRef} />
       <GameLandCollisionMesh />
-      {isOnBattle && <MouseFollower />}
       {isInitialCameraSetup && (
         <>
           <BoatController boatRef={boatRef} />
