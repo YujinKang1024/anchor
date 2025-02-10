@@ -3,7 +3,7 @@ import { useAtom } from 'jotai';
 import { gsap } from 'gsap';
 import styled from 'styled-components';
 
-import { PLAYER_MAX_HP } from '@/domains/island/gameLand/battle/constants/battle.constants';
+import { PLAYER_MAX_HP } from '@/domains/island/gameLand';
 import { playerHPAtom } from '@/domains/island/atoms/battleAtoms';
 
 const HPBarContainer = styled.div`

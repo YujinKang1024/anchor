@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
-import { PLAYER_MAX_HP } from '@/domains/island/gameLand/battle';
+import { PLAYER_MAX_HP } from '@/domains/island/gameLand';
 import { EMISSION_COLOR_MAP } from '@/shared/constants';
 
 import { isLandMenuOpenAtom } from '@/atoms';

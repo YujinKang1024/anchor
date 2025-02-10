@@ -1,24 +1,18 @@
-import { useCallback, useEffect, useState, useMemo } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { useAtom } from 'jotai';
 import * as THREE from 'three';
-import { Physics, useBox, usePlane } from '@react-three/cannon';
 
 import { EMISSION_COLOR_MAP } from '@/shared/constants';
 import { isEnterIslandAtom } from '@/domains/island/atoms/playerStateAtoms';
 import { isLandMenuOpenAtom, isShowSoldOutMessageAtom } from '@/atoms';
 
-import { Can } from './Can';
+import { CansContainer, GameLandFloor } from '@/domains/island/gameLand';
 
 import gameVendingMachine from '@/assets/models/gameLand-vendingMachine.glb';
 
 const VendingMachineBody = ({ onClick, onPointerOver, onPointerOut }) => {
   const { scene: vendingMachineScene } = useGLTF(gameVendingMachine);
-  const [ref] = useBox(() => ({
-    mass: 0,
-    position: [-480, 10, -433],
-    args: [50, 110, 30],
-  }));
 
   useEffect(() => {
     vendingMachineScene.traverse((child) => {
@@ -36,7 +30,7 @@ const VendingMachineBody = ({ onClick, onPointerOver, onPointerOut }) => {
   return (
     <>
       <mesh
-        ref={ref}
+        position={[-480, 10, -433]}
         onPointerDown={onClick}
         onPointerOver={onPointerOver}
         onPointerOut={onPointerOut}
@@ -49,24 +43,7 @@ const VendingMachineBody = ({ onClick, onPointerOver, onPointerOut }) => {
   );
 };
 
-const GameLandFloor = () => {
-  const [ref] = usePlane(() => ({
-    rotation: [-Math.PI / 2, 0, 0],
-    position: [-390, 4.5, -290],
-    type: 'Static',
-    restitution: 0.1,
-    friction: 0.8,
-  }));
-
-  return (
-    <mesh ref={ref}>
-      <planeGeometry args={[400, 300]} />
-      <meshStandardMaterial visible={false} />
-    </mesh>
-  );
-};
-
-const GameLandVendingMachineContent = ({ onClick }) => {
+const GameLandVendingMachineContent = () => {
   const [isEnterIsland] = useAtom(isEnterIslandAtom);
   const [isLandMenuOpen] = useAtom(isLandMenuOpenAtom);
   const [, setIsShowSoldOutMessage] = useAtom(isShowSoldOutMessageAtom);
@@ -77,28 +54,24 @@ const GameLandVendingMachineContent = ({ onClick }) => {
       if (!isEnterIsland || isLandMenuOpen) return;
 
       event.stopPropagation();
-      if (onClick) {
-        onClick(event);
-      }
 
       if (cans.length < 5) {
-        setCans((prevCans) => [
-          ...prevCans,
-          {
-            id: Date.now(),
-            position: [
-              -480 + (Math.random() - 0.5) * 2,
-              10 + prevCans.length,
-              -420 + (Math.random() - 0.5) * 2,
-            ],
-          },
-        ]);
+        const newCan = {
+          id: Date.now(),
+          position: [
+            -490 + (Math.random() - 0.5) * 25,
+            10 + Math.random() * 2,
+            -420 + (Math.random() + 0.5) * 20,
+          ],
+        };
+
+        setCans((prevCans) => [...prevCans, newCan]);
       } else {
         setIsShowSoldOutMessage(true);
         setTimeout(() => setIsShowSoldOutMessage(false), 2000);
       }
     },
-    [onClick, isEnterIsland, isLandMenuOpen, cans.length, setIsShowSoldOutMessage],
+    [isEnterIsland, isLandMenuOpen, cans.length, setIsShowSoldOutMessage],
   );
 
   const handlePointerOut = useCallback(() => {
@@ -111,10 +84,6 @@ const GameLandVendingMachineContent = ({ onClick }) => {
     }
   }, [isEnterIsland, isLandMenuOpen]);
 
-  const canElements = useMemo(() => {
-    return cans.map((can) => <Can key={can.id} initialPosition={can.position} />);
-  }, [cans]);
-
   return (
     <>
       <VendingMachineBody
@@ -122,16 +91,16 @@ const GameLandVendingMachineContent = ({ onClick }) => {
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
       />
-      {canElements}
-      <GameLandFloor />
+      <CansContainer cans={cans} />
     </>
   );
 };
 
-export const GameLandVendingMachine = ({ onClick }) => {
+export const GameLandVendingMachine = () => {
   return (
-    <Physics>
-      <GameLandVendingMachineContent onClick={onClick} />
-    </Physics>
+    <>
+      <GameLandFloor />
+      <GameLandVendingMachineContent />
+    </>
   );
 };

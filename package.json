@@ -14,7 +14,6 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@react-three/cannon": "^6.6.0",
     "@react-three/drei": "^9.108.3",
     "@react-three/fiber": "^8.16.8",
     "@react-three/postprocessing": "^2.16.2",
