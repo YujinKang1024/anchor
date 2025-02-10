@@ -16,7 +16,7 @@ gsap.registerPlugin(CSSPlugin);
 export const EnterIslandButton = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [, setIsLandMenuOpen] = useAtom(isLandMenuOpenAtom);
-  const [isEnterIsland, setIsEnterIsland] = useAtom(isEnterIslandAtom);
+  const [, setIsEnterIsland] = useAtom(isEnterIslandAtom);
 
   const buttonRef = useRef(null);
   const imageRef = useRef(null);
@@ -84,7 +84,6 @@ export const EnterIslandButton = () => {
     setIsEnterIsland(true);
     setIsVisible(false);
     setIsLandMenuOpen(true);
-    console.log(isEnterIsland);
   }
 
   return (

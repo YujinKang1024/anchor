@@ -99,7 +99,6 @@ export const GameLand = forwardRef((props, ref) => {
 
   const handleBattleMachineClick = useCallback(() => {
     if (!isOnBattle && isEnterIsland && !isLandMenuOpen) {
-      console.log('Menu open state:', isLandMenuOpen);
       setIsOnBattle(true);
     }
   }, [isOnBattle, setIsOnBattle, isEnterIsland, isLandMenuOpen]);
@@ -115,12 +114,6 @@ export const GameLand = forwardRef((props, ref) => {
     document.body.style.cursor = 'default';
     setIsBattleMachineHovered(false);
   }, []);
-
-  const handleVendingMachineClick = useCallback(() => {
-    if (isEnterIsland && !isLandMenuOpen) {
-      console.log('자판기 클릭!');
-    }
-  }, [isEnterIsland, isLandMenuOpen]);
 
   const handleMouseMove = useCallback((event) => {
     const x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -138,10 +131,13 @@ export const GameLand = forwardRef((props, ref) => {
       setPlayerHP((prevHP) => {
         const newHP = Math.max(prevHP - damage, 0);
         if (newHP === 0) {
-          setIsEnterIsland(false);
-          setIsOnBattle(false);
-          setIsLandMenuOpen(false);
-          setMonsterHP(100);
+          setTimeout(() => {
+            setIsEnterIsland(false);
+            setIsOnBattle(false);
+            setIsLandMenuOpen(false);
+            setMonsterHP(100);
+          }, 1000);
+
           return 0;
         }
         return newHP;
@@ -169,7 +165,7 @@ export const GameLand = forwardRef((props, ref) => {
         onPointerOver={handleBattleMachinePointerOver}
         onPointerOut={handleBattleMachinePointerOut}
       />
-      <GameLandVendingMachine onClick={handleVendingMachineClick} />
+      <GameLandVendingMachine />
       <GameLandBattleSign isGlowing={isBattleMachineHovered} />
       <Monster
         position={[-400, 40, -370]}
