@@ -34,9 +34,8 @@ export const GameLandCollisionMesh = () => {
   return (
     <>
       {collisionMeshes.map((mesh, index) => (
-        <mesh key={index} position={mesh.position} name={mesh.name}>
+        <mesh key={index} position={mesh.position} name={mesh.name} visible={false}>
           <cylinderGeometry args={[mesh.radius, mesh.radius, mesh.height, 32]} />
-          <meshBasicMaterial color="#ff0000" wireframe transparent opacity={0.3} />
         </mesh>
       ))}
     </>

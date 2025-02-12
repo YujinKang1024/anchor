@@ -30,24 +30,20 @@ export const OceanBoundaryCollision = () => {
 
   return (
     <group position={[0, yOffset, 0]}>
-      <mesh position={[0, height / 2, -depth / 2]} name="collision_boundary_north">
+      <mesh position={[0, height / 2, -depth / 2]} name="collision_boundary_north" visible={false}>
         <boxGeometry args={[width, height, thickness]} />
-        <meshBasicMaterial color="#ff0000" wireframe transparent opacity={0.3} />
       </mesh>
 
-      <mesh position={[0, height / 2, depth / 2]} name="collision_boundary_south">
+      <mesh position={[0, height / 2, depth / 2]} name="collision_boundary_south" visible={false}>
         <boxGeometry args={[width, height, thickness]} />
-        <meshBasicMaterial color="#ff0000" wireframe transparent opacity={0.3} />
       </mesh>
 
-      <mesh position={[width / 2, height / 2, 0]} name="collision_boundary_east">
+      <mesh position={[width / 2, height / 2, 0]} name="collision_boundary_east" visible={false}>
         <boxGeometry args={[thickness, height, depth]} />
-        <meshBasicMaterial color="#ff0000" wireframe transparent opacity={0.3} />
       </mesh>
 
-      <mesh position={[-width / 2, height / 2, 0]} name="collision_boundary_west">
+      <mesh position={[-width / 2, height / 2, 0]} name="collision_boundary_west" visible={false}>
         <boxGeometry args={[thickness, height, depth]} />
-        <meshBasicMaterial color="#ff0000" wireframe transparent opacity={0.3} />
       </mesh>
     </group>
   );

@@ -16,6 +16,7 @@ import gradientBackground from '@/assets/textures/gradient-background.jpg';
 export const Scene3DContents = ({ boatRef, cameraRef, gameLandRef, orbitControlsRef }) => {
   const [isInitialCameraSetup, setisInitialCameraSetup] = useState(false);
   const directionalLightRef = useRef();
+  const basicLandRef = useRef();
 
   const { scene } = useThree();
   const gradientTexture = useLoader(THREE.TextureLoader, gradientBackground);
@@ -74,9 +75,13 @@ export const Scene3DContents = ({ boatRef, cameraRef, gameLandRef, orbitControls
       <ambientLight color={new THREE.Color(0x87ceeb)} intensity={0.4} />
       <ambientLight color={new THREE.Color(0xfffacd)} intensity={0.5} />
       <Boat ref={boatRef} />
-      <Ocean directionalLightRef={directionalLightRef} boatRef={boatRef} />
+      <Ocean
+        directionalLightRef={directionalLightRef}
+        gameLandRef={gameLandRef}
+        basicLandRef={basicLandRef}
+      />
       <OceanBoundaryCollision />
-      <BasicLand />
+      <BasicLand ref={basicLandRef} />
       <LandCollisionMesh />
       <GameLand ref={gameLandRef} />
       <GameLandCollisionMesh />

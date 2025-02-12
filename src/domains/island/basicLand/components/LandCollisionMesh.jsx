@@ -34,9 +34,8 @@ export const LandCollisionMesh = () => {
   return (
     <>
       {collisionMeshes.map((mesh, index) => (
-        <mesh key={index} position={mesh.position} name={mesh.name}>
+        <mesh key={index} position={mesh.position} name={mesh.name} visible={false}>
           <cylinderGeometry args={[mesh.radius, mesh.radius, mesh.height, 32]} />
-          <meshStandardMaterial color="#ff0000" wireframe={true} transparent opacity={0.3} />
         </mesh>
       ))}
     </>
