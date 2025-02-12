@@ -12,24 +12,26 @@ export const Laser = ({ monsterRef, emissionMeshRef, isFiring }) => {
 
   const getTargetPosition = useCallback(
     (mouseX, mouseY) => {
-      // 스크린 좌표를 -1에서 1 사이로 정규화
+      if (!monsterRef.current || !emissionMeshRef.current) return null;
+
       const normalizedX = (mouseX / window.innerWidth) * 2 - 1;
       const normalizedY = -(mouseY / window.innerHeight) * 2 + 1;
 
-      // 레이캐스터 생성
       const raycaster = new THREE.Raycaster();
       raycaster.setFromCamera(new THREE.Vector2(normalizedX, normalizedY), camera);
 
-      // 가상의 평면 생성 (y=50에 위치한 수평면)
-      const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -50);
+      const cameraDirection = new THREE.Vector3(0, 0, -1);
+      cameraDirection.applyQuaternion(camera.quaternion);
 
-      // 레이캐스터와 평면의 교차점 계산
+      const plane = new THREE.Plane();
+      plane.setFromNormalAndCoplanarPoint(cameraDirection, new THREE.Vector3(0, 0, 0));
+
       const targetPosition = new THREE.Vector3();
       raycaster.ray.intersectPlane(plane, targetPosition);
 
       return targetPosition;
     },
-    [camera],
+    [camera, monsterRef, emissionMeshRef],
   );
 
   const laserMaterial = useMemo(() => {
@@ -51,42 +53,69 @@ export const Laser = ({ monsterRef, emissionMeshRef, isFiring }) => {
   const updateLaser = useCallback(() => {
     if (!laserRef.current || !emissionMeshRef.current || !monsterRef.current) return;
 
-    // emission mesh의 월드 포지션 계산
     const emissionWorldPosition = new THREE.Vector3();
     emissionMeshRef.current.getWorldPosition(emissionWorldPosition);
+    emissionWorldPosition.y += 20;
 
-    emissionWorldPosition.y += 10;
+    const monsterRotation = monsterRef.current.rotation.y;
+    const offsetDistance = 5;
+    emissionWorldPosition.x += Math.sin(monsterRotation) * offsetDistance;
+    emissionWorldPosition.z += Math.cos(monsterRotation) * offsetDistance;
 
-    // 타겟 위치 계산
     const targetPosition = getTargetPosition(mousePosition.x, mousePosition.y);
+    if (!targetPosition) return;
 
-    if (!targetPosition) return; // 교차점이 없는 경우 처리
-
-    // 레이저 방향 계산
     const direction = new THREE.Vector3();
     direction.subVectors(targetPosition, emissionWorldPosition).normalize();
 
-    // 실제 거리 계산
+    const raycaster = new THREE.Raycaster();
+    raycaster.ray.origin.copy(emissionWorldPosition);
+    raycaster.ray.direction.copy(direction);
+
+    const monsterMeshes = [];
+    monsterRef.current.traverse((child) => {
+      if (child.isMesh) {
+        child.updateMatrixWorld();
+        monsterMeshes.push(child);
+      }
+    });
+
+    const intersects = raycaster.intersectObjects(monsterMeshes, true);
+
     const distanceToTarget = emissionWorldPosition.distanceTo(targetPosition);
-    let finalDistance = distanceToTarget;
+    const finalDistance = Math.min(Math.max(distanceToTarget, 1), 500);
 
-    // 최대/최소 거리 제한
-    finalDistance = Math.min(finalDistance, 500);
-    finalDistance = Math.max(finalDistance, 1);
+    if (intersects.length > 0 && intersects[0].distance < finalDistance) {
+      const intersectionPoint = emissionWorldPosition
+        .clone()
+        .add(direction.clone().multiplyScalar(intersects[0].distance));
+      const remainingDistance = finalDistance - intersects[0].distance;
 
-    // 레이저 중간점 계산 및 위치 설정
-    const midPoint = emissionWorldPosition
-      .clone()
-      .add(direction.clone().multiplyScalar(finalDistance * 0.5));
+      const startPoint = intersectionPoint.clone().add(direction.clone().multiplyScalar(2));
+      const midPoint = startPoint
+        .clone()
+        .add(direction.clone().multiplyScalar(remainingDistance * 0.5));
 
-    laserRef.current.position.copy(midPoint);
-    laserRef.current.scale.set(0.15, finalDistance, 0.15);
-    laserRef.current.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction);
+      laserRef.current.position.copy(midPoint);
+      laserRef.current.scale.set(0.15, remainingDistance, 0.15);
+      laserRef.current.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction);
+    } else {
+      // 교차하지 않는 경우 전체 레이저 표시
+      const midPoint = emissionWorldPosition
+        .clone()
+        .add(direction.clone().multiplyScalar(finalDistance * 0.5));
+
+      laserRef.current.position.copy(midPoint);
+      laserRef.current.scale.set(0.15, finalDistance, 0.15);
+      laserRef.current.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction);
+    }
   }, [getTargetPosition, mousePosition.x, mousePosition.y, emissionMeshRef, monsterRef]);
 
   useFrame((state) => {
     if (isFiring) {
       updateLaser(state);
+    } else {
+      if (laserRef.current) laserRef.current.visible = false;
     }
   });
 
