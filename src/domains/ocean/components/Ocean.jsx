@@ -37,9 +37,11 @@ export const Ocean = ({ directionalLightRef, basicLandRef, gameLandRef }) => {
   const reflectionRenderTarget = useMemo(
     () =>
       new THREE.WebGLRenderTarget(size.width, size.height, {
-        encoding: THREE.sRGBEncoding,
+        colorSpace: THREE.SRGBColorSpace,
         minFilter: THREE.LinearFilter,
         magFilter: THREE.LinearFilter,
+        format: THREE.RGBAFormat,
+        type: THREE.UnsignedByteType,
       }),
     [size],
   );
