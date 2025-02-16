@@ -4,7 +4,7 @@ import { gsap } from 'gsap';
 import { CSSPlugin } from 'gsap/CSSPlugin';
 
 import { isEnterIslandAtom } from '@/domains/island/atoms';
-import { isLandMenuOpenAtom } from '@/atoms';
+import { isLandMenuOpenAtom, isShowAboutModalAtom } from '@/atoms';
 
 import { useInteractionZone } from '@/shared/hooks';
 import { ButtonContainer, ButtonImage, ButtonText } from './EnterIslandButton.styles';
@@ -15,6 +15,7 @@ gsap.registerPlugin(CSSPlugin);
 
 export const EnterIslandButton = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [isShowAboutModal] = useAtom(isShowAboutModalAtom);
   const [, setIsLandMenuOpen] = useAtom(isLandMenuOpenAtom);
   const [, setIsEnterIsland] = useAtom(isEnterIslandAtom);
 
@@ -85,6 +86,8 @@ export const EnterIslandButton = () => {
     setIsVisible(false);
     setIsLandMenuOpen(true);
   }
+
+  if (isShowAboutModal) return;
 
   return (
     <ButtonContainer

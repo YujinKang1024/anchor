@@ -14,7 +14,7 @@ import {
 } from '@react-three/postprocessing';
 import { BlendFunction } from 'postprocessing';
 
-import { isSoundPlayingAtom } from '@/atoms';
+import { isSoundPlayingAtom, isShowAboutModalAtom } from '@/atoms';
 import { isEnterIslandAtom } from '../island/atoms/playerStateAtoms';
 
 import { LoadingScreen } from '@/shared/components/Loading';
@@ -30,8 +30,10 @@ export const Scene3D = () => {
   const [showLandingUI, setShowLandingUI] = useState(false);
   const [showScene, setShowScene] = useState(false);
   const [, setIsSoundPlaying] = useAtom(isSoundPlayingAtom);
-  const [isEnterIsland] = useAtom(isEnterIslandAtom);
   const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const [isEnterIsland] = useAtom(isEnterIslandAtom);
+  const [isShowAboutModal] = useAtom(isShowAboutModalAtom);
 
   const orbitControlsRef = useRef();
   const canvasRef = useRef(null);
@@ -117,6 +119,7 @@ export const Scene3D = () => {
                 />
                 <OrbitControls
                   ref={orbitControlsRef}
+                  enabled={!isShowAboutModal}
                   enablePan={false}
                   enableZoom={true}
                   minPolarAngle={Math.PI / 4}
