@@ -78,9 +78,9 @@ export const LandSideMenu = () => {
         <ButtonImage ref={buttonRef} src={arrowImage} alt="Arrow Button" />
       </ButtonContainer>
       <TextContainer ref={textContainerRef}>
-        <MenuHeader>Develop Island</MenuHeader>
+        <MenuHeader>Game Develop Island</MenuHeader>
         <DescriptionContainer>
-          <Description>개발 섬에 오신 것을 환영합니다!</Description>
+          <Description>게임 섬에 오신 것을 환영합니다!</Description>
           <Description>
             이 작은 섬 안에서는 잔디 사이를 누비는 풀벌레마저 자유로울 수 없다고 합니다.
           </Description>

@@ -81,24 +81,24 @@ export const AboutModal = () => {
     () => (
       <TextContainer>
         <Text ref={(el) => (textRefs.current[0] = el)}>
-          안녕하세요, 주니어 프론트엔드 개발자
+          안녕하세요! <Spacing /> 흐름을 정리하고, 더 나은 경험을 만드는 개발자
           <HighlightText color="#006cff"> 강유진</HighlightText>
           입니다.
         </Text>
         <Text ref={(el) => (textRefs.current[1] = el)}>
-          대학교 게임 학과에서 3D 그래픽을 전공하며 여러 번의 게임 개발 프로젝트를 겪었습니다.{' '}
-          <Spacing />그 과정에서 예술적, 개발적 감각을 키워나가며 팀원들과 협업하는 방법에 대해
-          익혀나갔습니다.
+          어떤 시스템이든 패턴을 찾아 정리하는 걸 좋아합니다.
+          <Spacing />
+          복잡한 구조를 깔끔하게 정리하고 기능을 더 효율적으로 개선하는 것에서 보람을 느낍니다.
         </Text>
         <Text ref={(el) => (textRefs.current[2] = el)}>
-          그 중 배경 그래픽 팀장으로 개발에 참여한 졸업 작품 {`'여명'`}은 공모전 수상 및 정식 출시를
-          통해 사용자들에게 긍정적인 반응을 얻기도 했습니다.
+          동시에 사용자 경험을 더욱 직관적이고 매끄럽게 만드는 것에도 관심이 많습니다.
+          <Spacing />
+          단순히 기능을 구현하는 것을 넘어, 더 편리하고 유용한 흐름을 설계하는 것이 중요하다고
+          생각합니다.
         </Text>
         <Text ref={(el) => (textRefs.current[3] = el)}>
-          졸업 이후에는 기능 구현에 대한 흥미와 실용성 있는 서비스 개발에 대한 열망으로 웹 개발을
-          시작하게 되었습니다. <Spacing />
-          기획, 그래픽, 개발, 다방면에서의 경험을 살려 동료들과 원활하게 협업하며 완성도 높은
-          서비스를 개발해 나가고 싶습니다.
+          개발을 통해 팀과 프로덕션이 더 원활하게 돌아가도록 기여하고 <Spacing />그 과정에서 저도
+          계속 배우고 성장하는 개발자가 되고 싶습니다!
         </Text>
         <Text ref={(el) => (textRefs.current[4] = el)} color="#fff" marginTop="5%" fontWeight="600">
           CONTACT
