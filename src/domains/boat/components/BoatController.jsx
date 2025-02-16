@@ -24,13 +24,13 @@ export const BoatController = ({ boatRef }) => {
     let moving = false;
 
     if (keysPressed['w'] || keysPressed['ㅈ']) {
-      newPosition.x -= BOAT_CONSTANTS.MOVE_DISTANCE * Math.cos(newRotation);
-      newPosition.z += BOAT_CONSTANTS.MOVE_DISTANCE * Math.sin(newRotation);
+      newPosition.x += BOAT_CONSTANTS.MOVE_DISTANCE * Math.cos(newRotation);
+      newPosition.z -= BOAT_CONSTANTS.MOVE_DISTANCE * Math.sin(newRotation);
       moving = true;
     }
     if (keysPressed['s'] || keysPressed['ㄴ']) {
-      newPosition.x += BOAT_CONSTANTS.MOVE_DISTANCE * Math.cos(newRotation);
-      newPosition.z -= BOAT_CONSTANTS.MOVE_DISTANCE * Math.sin(newRotation);
+      newPosition.x -= BOAT_CONSTANTS.MOVE_DISTANCE * Math.cos(newRotation);
+      newPosition.z += BOAT_CONSTANTS.MOVE_DISTANCE * Math.sin(newRotation);
       moving = true;
     }
     if (keysPressed['a'] || keysPressed['ㅁ']) {
