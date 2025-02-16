@@ -56,16 +56,18 @@ const GameLandVendingMachineContent = () => {
       event.stopPropagation();
 
       if (cans.length < 5) {
-        const newCan = {
-          id: Date.now(),
-          position: [
-            -490 + (Math.random() - 0.5) * 25,
-            10 + Math.random() * 2,
-            -420 + (Math.random() + 0.5) * 20,
-          ],
-        };
+        requestAnimationFrame(() => {
+          const newCan = {
+            id: Date.now(),
+            position: [
+              -490 + (Math.random() - 0.5) * 25,
+              10 + Math.random() * 2,
+              -420 + (Math.random() + 0.5) * 20,
+            ],
+          };
 
-        setCans((prevCans) => [...prevCans, newCan]);
+          setCans((prevCans) => [...prevCans, newCan]);
+        });
       } else {
         setIsShowSoldOutMessage(true);
         setTimeout(() => setIsShowSoldOutMessage(false), 2000);
