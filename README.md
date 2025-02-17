@@ -628,31 +628,38 @@ float calculateWaveHeight(vec2 position, float u_time) {
   - 단일 샘플링 방식(하드 그림자) → 그림자 경계가 날카로움
   - 다중 샘플링(PCF) → 그림자가 자연스럽게 퍼짐
 
-  1. 기본 그림자 값 계산
+1. 기본 그림자 값 계산
 
-      ```glsl
-      float shadow = getShadow(vShadowCoord);
-      ```
+```glsl
+float shadow = getShadow(vShadowCoord);
+```
 
-      - `getShadow(vShadowCoord)`: 그림자 맵에서 기본적인 그림자 값 샘플링 (* 샘플링: 여러 지점에서 값을 가져오는 것)
-      - 단순한 하드 그림자를 계산하는 단계
+- `getShadow(vShadowCoord)`: 그림자 맵에서 기본적인 그림자 값 샘플링 (* 샘플링: 여러 지점에서 값을 가져오는 것)
+- 단순한 하드 그림자를 계산하는 단계
+      
 <br>
-  2.	블러 처리된 그림자 값 계산
 
-        ```glsl
-        float blurred = blurShadow(vShadowCoord);
-        ```
+2. 블러 처리된 그림자 값 계산
 
-        - `blurShadow(vShadowCoord)`: 여러 샘플을 이용해 평균을 내어 그림자를 부드럽게 만듦
+```glsl
+float blurred = blurShadow(vShadowCoord);
+```
+
+- `blurShadow(vShadowCoord)`: 여러 샘플을 이용해 평균을 내어 그림자를 부드럽게 만듦
+  
 <br>
-  3. PCF를 활용한 부드러운 그림자 적용
 
-      ```glsl
-      float finalShadow = mix(shadow, blurred, 0.0001);
-      ```
-      - `mix(shadow, blurred, 0.0001)`: 기본 그림자 값과 블러 처리된 그림자를 적절히 혼합
-      - 0.0001은 블러의 강도를 조절하는 역할
+3. PCF를 활용한 부드러운 그림자 적용
+
+```glsl
+float finalShadow = mix(shadow, blurred, 0.0001);
+```
+
+- `mix(shadow, blurred, 0.0001)`: 기본 그림자 값과 블러 처리된 그림자를 적절히 혼합
+- 0.0001은 블러의 강도를 조절하는 역할
+  
 <br>
+
   4.	그림자를 최종 색상에 반영
         ```glsl
         vec3 shadowColor = mix(u_shadowColor, vec3(1.0), finalShadow);
@@ -661,6 +668,8 @@ float calculateWaveHeight(vec2 position, float u_time) {
 
         - 그림자 색과 기본 조명을 혼합하여 부드러운 그림자 색상 생성
         - 최종적으로 물 표면에 그림자를 적용하여 자연스러운 효과를 구현
+    
+<br>
 
 **5-4. 텍스처 적용** <br>
 
